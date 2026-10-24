@@ -41,9 +41,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cooldown.app.system.ProtectionAlertNotifier
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PauseActivity : ComponentActivity() {
+
+    @Inject lateinit var notifier: ProtectionAlertNotifier
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +59,9 @@ class PauseActivity : ComponentActivity() {
         // ⭐ Demande le déverrouillage automatique pour rendre l'écran interactif immédiatement
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         keyguardManager?.requestDismissKeyguard(this, null)
+
+        // ⭐ Annule les rappels : l'utilisateur a réagi en tapant sur la notification
+        notifier.dismissBlockedCall()
 
         setContent {
             MaterialTheme {

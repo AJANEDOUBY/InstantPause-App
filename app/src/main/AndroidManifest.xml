@@ -75,7 +75,15 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="call_protection_watchdog" />
         </service>
-
+        <!-- Foreground Service de rappel : re-poste la notification toutes les 30s -->
+        <service
+            android:name=".system.ReminderForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="blocked_call_reminders" />
+        </service>
         <!-- Récepteur au démarrage du téléphone (exported=true OBLIGATOIRE) -->
         <receiver
             android:name=".system.BootReceiver"

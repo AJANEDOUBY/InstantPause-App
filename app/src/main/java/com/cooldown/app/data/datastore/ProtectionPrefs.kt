@@ -41,18 +41,32 @@ class ProtectionPrefs @Inject constructor(
         if (e is IOException) emit(emptyPreferences()) else throw e
     }
 
+    // === Mode Urgence Émotionnelle ===
     val emergencyUntil: Flow<Long> = data.map { it[EMERGENCY_UNTIL] ?: 0L }.distinctUntilChanged()
 
     suspend fun getEmergencyUntil(): Long = data.first()[EMERGENCY_UNTIL] ?: 0L
     suspend fun setEmergencyUntil(v: Long) { dataStore.edit { it[EMERGENCY_UNTIL] = v } }
     suspend fun clearEmergency() { dataStore.edit { it.remove(EMERGENCY_UNTIL) } }
 
+    // === État du rôle Call Redirection ===
     val roleRevoked: Flow<Boolean> = data.map { it[ROLE_REVOKED] ?: false }.distinctUntilChanged()
     suspend fun isRoleRevoked(): Boolean = data.first()[ROLE_REVOKED] ?: false
     suspend fun setRoleRevoked(v: Boolean) { dataStore.edit { it[ROLE_REVOKED] = v } }
 
+    // === Bandeau d'aide (affiché une seule fois au premier lancement) ===
+    val helpBannerDismissed: Flow<Boolean> =
+        data.map { it[HELP_BANNER_DISMISSED] ?: false }.distinctUntilChanged()
+
+    suspend fun isHelpBannerDismissed(): Boolean =
+        data.first()[HELP_BANNER_DISMISSED] ?: false
+
+    suspend fun setHelpBannerDismissed(value: Boolean) {
+        dataStore.edit { it[HELP_BANNER_DISMISSED] = value }
+    }
+
     private companion object {
         val EMERGENCY_UNTIL = longPreferencesKey("emergency_until_wall_ms")
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
+        val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
     }
 }

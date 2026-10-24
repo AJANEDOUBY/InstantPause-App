@@ -27,7 +27,7 @@ import javax.inject.Inject
 /**
  * Intercepte les appels sortants via l'API Telecom (rôle ROLE_CALL_REDIRECTION).
  *
- * Principes:
+ * Principes :
  *  - Fail-open : toute erreur ou timeout laisse passer l'appel.
  *  - Une seule réponse à Telecom par appel ([responded]).
  *  - Les urgences sont court-circuitées avant toute I/O.
