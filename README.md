@@ -241,6 +241,30 @@ Sous Windows : `gradlew.bat`.
 Le fichier `local.properties` (chemin du SDK) n'est pas versionné — Android Studio le génère
 automatiquement, ou renseignez `sdk.dir=/chemin/vers/Android/Sdk`.
 
+### Publier une release
+
+Le script `release.ps1` enchaîne tout : tests, build release (R8), `zipalign`, signature,
+vérification, tag git et publication GitHub avec l'APK en asset.
+
+```powershell
+# Simulation complète, sans tag ni publication
+.\release.ps1 -DryRun
+
+# Avec des notes de release personnalisées
+.\release.ps1 -Notes .\notes-1.1.md
+```
+
+Prérequis :
+
+- un **keystore** dans `keystore/cooldown-release.jks` + `keystore/KEYSTORE-INFO.txt`
+  (voir `.gitignore` : ces fichiers ne doivent **jamais** être committés) ;
+- un **token GitHub** dans `$env:GITHUB_TOKEN`, ou des identifiants enregistrés
+  auprès du gestionnaire d'identifiants git (`git credential approve`).
+
+Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`versionCode` dans
+`app/build.gradle.kts` avant chaque publication.
+
+
 ---
 
 ## Tests
