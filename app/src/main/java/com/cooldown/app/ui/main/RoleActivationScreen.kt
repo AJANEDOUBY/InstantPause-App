@@ -52,7 +52,7 @@ fun RoleActivationScreen(
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "Pour que CoolDown puisse mettre vos appels en pause, " +
+            text = "Pour qu'Instant Pause puisse mettre vos appels en pause, " +
                     "Android doit vous demander une autorisation spéciale.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,

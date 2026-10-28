@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Construit, signe et publie une release GitHub de CoolDown.
+    Construit, signe et publie une release GitHub d'Instant Pause.
 
 .DESCRIPTION
     Enchaîne :
@@ -92,10 +92,10 @@ if (-not $Tag) { $Tag = "v$versionName" }
 $ksDir    = Join-Path $root 'keystore'
 $ksFile   = Join-Path $ksDir 'cooldown-release.jks'
 $ksInfo   = Join-Path $ksDir 'KEYSTORE-INFO.txt'
-$apkName  = "CoolDown-$versionName.apk"
+$apkName  = "InstantPause-$versionName.apk"
 
 Write-Host ""
-Write-Host "CoolDown $versionName (versionCode $versionCode)  ->  tag $Tag" -ForegroundColor White
+Write-Host "Instant Pause $versionName (versionCode $versionCode)  ->  tag $Tag" -ForegroundColor White
 
 if (-not (Test-Path $ksFile) -or -not (Test-Path $ksInfo)) {
     Fail "Keystore manquant : $ksFile / $ksInfo. Voir README (section Signature)."
@@ -200,7 +200,7 @@ $existing = git ls-remote --tags origin "refs/tags/$Tag" 2>$null
 if ($existing) { Fail "Le tag $Tag existe deja sur origin. Incrementer versionName ou passer -Tag." }
 
 if (-not (git rev-parse -q --verify "refs/tags/$Tag" 2>$null)) {
-    Invoke-Checked 'git' @('tag', '-a', $Tag, '-m', "CoolDown $versionName")
+    Invoke-Checked 'git' @('tag', '-a', $Tag, '-m', "Instant Pause $versionName")
 }
 Invoke-Checked 'git' @('push', 'origin', $Tag)
 Write-Ok "tag pousse"
@@ -212,7 +212,7 @@ if ($Notes -and (Test-Path $Notes)) {
     $body = Get-Content $Notes -Raw
 } else {
     $body = @"
-CoolDown $versionName
+Instant Pause $versionName
 
 Application Android qui intercepter les appels sortants impulsifs pendant des plages
 horaires definies ou un mode Zen, puis propose un ecran de pause sensoriel.
@@ -252,7 +252,7 @@ $headers = @{
 # Brouillon d'abord : permet l'upload meme si les releases immuables sont activees.
 $payload = @{
     tag_name         = $Tag
-    name             = "CoolDown $versionName"
+    name             = "Instant Pause $versionName"
     body             = $body
     draft            = $true
     prerelease       = $false

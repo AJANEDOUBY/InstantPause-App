@@ -82,15 +82,6 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="call_protection_watchdog" />
         </service>
-        <!-- Foreground Service de rappel : re-poste la notification toutes les 30s -->
-        <service
-            android:name=".system.ReminderForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="blocked_call_reminders" />
-        </service>
         <!-- Administrateur d'appareil : uniquement pour freiner la désinstallation -->
         <receiver
             android:name=".system.CoolDownDeviceAdminReceiver"

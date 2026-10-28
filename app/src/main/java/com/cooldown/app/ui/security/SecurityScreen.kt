@@ -108,7 +108,7 @@ fun SecurityScreen(
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component)
                     putExtra(
                         DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                        "CoolDown empêchera sa désinstallation accidentelle ou impulsive."
+                        "Instant Pause empêchera sa désinstallation accidentelle ou impulsive."
                     )
                 }
                 runCatching { adminLauncher.launch(intent) }
@@ -128,7 +128,7 @@ fun SecurityScreen(
             }.getOrNull()
         }
         Text(
-            text = "CoolDown $version",
+            text = "Instant Pause $version",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -156,7 +156,7 @@ fun SecurityScreen(
         Dialog.UNINSTALL_GUARD -> UnlockDialog(
             vm = vm,
             title = "Retirer la protection",
-            message = "Sans administrateur, CoolDown pourra être désinstallé " +
+            message = "Sans administrateur, Instant Pause pourra être désinstallé " +
                     "sans aucune résistance. Saisissez votre code pour confirmer.",
             onDismiss = { dialog = null },
             onSuccess = {

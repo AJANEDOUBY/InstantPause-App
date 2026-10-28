@@ -1,8 +1,11 @@
-# CoolDown
+# Instant Pause
+
+> Ancien nom : **CoolDown**. Le dépôt, le paquet `com.cooldown.app` et les classes internes
+> gardent cet identifiant pour ne pas casser les mises à jour : seul le nom affiché change.
 
 > **Attendez demain avant d'appeler.**
 
-CoolDown est une application Android open source qui vous aide à **résister aux appels impulsifs**.
+Instant Pause est une application Android open source qui vous aide à **résister aux appels impulsifs**.
 Pendant les plages horaires que vous définissez, chaque appel sortant est intercepté et remplacé par
 un **écran de pause sensoriel** : respirer, se calmer, puis décider.
 
@@ -31,7 +34,7 @@ Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur v
 ## Le concept
 
 Beaucoup d'appels sont passés dans un moment de colère, de fatigue ou d'impulsivité — et regrettés
-dix minutes plus tard. CoolDown ne supprime pas la possibilité d'appeler : il **insère un délai
+dix minutes plus tard. Instant Pause ne supprime pas la possibilité d'appeler : il **insère un délai
 conscient** entre l'envie et l'action.
 
 Trois mécanismes, tous contrôlés par vous :
@@ -70,9 +73,11 @@ Quand un appel est bloqué, un écran plein écran s'affiche (même verrouillé)
 - message bienveillant plutôt qu'un simple « Appel bloqué » ;
 - bouton **Fermer** volontairement inactif quelques secondes.
 
-### 🔔 Rappels
-Une notification heads-up « Appel bloqué » est postée, puis **re-postée 10 fois toutes les 30 s**
-si vous ne réagissez pas. Un tap ouvre l'écran de pause et arrête la séquence.
+### 🔔 Une seule alerte
+Quand un appel est bloqué, **une** notification « Appel bloqué » s'affiche et vibre une fois.
+Elle n'est jamais répétée : l'appel est déjà refusé, insister toutes les 30 secondes n'apporte
+rien et pousse à couper les notifications de l'app. Elle disparaît d'un tap (écran de pause) ou
+d'un balayage.
 
 ### 📜 Historique
 Chaque décision est journalisée localement : numéro, date, statut
@@ -157,7 +162,7 @@ l'app tant que cet administrateur est actif.
 
 ---
 
-CoolDown exploite l'API **Android Telecom** `CallRedirectionService`, disponible depuis Android 10
+Instant Pause exploite l'API **Android Telecom** `CallRedirectionService`, disponible depuis Android 10
 via le rôle système `ROLE_CALL_REDIRECTION`.
 
 ```mermaid
@@ -215,7 +220,6 @@ app/src/main/java/com/cooldown/app/
 ├── system/
 │   ├── CoolDownCallRedirectionService.kt  # Interception Telecom
 │   ├── PauseForegroundService.kt          # Ouverture de l'UI depuis l'arrière-plan
-│   ├── ReminderForegroundService.kt       # Rappels 10 × 30 s
 │   ├── CoolDownWatchdogService.kt         # Maintien en vie
 │   ├── WatchdogAlarmReceiver.kt           # Ré-armement périodique
 │   ├── CoolDownDeviceAdminReceiver.kt     # Anti-désinstallation (aucune politique)
@@ -266,11 +270,11 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ CoolDown-1.2.1.apk](../../releases/download/v1.2.1/CoolDown-1.2.1.apk)** — 4,3 Mo · Android 10+
+**[⬇ InstantPause-1.2.2.apk](../../releases/download/v1.2.2/InstantPause-1.2.2.apk)** — 4,3 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum CoolDown-1.2.1.apk
+sha256sum InstantPause-1.2.2.apk
 # → voir le hash publié dans la release (recalculé à chaque build)
 ```
 
@@ -279,7 +283,7 @@ sha256sum CoolDown-1.2.1.apk
 
 > 🛡️ Certains antivirus préinstallés (AVG/Avast sur itel, Infinix…) affichent « application
 > suspecte » pour tout APK installé hors Play Store. C'est une heuristique sur la **source**,
-> pas une analyse du code : ne validez pas « SUPPRIMER ». (Et si l'administrateur CoolDown est
+> pas une analyse du code : ne validez pas « SUPPRIMER ». (Et si l'administrateur Instant Pause est
 > actif, la désinstallation échouera de toute façon.)
 
 ### Prérequis
@@ -293,7 +297,7 @@ sha256sum CoolDown-1.2.1.apk
    contourne pas, et le code ne pourra plus être supprimé ensuite.
 3. Acceptez le rôle **Redirection d'appels**.
 4. Accordez les permissions demandées :
-   - **Notifications** (Android 13+) — indispensable pour les rappels ;
+   - **Notifications** (Android 13+) — pour l'alerte de blocage ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
    - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
 5. Activez si vous le souhaitez la protection **anti-désinstallation** (Device Admin), dans
@@ -383,14 +387,14 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | Permission | Raison |
 |---|---|
 | `BIND_CALL_REDIRECTION_SERVICE` | Accès au flux Telecom (accordé via le rôle système, pas par l'utilisateur) |
-| `POST_NOTIFICATIONS` | Rappels de blocage |
+| `POST_NOTIFICATIONS` | Alerte unique de blocage |
 | `VIBRATE` | Retour haptique de l'écran de pause |
 | `SYSTEM_ALERT_WINDOW` | Affichage de l'écran de pause au-dessus du dialer |
 | `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé |
 | `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
-| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, rappels, ouverture d'UI |
+| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
 | `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée |
 
 ---
@@ -413,7 +417,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
   n'est pas encore implémentée — le blocage est binaire.
 - **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent
   tuer le watchdog et **retarder le `BOOT_COMPLETED`** au point de ne jamais le délivrer.
-  Sur ces appareils (itel/Transsion, Xiaomi, Infinix…), autorisez CoolDown dans
+  Sur ces appareils (itel/Transsion, Xiaomi, Infinix…), autorisez Instant Pause dans
   **Démarrage automatique** et **sans restriction d'énergie**. L'app affiche un bandeau
   ambre tant que l'exemption d'énergie manque.
   L'interception d'appel, elle, **continue de fonctionner** : Telecom relance le processus
@@ -441,13 +445,13 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 - Plages, whitelist et historique restent dans le stockage privé de l'application
   (Room + DataStore).
 - `android:allowBackup="false"` : pas de sauvegarde cloud automatique des données.
-- L'historique des appels de CoolDown est **distinct** du journal d'appels système.
+- L'historique des appels d'Instant Pause est **distinct** du journal d'appels système.
 
 ---
 
 ## Avertissement
 
-CoolDown est un outil d'auto-discipline, pas un dispositif médical ni un contrôle parental.
+Instant Pause est un outil d'auto-discipline, pas un dispositif médical ni un contrôle parental.
 Il ne remplace pas un accompagnement professionnel si vos difficultés sont liées à votre santé.
 
 Testez toujours l'application avec un **numéro neutre** avant de compter dessus au quotidien.

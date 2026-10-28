@@ -27,14 +27,14 @@ class ProtectionAlertNotifier @Inject constructor(
     init {
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_HIGH)
-                .setName("Protection CoolDown")
+                .setName("Protection Instant Pause")
                 .setDescription("Alertes de blocage d'appel")
                 .setVibrationEnabled(true)
                 .build()
         )
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(SERVICE_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-                .setName("Service CoolDown")
+                .setName("Service Instant Pause")
                 .setDescription("Notification discrete pendant l'ouverture de l'ecran de pause")
                 .build()
         )
@@ -48,12 +48,12 @@ class ProtectionAlertNotifier @Inject constructor(
             return
         }
 
+        // Une seule alerte, au moment du blocage. Aucune répétition : l'appel est
+        // déjà refusé, re-sonner toutes les 30 s n'apporte rien et finit par
+        // pousser l'utilisateur à couper les notifications de l'app.
         runCatching { manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number)) }
-            .onFailure { Log.e(TAG, "Initial notify failed", it) }
+            .onFailure { Log.e(TAG, "Notify failed", it) }
         vibrate()
-
-        runCatching { ReminderForegroundService.start(context, number) }
-            .onFailure { Log.e(TAG, "FGS start failed", it) }
 
         Log.d(TAG, "showBlockedCall done")
     }
@@ -61,27 +61,7 @@ class ProtectionAlertNotifier @Inject constructor(
     @SuppressLint("MissingPermission")
     fun dismissBlockedCall() {
         Log.d(TAG, "dismissBlockedCall")
-        runCatching { ReminderForegroundService.stop(context) }
         runCatching { manager.cancel(ID_BLOCKED_CALL) }
-    }
-
-    /**
-     * Re-poste la notification. Le cancel() est ESSENTIEL :
-     * sans lui, Android ne re-declenche PAS le bandeau (heads-up).
-     */
-    @SuppressLint("MissingPermission")
-    fun postReminder(number: String) {
-        Log.d(TAG, "postReminder called for $number")
-        if (!manager.areNotificationsEnabled()) {
-            Log.w(TAG, "Notifications disabled, skip reminder")
-            return
-        }
-        // Cancel AVANT notify : force un nouveau bandeau
-        runCatching { manager.cancel(ID_BLOCKED_CALL) }
-        runCatching { manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number)) }
-            .onFailure { Log.e(TAG, "Reminder notify failed", it) }
-        vibrate()
-        Log.d(TAG, "postReminder done")
     }
 
     private fun buildBlockedNotification(number: String): Notification {
@@ -144,7 +124,7 @@ class ProtectionAlertNotifier @Inject constructor(
         fun buildForegroundNotification(context: Context): Notification {
             return NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setContentTitle("CoolDown")
+                .setContentTitle("Instant Pause")
                 .setContentText("Preparation de la pause...")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)

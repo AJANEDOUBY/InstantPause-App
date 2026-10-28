@@ -88,7 +88,7 @@ fun SetupScreen(vm: SecurityViewModel) {
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "Bienvenue dans CoolDown",
+                text = "Bienvenue dans Instant Pause",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)

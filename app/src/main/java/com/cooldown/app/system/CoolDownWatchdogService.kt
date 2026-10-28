@@ -46,7 +46,7 @@ class CoolDownWatchdogService : Service() {
         val manager = NotificationManagerCompat.from(this)
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
-                .setName("CoolDown veille")
+                .setName("Instant Pause veille")
                 .setDescription("Maintient la protection active en arrière-plan")
                 .setShowBadge(false)
                 .build()
@@ -64,7 +64,7 @@ class CoolDownWatchdogService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("CoolDown veille")
+            .setContentTitle("Instant Pause veille")
             .setContentText("Votre protection est active.")
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
