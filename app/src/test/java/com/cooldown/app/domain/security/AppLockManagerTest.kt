@@ -67,13 +67,24 @@ class AppLockManagerTest {
     }
 
     @Test
-    fun `definir un code verrouille puis deverrouille la session`() = runBlocking {
+    fun `definir un code laisse la session verrouillee`() = runBlocking {
         val manager = newManager()
         assertEquals(AppLockManager.Result.Success, manager.setPassphrase(code))
-        assertEquals(AppLockManager.Status.UNLOCKED, manager.state.value.status)
+        // Créer le code ne doit pas offrir une fenêtre de gratuité : la première
+        // action qui affaiblit la protection redemande immédiatement le code.
+        assertEquals(AppLockManager.Status.LOCKED, manager.state.value.status)
+        assertTrue(manager.state.value.isLocked)
         assertNotNull(store.stored)
         // Le sel et l'empreinte sont bien deux valeurs distinctes.
         assertFalse(store.stored!!.salt == store.stored!!.hash)
+    }
+
+    @Test
+    fun `le code cree permet ensuite de deverrouiller`() = runBlocking {
+        val manager = newManager()
+        manager.setPassphrase(code)
+        assertEquals(AppLockManager.Result.Success, manager.unlock(code))
+        assertEquals(AppLockManager.Status.UNLOCKED, manager.state.value.status)
     }
 
     @Test
@@ -249,6 +260,7 @@ class AppLockManagerTest {
     fun `un passage rapide en arriere-plan ne reverrouille pas`() = runBlocking {
         val manager = newManager()
         manager.setPassphrase(code)
+        manager.unlock(code)
         manager.onAppBackgrounded()
         clock.advance(30_000)
         manager.onAppForegrounded()
@@ -259,6 +271,7 @@ class AppLockManagerTest {
     fun `plus de soixante secondes en arriere-plan reverrouille`() = runBlocking {
         val manager = newManager()
         manager.setPassphrase(code)
+        manager.unlock(code)
         manager.onAppBackgrounded()
         clock.advance(61_000)
         manager.onAppForegrounded()

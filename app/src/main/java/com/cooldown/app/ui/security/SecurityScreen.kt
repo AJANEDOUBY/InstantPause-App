@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -97,7 +97,6 @@ fun SecurityScreen(
             state = lockState,
             onSet = { dialog = Dialog.SET },
             onChange = { dialog = Dialog.CHANGE },
-            onRemove = { dialog = Dialog.REMOVE },
             onLockNow = { vm.lockNow() }
         )
 
@@ -122,6 +121,20 @@ fun SecurityScreen(
         Spacer(Modifier.height(12.dp))
         HowItWorksCard()
 
+        Spacer(Modifier.height(20.dp))
+        val version = remember {
+            runCatching {
+                context.packageManager.getPackageInfo(context.packageName, 0).versionName
+            }.getOrNull()
+        }
+        Text(
+            text = "CoolDown $version",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(Modifier.height(24.dp))
     }
 
@@ -136,13 +149,6 @@ fun SecurityScreen(
         Dialog.CHANGE -> PassphraseDialog(
             vm = vm,
             mode = PassphraseMode.CHANGE,
-            onDismiss = { dialog = null },
-            onDone = { dialog = null }
-        )
-
-        Dialog.REMOVE -> PassphraseDialog(
-            vm = vm,
-            mode = PassphraseMode.REMOVE,
             onDismiss = { dialog = null },
             onDone = { dialog = null }
         )
@@ -163,14 +169,13 @@ fun SecurityScreen(
     }
 }
 
-private enum class Dialog { SET, CHANGE, REMOVE, UNINSTALL_GUARD }
+private enum class Dialog { SET, CHANGE, UNINSTALL_GUARD }
 
 @Composable
 private fun LockCard(
     state: AppLockManager.State,
     onSet: () -> Unit,
     onChange: () -> Unit,
-    onRemove: () -> Unit,
     onLockNow: () -> Unit
 ) {
     val enabled = state.isConfigured
@@ -197,7 +202,7 @@ private fun LockCard(
                     )
                     Text(
                         text = when {
-                            !enabled -> "La protection peut être coupée sans résistance."
+                            !enabled -> "Un code est requis avant d'utiliser l'app."
                             state.isLocked -> "Verrouillé — le code sera demandé."
                             else -> "Déverrouillé pour cette session."
                         },
@@ -226,20 +231,16 @@ private fun LockCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onChange, modifier = Modifier.weight(1f)) {
-                        Text("Changer")
-                    }
-                    OutlinedButton(
-                        onClick = onRemove,
-                        modifier = Modifier.weight(1f),
-                        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
-                    ) {
-                        Text("Supprimer")
-                    }
+                OutlinedButton(onClick = onChange, modifier = Modifier.fillMaxWidth()) {
+                    Text("Changer le code")
                 }
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = "Le code est défini à l'installation et ne peut pas être " +
+                            "supprimé depuis l'app. Seul un changement (avec l'ancien code) est possible.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 if (!state.isLocked) {
                     Spacer(Modifier.height(4.dp))
                     TextButton(onClick = onLockNow, modifier = Modifier.fillMaxWidth()) {
@@ -326,7 +327,8 @@ private fun HowItWorksCard() {
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
-            Bullet("Demandé pour : couper une plage, la supprimer (y compris une plage Zen en cours), changer ou retirer le code, retirer la protection anti-désinstallation.")
+            Bullet("Le code est créé à la première ouverture de l'app : impossible de l'ignorer ou de le supprimer ensuite.")
+            Bullet("Demandé pour : couper une plage, la supprimer (y compris une plage Zen en cours), changer le code, retirer la protection anti-désinstallation.")
             Bullet("Jamais demandé pour : bloquer un appel, ajouter une plage, activer le Zen, consulter l'historique.")
             Bullet("Le déverrouillage ne dure que le temps de la session : 60 s en arrière-plan et il faut retaper le code.")
             Bullet("Trois essais, puis 30 s, 1 min, 2 min… jusqu'à 15 min d'attente entre deux tentatives.")

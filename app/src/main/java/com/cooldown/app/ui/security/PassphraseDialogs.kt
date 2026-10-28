@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -196,7 +195,7 @@ fun UnlockDialog(
     )
 }
 
-enum class PassphraseMode { CREATE, CHANGE, REMOVE }
+enum class PassphraseMode { CREATE, CHANGE }
 
 /** Création, changement ou suppression du code. */
 @Composable
@@ -225,14 +224,10 @@ fun PassphraseDialog(
     }
 
     val blocked = remainingMs > 0L
-    val policyErrors = if (mode == PassphraseMode.REMOVE) {
-        emptyList()
-    } else {
-        PassphrasePolicy.violations(newCode)
-    }
-    val mismatch = mode != PassphraseMode.REMOVE && confirm.isNotEmpty() && confirm != newCode
+    val policyErrors = PassphrasePolicy.violations(newCode)
+    val mismatch = confirm.isNotEmpty() && confirm != newCode
     val canSubmit = !busy && !blocked &&
-        (mode == PassphraseMode.REMOVE || (PassphrasePolicy.isValid(newCode) && confirm == newCode)) &&
+        PassphrasePolicy.isValid(newCode) && confirm == newCode &&
         (mode == PassphraseMode.CREATE || current.isNotBlank())
 
     fun submit() {
@@ -243,7 +238,6 @@ fun PassphraseDialog(
             val result = when (mode) {
                 PassphraseMode.CREATE -> vm.setPassphrase(newCode)
                 PassphraseMode.CHANGE -> vm.changePassphrase(current, newCode)
-                PassphraseMode.REMOVE -> vm.removePassphrase(current)
             }
             if (result is AppLockManager.Result.Success) {
                 onDone()
@@ -255,8 +249,6 @@ fun PassphraseDialog(
         }
     }
 
-    val destructive = mode == PassphraseMode.REMOVE
-
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Default.Lock, contentDescription = null) },
@@ -265,7 +257,6 @@ fun PassphraseDialog(
                 when (mode) {
                     PassphraseMode.CREATE -> "Définir un code"
                     PassphraseMode.CHANGE -> "Changer le code"
-                    PassphraseMode.REMOVE -> "Supprimer le code"
                 }
             )
         },
@@ -279,9 +270,6 @@ fun PassphraseDialog(
                                     "ou revenir sur ces réglages."
                         PassphraseMode.CHANGE ->
                             "Saisissez le code actuel, puis le nouveau."
-                        PassphraseMode.REMOVE ->
-                            "Sans code, la protection pourra être désactivée par n'importe qui, " +
-                                    "y compris vous dans un mauvais jour."
                     },
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -296,37 +284,35 @@ fun PassphraseDialog(
                     Spacer(Modifier.height(12.dp))
                 }
 
-                if (mode != PassphraseMode.REMOVE) {
-                    SecretField(
-                        value = newCode,
-                        onValueChange = { newCode = it; error = null },
-                        label = "Nouveau code"
-                    )
-                    Spacer(Modifier.height(12.dp))
-                    SecretField(
-                        value = confirm,
-                        onValueChange = { confirm = it; error = null },
-                        label = "Confirmer le code",
-                        imeAction = ImeAction.Done,
-                        onDone = { submit() }
-                    )
+                SecretField(
+                    value = newCode,
+                    onValueChange = { newCode = it; error = null },
+                    label = "Nouveau code"
+                )
+                Spacer(Modifier.height(12.dp))
+                SecretField(
+                    value = confirm,
+                    onValueChange = { confirm = it; error = null },
+                    label = "Confirmer le code",
+                    imeAction = ImeAction.Done,
+                    onDone = { submit() }
+                )
 
-                    if (newCode.isNotEmpty() && policyErrors.isNotEmpty()) {
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "Il faut ${violationText(policyErrors)}.",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    if (mismatch) {
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "Les deux saisies diffèrent.",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
+                if (newCode.isNotEmpty() && policyErrors.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Il faut ${violationText(policyErrors)}.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                if (mismatch) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Les deux saisies diffèrent.",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
 
                 if (error != null) {
@@ -350,21 +336,12 @@ fun PassphraseDialog(
         confirmButton = {
             Button(
                 onClick = { submit() },
-                enabled = canSubmit,
-                colors = if (destructive) {
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    )
-                } else {
-                    ButtonDefaults.buttonColors()
-                }
+                enabled = canSubmit
             ) {
                 Text(
                     when (mode) {
                         PassphraseMode.CREATE -> "Enregistrer"
                         PassphraseMode.CHANGE -> "Changer"
-                        PassphraseMode.REMOVE -> "Supprimer"
                     }
                 )
             }

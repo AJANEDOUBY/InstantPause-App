@@ -26,12 +26,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cooldown.app.domain.security.AppLockManager
 import com.cooldown.app.system.CoolDownWatchdogService
 import com.cooldown.app.system.WatchdogAlarmReceiver
 import com.cooldown.app.ui.logs.LogsScreen
 import com.cooldown.app.ui.schedule.ScheduleScreen
 import com.cooldown.app.ui.security.SecurityScreen
+import com.cooldown.app.ui.security.SecurityViewModel
+import com.cooldown.app.ui.security.SetupScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -81,17 +85,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             CoolDownTheme {
                 val roleHeld by viewModel.roleHeld.collectAsStateWithLifecycle()
+                val securityViewModel: SecurityViewModel = hiltViewModel()
+                val lockState by securityViewModel.state.collectAsStateWithLifecycle()
 
-                if (!roleHeld) {
-                    RoleActivationScreen(
+                when {
+                    // Chargement du verrou : ne pas afficher l'onboarding par erreur.
+                    lockState.status == AppLockManager.Status.LOADING -> LoadingScreen()
+
+                    // Aucun code : l'app ne va pas plus loin. Le verrou n'est pas une option.
+                    lockState.status == AppLockManager.Status.DISABLED ->
+                        SetupScreen(vm = securityViewModel)
+
+                    !roleHeld -> RoleActivationScreen(
                         onActivateClick = {
                             viewModel.createRequestRoleIntent()?.let { intent ->
                                 roleRequestLauncher.launch(intent)
                             }
                         }
                     )
-                } else {
-                    MainScreen(
+
+                    else -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
                         onRequestOverlayPermission = {
@@ -133,6 +146,13 @@ class MainActivity : ComponentActivity() {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 

@@ -80,9 +80,11 @@ Chaque décision est journalisée localement : numéro, date, statut
 Les entrées de plus de **90 jours** sont purgées automatiquement.
 
 ### 🔒 Verrou de protection
-Un **code alphanumérique** (6 caractères minimum, au moins une lettre et un chiffre) empêche
-de couper la protection sur un coup de tête. Il n'est demandé que pour les actions qui
-**affaiblissent** la protection — jamais pour bloquer un appel ou ajouter une plage.
+Un **code alphanumérique** (6 caractères minimum, au moins une lettre et un chiffre) est
+**obligatoire dès la première ouverture** de l'app : impossible de l'ignorer, impossible de le
+supprimer ensuite. Il empêche de couper la protection sur un coup de tête. Il n'est demandé
+que pour les actions qui **affaiblissent** la protection — jamais pour bloquer un appel ou
+ajouter une plage.
 Voir la section [Verrou de protection](#verrou-de-protection).
 
 ### 🛡️ Robustesse
@@ -99,13 +101,24 @@ Voir la section [Verrou de protection](#verrou-de-protection).
 L'ennemi n'est pas un attaquant : c'est **vous**, dans un mauvais jour. Le verrou est donc
 conçu pour résister à l'impulsivité, pas pour protéger un secret.
 
+### Obligatoire, pas optionnel
+
+Au premier lancement, l'app affiche un écran unique : **choisir le code**. Tant qu'il n'existe
+pas, aucune plage, aucun rôle Telecom, aucun réglage n'est accessible. La version 1.1.0 laissait
+le code facultatif : on pouvait activer la protection puis la couper sans jamais rien définir.
+C'est corrigé : le code est créé à froid, avant tout le reste, et il ne peut plus être supprimé
+depuis l'app (seul un **changement**, avec l'ancien code, est possible).
+
+Le code est créé **verrouillé** : même dans les secondes qui suivent sa création, couper une
+plage redemande le code. Pas de fenêtre de gratuité.
+
 ### Ce qui demande le code
 
 | Action | Code requis |
 |---|---|
 | Couper une plage active | ✅ |
 | Supprimer une plage (y compris Zen en cours) | ✅ |
-| Changer ou supprimer le code | ✅ |
+| Changer le code | ✅ |
 | Retirer la protection anti-désinstallation | ✅ |
 | Bloquer un appel, ajouter une plage, activer le Zen | ❌ |
 | Consulter l'historique | ❌ |
@@ -253,11 +266,11 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ CoolDown-1.1.0.apk](../../releases/download/v1.1.0/CoolDown-1.1.0.apk)** — 4,3 Mo · Android 10+
+**[⬇ CoolDown-1.2.0.apk](../../releases/download/v1.2.0/CoolDown-1.2.0.apk)** — 4,3 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum CoolDown-1.1.0.apk
+sha256sum CoolDown-1.2.0.apk
 # → voir le hash publié dans la release (recalculé à chaque build)
 ```
 
@@ -276,15 +289,16 @@ sha256sum CoolDown-1.1.0.apk
 
 ### Étapes
 1. Installez l'APK (release ou build locale).
-2. Ouvrez l'app → **Activer la protection** → acceptez le rôle **Redirection d'appels**.
-3. Accordez les permissions demandées :
+2. Ouvrez l'app → **choisissez votre code de protection**. Il est obligatoire : l'écran ne se
+   contourne pas, et le code ne pourra plus être supprimé ensuite.
+3. Acceptez le rôle **Redirection d'appels**.
+4. Accordez les permissions demandées :
    - **Notifications** (Android 13+) — indispensable pour les rappels ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
    - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
-4. Définissez votre **code de protection** dans l'onglet **Sécurité**, à froid — c'est lui qui
-   vous empêchera de tout couper ce soir. Activez si vous le souhaitez la protection
-   anti-désinstallation (Device Admin).
-5. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+5. Activez si vous le souhaitez la protection **anti-désinstallation** (Device Admin), dans
+   l'onglet **Sécurité**.
+6. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---
 
@@ -336,7 +350,7 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 
 ## Tests
 
-59 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+60 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
 
 | Suite | Couverture |
 |---|---|
@@ -346,9 +360,9 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 | `PassphrasePolicyTest` (7) | longueur, lettre + chiffre, normalisation, accents |
 | `PassphraseHasherTest` (7) | déterminisme, sel, bon/mauvais code, empreinte corrompue |
 | `LockoutPolicyTest` (4) | essais libres, doublement, plafond 15 min, compteur |
-| `AppLockManagerTest` (19) | cycle de vie, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
+| `AppLockManagerTest` (20) | cycle de vie, code créé verrouillé, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
 
-Soit **59 tests** au total.
+Soit **60 tests** au total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest

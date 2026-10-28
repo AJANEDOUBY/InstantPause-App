@@ -114,6 +114,10 @@ class AppLockManager @Inject constructor(
     /**
      * Crée le code. Refusé si un code existe déjà : dans ce cas il faut passer
      * par [changePassphrase], qui exige l'ancien.
+     *
+     * Le code est créé **verrouillé** : la première action qui affaiblit la
+     * protection redemandera immédiatement le code. Sans ça, on pourrait tout
+     * couper dans les secondes qui suivent la création, sans rien retaper.
      */
     suspend fun setPassphrase(new: String): Result {
         ensureLoaded()
@@ -122,7 +126,7 @@ class AppLockManager @Inject constructor(
         val violations = PassphrasePolicy.violations(new)
         if (violations.isNotEmpty()) return Result.Rejected(violations)
 
-        return if (writePassphrase(new)) Result.Success else Result.StorageError
+        return if (writePassphrase(new, unlocked = false)) Result.Success else Result.StorageError
     }
 
     /** Change le code : l'ancien est obligatoire, avec les mêmes temporisations. */
@@ -135,12 +139,20 @@ class AppLockManager @Inject constructor(
 
         return when (val check = verify(current)) {
             is Result.Success ->
-                if (writePassphrase(new)) Result.Success else Result.StorageError
+                // L'utilisateur vient de prouver qu'il connaît le code : on ne le
+                // punit pas en le reverrouillant dans la seconde.
+                if (writePassphrase(new, unlocked = true)) Result.Success else Result.StorageError
             else -> check
         }
     }
 
-    /** Supprime le code (donc la protection contre la désactivation). */
+    /**
+     * Supprime le code — **volontairement absent de l'interface**.
+     *
+     * Le garder ici sert à un éventuel flux de réinitialisation explicite ; s'il
+     * était exposé dans l'onglet Sécurité, toute la protection redeviendrait
+     * désactivable en un dialogue, ce qui annulerait son intérêt.
+     */
     suspend fun removePassphrase(current: String): Result {
         ensureLoaded()
         if (!_state.value.isConfigured) return Result.NotConfigured
@@ -185,7 +197,7 @@ class AppLockManager @Inject constructor(
         return (until - clock.millis()).coerceAtLeast(0L)
     }
 
-    private suspend fun writePassphrase(new: String): Boolean {
+    private suspend fun writePassphrase(new: String, unlocked: Boolean): Boolean {
         val normalized = PassphrasePolicy.normalize(new)
         val salt = hasher.newSalt()
         val hash = hasher.derive(normalized, salt, hasher.iterations)
@@ -201,7 +213,7 @@ class AppLockManager @Inject constructor(
         if (!written) return false
 
         runCatching { store.writeLockout(LockoutState()) }
-        _state.value = State(status = Status.UNLOCKED)
+        _state.value = State(status = if (unlocked) Status.UNLOCKED else Status.LOCKED)
         return true
     }
 
