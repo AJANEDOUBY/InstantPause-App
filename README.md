@@ -384,7 +384,11 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 ## Limites connues
 
 - **Appels VoIP non couverts** : WhatsApp, Signal, Messenger, Telegram… ne passent pas par
-  Telecom et ne peuvent donc pas être interceptés par cette API.
+  Telecom et ne peuvent donc pas être interceptés par cette API. Une app tierce ne peut pas
+  voir ni annuler un appel VoIP **avant** qu'il soit composé. La seule piste réaliste serait
+  un overlay piloté par un service d'accessibilité à l'ouverture de l'app (voir la feuille de
+  route), avec deux compromis assumés : il faudrait la permission « Accessibilité », très
+  intrusive, et il bloquerait aussi les messages — sauf à exiger le code pour entrer.
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
@@ -406,6 +410,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 ## Feuille de route
 
 - [ ] Réponse interactive via `redirectCall()` (autoriser l'appel depuis l'écran de pause)
+- [ ] Blocage des appels VoIP : overlay via service d'accessibilité à l'ouverture de
+      WhatsApp/Signal/Telegram pendant une plage protégée (code ou respiration pour entrer)
 - [ ] Plages par défaut proposées au premier lancement
 - [ ] Import de contacts pour la whitelist
 - [ ] Statistiques (appels évités par semaine)
