@@ -264,6 +264,11 @@ sha256sum CoolDown-1.1.0.apk
 > ⚠️ Si une version de **debug** est déjà installée, désinstallez-la d'abord : la signature
 > diffère, Android refusera la mise à jour (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`).
 
+> 🛡️ Certains antivirus préinstallés (AVG/Avast sur itel, Infinix…) affichent « application
+> suspecte » pour tout APK installé hors Play Store. C'est une heuristique sur la **source**,
+> pas une analyse du code : ne validez pas « SUPPRIMER ». (Et si l'administrateur CoolDown est
+> actif, la désinstallation échouera de toute façon.)
+
 ### Prérequis
 - Android **10 (API 29)** ou supérieur.
 - Le constructeur doit exposer le rôle **Call Redirection**
