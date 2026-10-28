@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Artefacts de build et APK
+*.apk
+*.aab
+/app/build
+/build
+.kotlin/
+*.hprof

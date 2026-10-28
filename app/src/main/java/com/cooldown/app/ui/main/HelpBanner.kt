@@ -1,75 +1,66 @@
 package com.cooldown.app.ui.main
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-/**
- * Bandeau d'aide affiché une seule fois au premier lancement.
- * Explique la limitation de certains téléphones agressifs (itel, Tecno, Infinix...).
- */
 @Composable
 fun HelpBanner(
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit
+    onRequestPermission: () -> Unit
 ) {
+    // Un vert un peu plus foncé pour que le texte blanc ressorte bien (solide, pas transparent)
+    val solidGreen = Color(0xFF059669)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = solidGreen // ✅ Vert 100% opaque
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Lightbulb,
+                imageVector = Icons.Default.Security,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                tint = Color.White // Icône blanche pour ressortir
             )
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Conseil d'utilisation",
+                    text = "Finaliser la protection",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = Color.White
                 )
                 Text(
-                    text = "Sur certains téléphones (itel, Tecno, Infinix, Xiaomi), " +
-                            "gardez CoolDown ouverte en arrière-plan pour garantir " +
-                            "la protection. Sur les autres, aucun souci même fermée.",
+                    text = "Pour afficher l'écran de pause par-dessus vos appels, " +
+                            "veuillez autoriser CoolDown à s'afficher par-dessus les autres applications.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = Color.White.copy(alpha = 0.9f) // Blanc légèrement grisé pour le texte secondaire
                 )
-            }
-            IconButton(onClick = onDismiss) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Fermer le bandeau",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = onRequestPermission,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White, // Bouton blanc
+                        contentColor = solidGreen     // Texte vert
+                    )
+                ) {
+                    Text("Autoriser l'affichage", fontWeight = FontWeight.Bold)
+                }
             }
         }
     }

@@ -103,6 +103,12 @@ class BlockedLogRepositoryImpl @Inject constructor(
                 status = status
             )
         )
+        // Purge opportuniste : évite la croissance illimitée de la table.
+        dao.deleteOlderThan(System.currentTimeMillis() - MAX_LOG_AGE_MS)
+    }
+
+    private companion object {
+        const val MAX_LOG_AGE_MS = 90L * 24 * 60 * 60 * 1000 // 90 jours
     }
 }
 

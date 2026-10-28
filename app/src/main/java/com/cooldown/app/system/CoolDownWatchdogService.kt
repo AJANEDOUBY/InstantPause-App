@@ -82,7 +82,8 @@ class CoolDownWatchdogService : Service() {
             val brand = Build.BRAND.lowercase()
             val needsWatchdog = brand in setOf(
                 "itel", "tecno", "infinix", "xiaomi", "redmi", "poco",
-                "huawei", "honor", "oppo", "realme", "vivo"
+                "huawei", "honor", "oppo", "realme", "vivo",
+                "samsung", "oneplus", "meizu", "letv", "nokia"
             )
             if (needsWatchdog) start(context)
         }

@@ -9,6 +9,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -100,11 +101,10 @@ class ReminderForegroundService : Service() {
             )
         }
 
-        return Notification.Builder(this, SERVICE_CHANNEL_ID)
+        return NotificationCompat.Builder(this, SERVICE_CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("CoolDown")
             .setContentText("Rappels de pause actifs")
-            .setPriority(Notification.PRIORITY_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setOngoing(true)
             .setContentIntent(pending)

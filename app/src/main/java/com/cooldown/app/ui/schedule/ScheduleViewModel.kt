@@ -17,7 +17,6 @@ class ScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository
 ) : ViewModel() {
 
-    /** Liste des plages, rechargée automatiquement à chaque changement en base. */
     val schedules: StateFlow<List<Schedule>> = repository.observeAll()
         .stateIn(
             scope = viewModelScope,
@@ -37,6 +36,14 @@ class ScheduleViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    /** Ajoute une plage de protection immédiate pour les urgences (Mode Zen) */
+    fun activateZenMode() {
+        val now = LocalTime.now()
+        val end = now.plusHours(2)
+        // On ajoute une plage pour aujourd'hui (et demain si ça franchit minuit)
+        addSchedule(start = now, end = end, daysMask = Schedule.ALL_DAYS)
     }
 
     fun toggleActive(schedule: Schedule) {

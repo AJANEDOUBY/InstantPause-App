@@ -60,22 +60,41 @@ class PauseActivity : ComponentActivity() {
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
         keyguardManager?.requestDismissKeyguard(this, null)
 
-        // ⭐ Annule les rappels : l'utilisateur a réagi en tapant sur la notification
-        notifier.dismissBlockedCall()
+        // ⭐ Annule les rappels UNIQUEMENT si l'utilisateur a tapé la notification.
+        // Quand l'écran est ouvert automatiquement par PauseForegroundService, la
+        // notification et les rappels doivent rester actifs.
+        if (intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
+            notifier.dismissBlockedCall()
+        }
 
         setContent {
             MaterialTheme {
-                SensoryPauseScreen(onClose = { finish() })
+                SensoryPauseScreen(
+                    onClose = {
+                        notifier.dismissBlockedCall()
+                        finish()
+                    }
+                )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
+            notifier.dismissBlockedCall()
         }
     }
 
     companion object {
         private const val EXTRA_NUMBER = "extra_target_number"
+        private const val EXTRA_FROM_USER = "extra_from_user"
 
-        fun intent(context: Context, number: String): Intent =
+        fun intent(context: Context, number: String, fromUser: Boolean = false): Intent =
             Intent(context, PauseActivity::class.java).apply {
                 putExtra(EXTRA_NUMBER, number)
+                putExtra(EXTRA_FROM_USER, fromUser)
                 addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK or
                             Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -118,23 +137,26 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
         }
     }
 
-    LaunchedEffect(phase.value) {
-        val newPeak = when {
-            phase.value > 0.98f -> Peak.INHALED
-            phase.value < 0.02f -> Peak.EXHALED
-            else -> lastPeak
+    // Dérivé de l'animation : ne change que quelques fois par cycle,
+    // contrairement à `phase.value` qui change à chaque frame.
+    val currentPeak = when {
+        phase.value > 0.98f -> Peak.INHALED
+        phase.value < 0.02f -> Peak.EXHALED
+        else -> Peak.NONE
+    }
+
+    LaunchedEffect(currentPeak) {
+        if (currentPeak == Peak.NONE || currentPeak == lastPeak) return@LaunchedEffect
+        lastPeak = currentPeak
+        if (!vibrator.hasVibrator()) return@LaunchedEffect
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE)
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(35)
         }
-        if (newPeak != lastPeak && vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE)
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(35)
-            }
-        }
-        lastPeak = newPeak
     }
 
     val scale = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * phase.value

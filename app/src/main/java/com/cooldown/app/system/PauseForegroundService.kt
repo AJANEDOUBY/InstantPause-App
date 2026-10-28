@@ -63,6 +63,7 @@ class PauseForegroundService : Service() {
      * MODE_BACKGROUND_ACTIVITY_START_ALLOWED peut ouvrir une activité depuis un FGS
      * démarré en arrière-plan.
      */
+    @Suppress("DEPRECATION")
     private fun launchPauseActivity(number: String) {
         val targetIntent = PauseActivity.intent(this, number)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

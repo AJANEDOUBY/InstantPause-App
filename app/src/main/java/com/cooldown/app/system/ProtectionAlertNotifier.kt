@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ProtectionAlertNotifier @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     private val manager = NotificationManagerCompat.from(context)
 
@@ -85,7 +85,7 @@ class ProtectionAlertNotifier @Inject constructor(
     }
 
     private fun buildBlockedNotification(number: String): Notification {
-        val pauseIntent = PauseActivity.intent(context, number)
+        val pauseIntent = PauseActivity.intent(context, number, fromUser = true)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         val pending = PendingIntent.getActivity(

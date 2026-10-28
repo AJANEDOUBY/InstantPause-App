@@ -1,7 +1,7 @@
 package com.cooldown.app.domain.usecase
 
 import com.cooldown.app.data.datastore.ProtectionPrefs
-import com.cooldown.app.domain.phone.PhoneNumberNormalizer
+import com.cooldown.app.domain.phone.PhoneNumberAnalyzer
 import com.cooldown.app.domain.repository.ScheduleRepository
 import com.cooldown.app.domain.repository.WhitelistRepository
 import java.time.ZonedDateTime
@@ -28,14 +28,14 @@ class ShouldBlockCallUseCase @Inject constructor(
     private val schedules: ScheduleRepository,
     private val whitelist: WhitelistRepository,
     private val prefs: ProtectionPrefs,
-    private val normalizer: PhoneNumberNormalizer
+    private val normalizer: PhoneNumberAnalyzer
 ) {
     suspend operator fun invoke(
         rawNumber: String,
         regions: List<String>,
         now: ZonedDateTime = ZonedDateTime.now()
     ): CallDecision {
-        val effectiveRegions = regions.ifEmpty { listOf(PhoneNumberNormalizer.DEFAULT_REGION) }
+        val effectiveRegions = regions.ifEmpty { listOf(normalizer.defaultRegion()) }
 
         // 1. Urgences : toujours autorisées
         if (normalizer.isEmergency(rawNumber, effectiveRegions)) {
