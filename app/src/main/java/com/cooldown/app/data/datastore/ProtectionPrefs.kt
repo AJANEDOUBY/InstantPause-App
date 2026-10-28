@@ -6,8 +6,13 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.cooldown.app.domain.security.LockoutState
+import com.cooldown.app.domain.security.PassphraseStore
+import com.cooldown.app.domain.security.StoredPassphrase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,7 +41,7 @@ object DataStoreModule {
 @Singleton
 class ProtectionPrefs @Inject constructor(
     private val dataStore: DataStore<Preferences>
-) {
+) : PassphraseStore {
     private val data: Flow<Preferences> = dataStore.data.catch { e ->
         if (e is IOException) emit(emptyPreferences()) else throw e
     }
@@ -64,9 +69,57 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit { it[HELP_BANNER_DISMISSED] = value }
     }
 
+    // === Verrou de configuration (code alphanumérique) ===
+    //
+    // Seul le couple sel + empreinte PBKDF2 est stocké : le code lui-même
+    // n'existe nulle part sur le disque.
+    override suspend fun read(): StoredPassphrase? {
+        val prefs = data.first()
+        val salt = prefs[PASSPHRASE_SALT] ?: return null
+        val hash = prefs[PASSPHRASE_HASH] ?: return null
+        val iterations = prefs[PASSPHRASE_ITERATIONS] ?: return null
+        return StoredPassphrase(salt = salt, hash = hash, iterations = iterations)
+    }
+
+    override suspend fun write(stored: StoredPassphrase) {
+        dataStore.edit {
+            it[PASSPHRASE_SALT] = stored.salt
+            it[PASSPHRASE_HASH] = stored.hash
+            it[PASSPHRASE_ITERATIONS] = stored.iterations
+        }
+    }
+
+    override suspend fun clear() {
+        dataStore.edit {
+            it.remove(PASSPHRASE_SALT)
+            it.remove(PASSPHRASE_HASH)
+            it.remove(PASSPHRASE_ITERATIONS)
+        }
+    }
+
+    override suspend fun readLockout(): LockoutState {
+        val prefs = data.first()
+        return LockoutState(
+            failedAttempts = prefs[PASSPHRASE_FAILED_ATTEMPTS] ?: 0,
+            lockedUntil = prefs[PASSPHRASE_LOCKED_UNTIL] ?: 0L
+        )
+    }
+
+    override suspend fun writeLockout(state: LockoutState) {
+        dataStore.edit {
+            it[PASSPHRASE_FAILED_ATTEMPTS] = state.failedAttempts
+            it[PASSPHRASE_LOCKED_UNTIL] = state.lockedUntil
+        }
+    }
+
     private companion object {
         val EMERGENCY_UNTIL = longPreferencesKey("emergency_until_wall_ms")
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
         val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
+        val PASSPHRASE_SALT = stringPreferencesKey("passphrase_salt")
+        val PASSPHRASE_HASH = stringPreferencesKey("passphrase_hash")
+        val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")
+        val PASSPHRASE_FAILED_ATTEMPTS = intPreferencesKey("passphrase_failed_attempts")
+        val PASSPHRASE_LOCKED_UNTIL = longPreferencesKey("passphrase_locked_until")
     }
 }

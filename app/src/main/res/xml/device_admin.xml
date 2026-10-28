@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Aucune politique déclarée : CoolDown ne veut ni verrouiller l'écran, ni effacer
+  les données. L'administrateur sert uniquement à bloquer la désinstallation.
+-->
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies />
+</device-admin>

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +31,7 @@ import com.cooldown.app.system.CoolDownWatchdogService
 import com.cooldown.app.system.WatchdogAlarmReceiver
 import com.cooldown.app.ui.logs.LogsScreen
 import com.cooldown.app.ui.schedule.ScheduleScreen
+import com.cooldown.app.ui.security.SecurityScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -158,6 +160,12 @@ private fun MainScreen(
                     icon = { Icon(Icons.Default.History, contentDescription = "Historique") },
                     label = { Text("Historique") }
                 )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    icon = { Icon(Icons.Default.Lock, contentDescription = "Sécurité") },
+                    label = { Text("Sécurité") }
+                )
             }
         }
     ) { padding ->
@@ -174,6 +182,7 @@ private fun MainScreen(
                 when (selectedTab) {
                     0 -> ScheduleScreen()
                     1 -> LogsScreen()
+                    2 -> SecurityScreen()
                 }
             }
         }

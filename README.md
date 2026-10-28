@@ -14,6 +14,7 @@ Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur v
 
 - [Le concept](#le-concept)
 - [Fonctionnalités](#fonctionnalités)
+- [Verrou de protection](#verrou-de-protection)
 - [Comment ça marche](#comment-ça-marche)
 - [Architecture](#architecture)
 - [Stack technique](#stack-technique)
@@ -78,6 +79,12 @@ Chaque décision est journalisée localement : numéro, date, statut
 (`Bloqué`, `Autorisé (whitelist)`, `Fermé par l'utilisateur`).
 Les entrées de plus de **90 jours** sont purgées automatiquement.
 
+### 🔒 Verrou de protection
+Un **code alphanumérique** (6 caractères minimum, au moins une lettre et un chiffre) empêche
+de couper la protection sur un coup de tête. Il n'est demandé que pour les actions qui
+**affaiblissent** la protection — jamais pour bloquer un appel ou ajouter une plage.
+Voir la section [Verrou de protection](#verrou-de-protection).
+
 ### 🛡️ Robustesse
 - **Watchdog** en foreground service : l'app survit aux gestionnaires de batterie agressifs
   (constructeurs chinois notamment).
@@ -87,7 +94,55 @@ Les entrées de plus de **90 jours** sont purgées automatiquement.
 
 ---
 
-## Comment ça marche
+## Verrou de protection
+
+L'ennemi n'est pas un attaquant : c'est **vous**, dans un mauvais jour. Le verrou est donc
+conçu pour résister à l'impulsivité, pas pour protéger un secret.
+
+### Ce qui demande le code
+
+| Action | Code requis |
+|---|---|
+| Couper une plage active | ✅ |
+| Supprimer une plage (y compris Zen en cours) | ✅ |
+| Changer ou supprimer le code | ✅ |
+| Retirer la protection anti-désinstallation | ✅ |
+| Bloquer un appel, ajouter une plage, activer le Zen | ❌ |
+| Consulter l'historique | ❌ |
+
+### Comment il est stocké
+
+- **PBKDF2-HMAC-SHA256**, sel aléatoire de 16 octets, **120 000 itérations**, 256 bits.
+- Le code n'est **jamais** écrit en clair : seuls le sel, l'empreinte et le nombre d'itérations
+  sont conservés dans DataStore.
+- Comparaison à temps constant (`MessageDigest.isEqual`).
+- L'état « déverrouillé » n'existe qu'**en mémoire** : il meurt avec le processus et retombe
+  après **60 secondes** passées en arrière-plan.
+
+### Temporisation progressive
+
+Trois essais libres, puis 30 s, 1 min, 2 min, 4 min… jusqu'à **15 minutes** entre deux essais.
+Le compteur est persisté : tuer l'app ne le remet pas à zéro ; redémarrer le téléphone non plus.
+
+### Anti-désinstallation (Device Admin)
+
+L'écran **Sécurité** permet d'activer un administrateur d'appareil **sans aucune politique**
+(pas de verrouillage d'écran, pas d'effacement de données). Android refuse alors de désinstaller
+l'app tant que cet administrateur est actif.
+
+> **Soyons honnêtes** : aucune application ne peut empêcher une désinstallation. L'administrateur
+> ajoute deux étapes (Paramètres → Sécurité → Administrateurs → désactiver), et c'est tout.
+> C'est un ralentisseur qui casse le geste réflexe, pas un cadenas.
+
+### Ce que le verrou ne fait pas
+
+- Il ne bloque **pas** le lancement de l'app (choix assumé : la protection doit rester consultable).
+- Il ne résiste pas à `adb`, au mode sans échec, ni à un effacement des données de l'app.
+- Il ne protège pas contre une désactivation de l'administrateur depuis les Paramètres système.
+- **Code oublié = aucune récupération possible** : il faut effacer les données de l'app
+  (ce qui supprime aussi les plages) ou la désinstaller après avoir retiré l'administrateur.
+
+---
 
 CoolDown exploite l'API **Android Telecom** `CallRedirectionService`, disponible depuis Android 10
 via le rôle système `ROLE_CALL_REDIRECTION`.
@@ -134,13 +189,15 @@ Organisation en quatre couches, sans dépendance du domaine vers l'UI ou Android
 app/src/main/java/com/cooldown/app/
 ├── CoolDownApplication.kt          # @HiltAndroidApp
 ├── data/
-│   ├── datastore/ProtectionPrefs.kt    # DataStore : mode Zen, rôle, bandeau d'aide
+│   ├── datastore/ProtectionPrefs.kt    # DataStore : Zen, rôle, bandeau, empreinte du code
 │   ├── local/                          # Room : entités, DAO, base, converters
 │   └── repository/RepositoryImpls.kt   # Implémentations + purge 90 jours
+├── di/                                 # Modules Hilt (DataStore, sécurité, hasher, horloge)
 ├── domain/
 │   ├── model/Models.kt                 # Schedule, WhitelistEntry, BlockedLog
 │   ├── phone/                          # PhoneNumberAnalyzer (interface) + implémentation
 │   ├── repository/Repositories.kt      # Contrats
+│   ├── security/                       # PassphrasePolicy, PBKDF2, temporisations, AppLockManager
 │   └── usecase/ShouldBlockCallUseCase.kt  # Cœur métier : Allow / Block
 ├── system/
 │   ├── CoolDownCallRedirectionService.kt  # Interception Telecom
@@ -148,11 +205,13 @@ app/src/main/java/com/cooldown/app/
 │   ├── ReminderForegroundService.kt       # Rappels 10 × 30 s
 │   ├── CoolDownWatchdogService.kt         # Maintien en vie
 │   ├── WatchdogAlarmReceiver.kt           # Ré-armement périodique
+│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-désinstallation (aucune politique)
 │   ├── ProtectionAlertNotifier.kt         # Canaux + notifications
 │   └── BootReceiver.kt                    # Après reboot / mise à jour
 └── ui/
     ├── main/      # Accueil, bandeau d'aide, activation du rôle
     ├── schedule/  # Plages + historique (Compose)
+    ├── security/  # Verrou : code, temporisations, administrateur
     ├── pause/     # Écran de pause sensoriel
     ├── logs/      # Journal détaillé
     └── theme/     # Material 3
@@ -194,11 +253,11 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ CoolDown-1.0.1.apk](../../releases/download/v1.0.1/CoolDown-1.0.1.apk)** — 4,1 Mo · Android 10+
+**[⬇ CoolDown-1.1.0.apk](../../releases/download/v1.1.0/CoolDown-1.1.0.apk)** — 4,3 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum CoolDown-1.0.1.apk
+sha256sum CoolDown-1.1.0.apk
 # → voir le hash publié dans la release (recalculé à chaque build)
 ```
 
@@ -217,7 +276,10 @@ sha256sum CoolDown-1.0.1.apk
    - **Notifications** (Android 13+) — indispensable pour les rappels ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
    - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
-4. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+4. Définissez votre **code de protection** dans l'onglet **Sécurité**, à froid — c'est lui qui
+   vous empêchera de tout couper ce soir. Activez si vous le souhaitez la protection
+   anti-désinstallation (Device Admin).
+5. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---
 
@@ -269,13 +331,19 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 
 ## Tests
 
-22 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+59 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
 
 | Suite | Couverture |
 |---|---|
 | `ScheduleTest` (11) | fenêtres, bornes incluses/exclues, jours, franchissement de minuit |
 | `ShouldBlockCallUseCaseTest` (8) | urgence, mode Zen, plage, whitelist, expiration, région par défaut |
 | `BlockStatusConvertersTest` (2) | mapping Room ↔ `BlockStatus`, valeur inconnue |
+| `PassphrasePolicyTest` (7) | longueur, lettre + chiffre, normalisation, accents |
+| `PassphraseHasherTest` (7) | déterminisme, sel, bon/mauvais code, empreinte corrompue |
+| `LockoutPolicyTest` (4) | essais libres, doublement, plafond 15 min, compteur |
+| `AppLockManagerTest` (19) | cycle de vie, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
+
+Soit **59 tests** au total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -304,6 +372,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, rappels, ouverture d'UI |
+| `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée |
 
 ---
 
@@ -314,6 +383,9 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
+- **Verrou contournable** : le code protège les réglages de l'app, pas le système. Un
+  `adb`, un effacement des données, le mode sans échec ou la désactivation de l'administrateur
+  depuis les Paramètres restent possibles. Voir [Verrou de protection](#verrou-de-protection).
 - **Réponse interactive** : l'autorisation en un tap (`allowInteractiveResponse` de Telecom)
   n'est pas encore implémentée — le blocage est binaire.
 - **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent

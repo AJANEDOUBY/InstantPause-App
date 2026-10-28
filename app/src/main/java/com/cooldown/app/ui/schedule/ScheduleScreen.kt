@@ -25,6 +25,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cooldown.app.R
 import com.cooldown.app.domain.model.Schedule
+import com.cooldown.app.ui.security.SecurityViewModel
+import com.cooldown.app.ui.security.UnlockDialog
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -32,10 +35,32 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
-    viewModel: ScheduleViewModel = hiltViewModel()
+    viewModel: ScheduleViewModel = hiltViewModel(),
+    securityViewModel: SecurityViewModel = hiltViewModel()
 ) {
     val schedules by viewModel.schedules.collectAsStateWithLifecycle()
     var showAddDialog by remember { mutableStateOf(false) }
+
+    // Action retenue tant que le code n'est pas saisi.
+    var gatedAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    var gatedReason by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+
+    /**
+     * N'exige le code que pour les actions qui **affaiblissent** la protection :
+     * couper une plage, la supprimer. Ajouter une plage ou activer le Zen reste
+     * toujours possible, même verrouillé.
+     */
+    fun guard(reason: String, action: () -> Unit) {
+        scope.launch {
+            if (securityViewModel.requiresCode()) {
+                gatedReason = reason
+                gatedAction = action
+            } else {
+                action()
+            }
+        }
+    }
 
     // Vérifie si au moins une plage est active MAINTENANT
     val isCurrentlyProtected = schedules.any {
@@ -92,8 +117,22 @@ fun ScheduleScreen(
                     items(schedules, key = { it.id }) { schedule ->
                         ScheduleCard(
                             schedule = schedule,
-                            onToggle = { viewModel.toggleActive(schedule) },
-                            onDelete = { viewModel.delete(schedule) }
+                            onToggle = {
+                                if (schedule.isActive) {
+                                    guard(
+                                        "Désactiver la plage ${schedule.start} – ${schedule.end} ? " +
+                                                "Sans elle, plus rien ne bloquera vos appels sur ce créneau."
+                                    ) { viewModel.toggleActive(schedule) }
+                                } else {
+                                    // Réactiver renforce la protection : jamais gated.
+                                    viewModel.toggleActive(schedule)
+                                }
+                            },
+                            onDelete = {
+                                guard(
+                                    "Supprimer définitivement la plage ${schedule.start} – ${schedule.end} ?"
+                                ) { viewModel.delete(schedule) }
+                            }
                         )
                     }
                     item { Spacer(Modifier.height(80.dp)) } // Espace pour le FAB
@@ -109,6 +148,15 @@ fun ScheduleScreen(
                 viewModel.addSchedule(start, end, daysMask)
                 showAddDialog = false
             }
+        )
+    }
+
+    gatedAction?.let { action ->
+        UnlockDialog(
+            vm = securityViewModel,
+            message = gatedReason,
+            onDismiss = { gatedAction = null },
+            onSuccess = { action() }
         )
     }
 }
@@ -197,7 +245,7 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Ajoutez une plage pour activer la protection automatique (ex: 22h → 7h).",
+            text = "Ajoutez une plage pour activer la protection automatique (ex: 22h – 7h).",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -213,7 +261,7 @@ private fun ScheduleCard(
 ) {
     val timeFormatter = remember { DateTimeFormatter.ofPattern("HH:mm") }
     val timeRange = remember(schedule.start, schedule.end) {
-        "${schedule.start.format(timeFormatter)} → ${schedule.end.format(timeFormatter)}"
+        "${schedule.start.format(timeFormatter)} – ${schedule.end.format(timeFormatter)}"
     }
     val daysText = remember(schedule.daysMask) { formatDays(schedule.daysMask) }
 
@@ -342,7 +390,7 @@ private fun DayChips(mask: Int, onMaskChange: (Int) -> Unit) {
 private fun formatDays(mask: Int): String {
     if (mask == 0) return "Aucun jour"
     if (mask == Schedule.ALL_DAYS) return "Tous les jours"
-    if (mask == 0b0011111) return "Lun → Ven"
+    if (mask == 0b0011111) return "Lun – Ven"
     if (mask == 0b1100000) return "Week-end"
     val days = listOf("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim")
     return days.filterIndexed { i, _ -> (mask and (1 shl i)) != 0 }.joinToString(", ")
