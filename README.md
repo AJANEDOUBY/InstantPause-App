@@ -266,11 +266,11 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ CoolDown-1.2.0.apk](../../releases/download/v1.2.0/CoolDown-1.2.0.apk)** — 4,3 Mo · Android 10+
+**[⬇ CoolDown-1.2.1.apk](../../releases/download/v1.2.1/CoolDown-1.2.1.apk)** — 4,3 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum CoolDown-1.2.0.apk
+sha256sum CoolDown-1.2.1.apk
 # → voir le hash publié dans la release (recalculé à chaque build)
 ```
 

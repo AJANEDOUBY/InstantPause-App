@@ -94,48 +94,50 @@ fun ScheduleScreen(
             }
         }
     ) { padding ->
-        Column(
+        // Une seule LazyColumn pour tout l'écran : les bandeaux d'aide, le mode Zen
+        // et les plages défilent ensemble. Avant, la liste était coincée sous les
+        // bandeaux : sur une tablette en paysage, elle se retrouvait avec une
+        // hauteur nulle et les plages semblaient ne pas avoir été créées.
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 88.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // --- BANDEAU DE STATUT ---
-            StatusBanner(isProtected = isCurrentlyProtected)
+            item {
+                StatusBanner(isProtected = isCurrentlyProtected)
+            }
 
-            // --- CARTE MODE ZEN (URGENCE) ---
-            ZenModeCard(onClick = { viewModel.activateZenMode() })
+            item {
+                ZenModeCard(onClick = { viewModel.activateZenMode() })
+            }
 
-            // --- LISTE DES PLAGES ---
             if (schedules.isEmpty()) {
-                EmptyState(modifier = Modifier.weight(1f))
+                item {
+                    EmptyState()
+                }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(schedules, key = { it.id }) { schedule ->
-                        ScheduleCard(
-                            schedule = schedule,
-                            onToggle = {
-                                if (schedule.isActive) {
-                                    guard(
-                                        "Désactiver la plage ${schedule.start} – ${schedule.end} ? " +
-                                                "Sans elle, plus rien ne bloquera vos appels sur ce créneau."
-                                    ) { viewModel.toggleActive(schedule) }
-                                } else {
-                                    // Réactiver renforce la protection : jamais gated.
-                                    viewModel.toggleActive(schedule)
-                                }
-                            },
-                            onDelete = {
+                items(schedules, key = { it.id }) { schedule ->
+                    ScheduleCard(
+                        schedule = schedule,
+                        onToggle = {
+                            if (schedule.isActive) {
                                 guard(
-                                    "Supprimer définitivement la plage ${schedule.start} – ${schedule.end} ?"
-                                ) { viewModel.delete(schedule) }
+                                    "Désactiver la plage ${schedule.start} – ${schedule.end} ? " +
+                                            "Sans elle, plus rien ne bloquera vos appels sur ce créneau."
+                                ) { viewModel.toggleActive(schedule) }
+                            } else {
+                                // Réactiver renforce la protection : jamais gated.
+                                viewModel.toggleActive(schedule)
                             }
-                        )
-                    }
-                    item { Spacer(Modifier.height(80.dp)) } // Espace pour le FAB
+                        },
+                        onDelete = {
+                            guard(
+                                "Supprimer définitivement la plage ${schedule.start} – ${schedule.end} ?"
+                            ) { viewModel.delete(schedule) }
+                        }
+                    )
                 }
             }
         }
@@ -170,7 +172,6 @@ private fun StatusBanner(isProtected: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(bgColor.copy(alpha = 0.15f))
             .padding(16.dp),
@@ -190,9 +191,7 @@ private fun StatusBanner(isProtected: Boolean) {
 @Composable
 private fun ZenModeCard(onClick: () -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         onClick = onClick
     ) {

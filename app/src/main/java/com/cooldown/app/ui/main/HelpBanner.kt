@@ -10,7 +10,66 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+
+/**
+ * Bandeaux d'aide volontairement **compacts** : une icône, deux lignes et un bouton
+ * sur la même rangée. En version pleine hauteur, deux bandeaux mangeaient plus de
+ * 500 px sur une tablette en paysage et poussaient la liste des plages hors écran.
+ */
+@Composable
+private fun CompactBanner(
+    title: String,
+    message: String,
+    actionLabel: String,
+    containerColor: Color,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(imageVector = icon, contentDescription = null, tint = Color.White)
+            Spacer(Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.9f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Button(
+                onClick = onClick,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = containerColor
+                )
+            ) {
+                Text(actionLabel, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
 
 /** Bandeau affiché tant que l'app n'a pas le droit de s'afficher par-dessus les autres. */
 @Composable
@@ -18,54 +77,15 @@ fun HelpBanner(
     modifier: Modifier = Modifier,
     onRequestPermission: () -> Unit
 ) {
-    // Un vert un peu plus foncé pour que le texte blanc ressorte bien (solide, pas transparent)
-    val solidGreen = Color(0xFF059669)
-
-    Card(
+    CompactBanner(
+        title = "Affichage par-dessus les appels",
+        message = "Requis pour montrer l'écran de pause pendant un appel.",
+        actionLabel = "Autoriser",
+        containerColor = Color(0xFF059669),
+        icon = Icons.Default.Security,
+        onClick = onRequestPermission,
         modifier = modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = solidGreen // ✅ Vert 100% opaque
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Security,
-                contentDescription = null,
-                tint = Color.White // Icône blanche pour ressortir
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Finaliser la protection",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = "Pour afficher l'écran de pause par-dessus vos appels, " +
-                            "veuillez autoriser CoolDown à s'afficher par-dessus les autres applications.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.9f) // Blanc légèrement grisé pour le texte secondaire
-                )
-                Spacer(Modifier.height(8.dp))
-                Button(
-                    onClick = onRequestPermission,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White, // Bouton blanc
-                        contentColor = solidGreen     // Texte vert
-                    )
-                ) {
-                    Text("Autoriser l'affichage", fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-    }
+    )
 }
 
 /**
@@ -80,50 +100,13 @@ fun BatteryBanner(
     modifier: Modifier = Modifier,
     onRequestExemption: () -> Unit
 ) {
-    val solidAmber = Color(0xFFB45309)
-
-    Card(
+    CompactBanner(
+        title = "Protection après redémarrage",
+        message = "Autorisez le démarrage auto et l'énergie sans restriction.",
+        actionLabel = "Autoriser",
+        containerColor = Color(0xFFB45309),
+        icon = Icons.Default.BatteryAlert,
+        onClick = onRequestExemption,
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = solidAmber),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.BatteryAlert,
-                contentDescription = null,
-                tint = Color.White
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Protection en veille limitée",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = "Pour rester active après un redémarrage, autorisez CoolDown " +
-                            "à démarrer automatiquement et sans restriction d'énergie " +
-                            "(Paramètres › Batterie / Démarrage auto).",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.9f)
-                )
-                Spacer(Modifier.height(8.dp))
-                Button(
-                    onClick = onRequestExemption,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = solidAmber
-                    )
-                ) {
-                    Text("Autoriser en arrière-plan", fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-    }
+    )
 }
