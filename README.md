@@ -190,6 +190,21 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 ## Installation
 
+### Téléchargement
+
+La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
+
+**[⬇ CoolDown-1.0.apk](../../releases/download/v1.0/CoolDown-1.0.apk)** — 4,1 Mo · Android 10+
+
+```bash
+# Vérifier l'intégrité du fichier téléchargé
+sha256sum CoolDown-1.0.apk
+# → e20eefa6403930391d5b31ece48bb8123390dbc6a06d815867b732b17ba33d53
+```
+
+> ⚠️ Si une version de **debug** est déjà installée, désinstallez-la d'abord : la signature
+> diffère, Android refusera la mise à jour (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`).
+
 ### Prérequis
 - Android **10 (API 29)** ou supérieur.
 - Le constructeur doit exposer le rôle **Call Redirection**

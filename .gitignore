@@ -21,3 +21,8 @@ local.properties
 /build
 .kotlin/
 *.hprof
+
+# Clés de signature (NE JAMAIS COMMITTER)
+/keystore/
+*.jks
+*.keystore
