@@ -136,7 +136,10 @@ class ProtectionAlertNotifier @Inject constructor(
         private const val CHANNEL_ID = "cooldown_protection"
         private const val SERVICE_CHANNEL_ID = "cooldown_service"
         private const val ID_BLOCKED_CALL = 4203
-        private const val REQ_PAUSE = 4300
+
+        // Doit rester différent du request code de PauseForegroundService (4300) :
+        // même code + même Intent filtré = même PendingIntent, donc extras écrasés.
+        private const val REQ_PAUSE = 4301
 
         fun buildForegroundNotification(context: Context): Notification {
             return NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)

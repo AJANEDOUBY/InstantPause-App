@@ -2,6 +2,7 @@ package com.cooldown.app.ui.main
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/** Bandeau affiché tant que l'app n'a pas le droit de s'afficher par-dessus les autres. */
 @Composable
 fun HelpBanner(
     modifier: Modifier = Modifier,
@@ -60,6 +62,66 @@ fun HelpBanner(
                     )
                 ) {
                     Text("Autoriser l'affichage", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Bandeau affiché quand l'app reste soumise à l'optimisation batterie.
+ *
+ * Sans exemption, les constructeurs (itel, Xiaomi, Samsung…) tuent le veilleur
+ * en arrière-plan : la protection continue de fonctionner (Telecom réveille
+ * l'app à chaque appel) mais elle n'est plus garantie après un redémarrage.
+ */
+@Composable
+fun BatteryBanner(
+    modifier: Modifier = Modifier,
+    onRequestExemption: () -> Unit
+) {
+    val solidAmber = Color(0xFFB45309)
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = solidAmber),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.BatteryAlert,
+                contentDescription = null,
+                tint = Color.White
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Protection en veille limitée",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                Text(
+                    text = "Pour rester active après un redémarrage, autorisez CoolDown " +
+                            "à démarrer automatiquement et sans restriction d'énergie " +
+                            "(Paramètres › Batterie / Démarrage auto).",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(
+                    onClick = onRequestExemption,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = solidAmber
+                    )
+                ) {
+                    Text("Autoriser en arrière-plan", fontWeight = FontWeight.Bold)
                 }
             }
         }

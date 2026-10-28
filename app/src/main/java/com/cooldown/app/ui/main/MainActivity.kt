@@ -7,13 +7,16 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
@@ -35,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private var hasOverlayPermission by mutableStateOf(false)
+    private var batteryOptimized by mutableStateOf(false)
 
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -51,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
         CoolDownWatchdogService.startIfNeeded(this)
         WatchdogAlarmReceiver.startAlarm(this)
+        batteryOptimized = isBatteryOptimized()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -86,6 +91,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
+                        batteryOptimized = batteryOptimized,
                         onRequestOverlayPermission = {
                             startActivity(
                                 Intent(
@@ -93,7 +99,8 @@ class MainActivity : ComponentActivity() {
                                     Uri.parse("package:$packageName")
                                 )
                             )
-                        }
+                        },
+                        onRequestBatteryExemption = { requestBatteryExemption() }
                     )
                 }
             }
@@ -104,13 +111,35 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         viewModel.refreshRole()
         hasOverlayPermission = Settings.canDrawOverlays(this)
+        batteryOptimized = isBatteryOptimized()
+    }
+
+    /** Vrai si l'app reste soumise à l'optimisation batterie du système. */
+    private fun isBatteryOptimized(): Boolean {
+        val pm = getSystemService(PowerManager::class.java) ?: return false
+        return !pm.isIgnoringBatteryOptimizations(packageName)
+    }
+
+    private fun requestBatteryExemption() {
+        val direct = Intent(
+            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            Uri.parse("package:$packageName")
+        )
+        runCatching { startActivity(direct) }.onFailure {
+            // Certains constructeurs désactivent cette action : on ouvre la liste générale.
+            runCatching {
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            }
+        }
     }
 }
 
 @Composable
 private fun MainScreen(
     hasOverlayPermission: Boolean,
-    onRequestOverlayPermission: () -> Unit
+    batteryOptimized: Boolean,
+    onRequestOverlayPermission: () -> Unit,
+    onRequestBatteryExemption: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -132,18 +161,20 @@ private fun MainScreen(
             }
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            when (selectedTab) {
-                0 -> ScheduleScreen()
-                1 -> LogsScreen()
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            // Les bandeaux poussent le contenu vers le bas : aucun recouvrement.
+            if (!hasOverlayPermission) {
+                HelpBanner(onRequestPermission = onRequestOverlayPermission)
+            }
+            if (batteryOptimized) {
+                BatteryBanner(onRequestExemption = onRequestBatteryExemption)
             }
 
-            // Le bandeau n'apparaît QUE si la permission overlay manque
-            if (!hasOverlayPermission) {
-                HelpBanner(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    onRequestPermission = onRequestOverlayPermission
-                )
+            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                when (selectedTab) {
+                    0 -> ScheduleScreen()
+                    1 -> LogsScreen()
+                }
             }
         }
     }

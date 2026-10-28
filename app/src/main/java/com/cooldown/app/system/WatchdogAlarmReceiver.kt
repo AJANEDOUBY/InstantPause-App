@@ -34,15 +34,36 @@ class WatchdogAlarmReceiver : BroadcastReceiver() {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val pendingIntent = createPendingIntent(context)
 
-            // On utilise setAndAllowWhileIdle : fonctionne même quand le téléphone est en veille
+            // On utilise une alarme « allow while idle » : elle fonctionne quand le
+            // téléphone est en veille. Exacte si le système l'autorise, sinon on
+            // retombe sur une alarme inexacte (aucune permission requise).
             val triggerAt = System.currentTimeMillis() + INTERVAL_MS
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
+            val exactAllowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+                alarmManager.canScheduleExactAlarms()
+
+            val scheduled = runCatching {
+                if (exactAllowed) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent
+                    )
+                } else {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent
+                    )
+                }
             }
-            Log.d(TAG, "Alarme de sécurité programmée dans 15 minutes.")
+
+            if (scheduled.isFailure) {
+                // Dernier recours : alarme inexacte, acceptée partout.
+                runCatching {
+                    alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent
+                    )
+                }.onFailure { Log.w(TAG, "Alarme impossible à programmer", it) }
+            }
+
+            Log.d(TAG, "Alarme de sécurité programmée dans 15 minutes (exacte=$exactAllowed).")
         }
 
         fun scheduleNextAlarm(context: Context) {

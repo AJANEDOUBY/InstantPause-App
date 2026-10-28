@@ -91,8 +91,22 @@ class PauseActivity : ComponentActivity() {
         private const val EXTRA_NUMBER = "extra_target_number"
         private const val EXTRA_FROM_USER = "extra_from_user"
 
+        /**
+         * Actions distinctes par origine.
+         *
+         * Indispensable : `PendingIntent.filterEquals()` ignore les extras. Sans
+         * action différente, le PendingIntent de l'écran automatique et celui de
+         * la notification (même request code + FLAG_UPDATE_CURRENT) désignent le
+         * MÊME enregistrement : le dernier créé écrase les extras de l'autre.
+         * L'écran ouvert automatiquement héritait alors de `fromUser = true` et
+         * annulait la notification et les rappels.
+         */
+        private const val ACTION_AUTO = "com.cooldown.app.action.PAUSE_AUTO"
+        private const val ACTION_FROM_USER = "com.cooldown.app.action.PAUSE_FROM_USER"
+
         fun intent(context: Context, number: String, fromUser: Boolean = false): Intent =
             Intent(context, PauseActivity::class.java).apply {
+                action = if (fromUser) ACTION_FROM_USER else ACTION_AUTO
                 putExtra(EXTRA_NUMBER, number)
                 putExtra(EXTRA_FROM_USER, fromUser)
                 addFlags(

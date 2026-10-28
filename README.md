@@ -194,12 +194,12 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ CoolDown-1.0.apk](../../releases/download/v1.0/CoolDown-1.0.apk)** — 4,1 Mo · Android 10+
+**[⬇ CoolDown-1.0.1.apk](../../releases/download/v1.0.1/CoolDown-1.0.1.apk)** — 4,1 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum CoolDown-1.0.apk
-# → e20eefa6403930391d5b31ece48bb8123390dbc6a06d815867b732b17ba33d53
+sha256sum CoolDown-1.0.1.apk
+# → voir le hash publié dans la release (recalculé à chaque build)
 ```
 
 > ⚠️ Si une version de **debug** est déjà installée, désinstallez-la d'abord : la signature
@@ -301,6 +301,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `SYSTEM_ALERT_WINDOW` | Affichage de l'écran de pause au-dessus du dialer |
 | `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé |
 | `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
+| `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, rappels, ouverture d'UI |
 
 ---
@@ -314,8 +316,13 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
 - **Réponse interactive** : l'autorisation en un tap (`allowInteractiveResponse` de Telecom)
   n'est pas encore implémentée — le blocage est binaire.
-- **Fork constructeur** : les surcouches très agressives (gestion batterie) peuvent tuer le
-  watchdog ; pensez à exclure l'app de l'optimisation batterie.
+- **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent
+  tuer le watchdog et **retarder le `BOOT_COMPLETED`** au point de ne jamais le délivrer.
+  Sur ces appareils (itel/Transsion, Xiaomi, Infinix…), autorisez CoolDown dans
+  **Démarrage automatique** et **sans restriction d'énergie**. L'app affiche un bandeau
+  ambre tant que l'exemption d'énergie manque.
+  L'interception d'appel, elle, **continue de fonctionner** : Telecom relance le processus
+  à froid à chaque appel, et le watchdog se ré-arme à cette occasion.
 
 ---
 

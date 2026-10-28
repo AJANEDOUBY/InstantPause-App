@@ -150,6 +150,11 @@ class CoolDownCallRedirectionService : CallRedirectionService() {
         runCatching { PauseForegroundService.start(this, number) }
             .onFailure { Log.w(TAG, "Échec démarrage foreground service", it) }
 
+        // Ré-armement opportuniste : l'app est déjà réveillée par Telecom, autant
+        // en profiter pour relancer le veilleur si le système l'avait tué.
+        runCatching { CoolDownWatchdogService.startIfNeeded(this) }
+            .onFailure { Log.w(TAG, "Échec du ré-armement du watchdog", it) }
+
         // Notification de secours : appel synchrone volontaire. Le service de
         // redirection est détruit juste après cancelCall(), donc un launch()
         // sur serviceScope serait annulé avant de s'exécuter.
