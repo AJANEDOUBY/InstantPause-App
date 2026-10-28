@@ -401,12 +401,28 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 
 ## Limites connues
 
-- **Appels VoIP non couverts** : WhatsApp, Signal, Messenger, Telegram… ne passent pas par
-  Telecom et ne peuvent donc pas être interceptés par cette API. Une app tierce ne peut pas
-  voir ni annuler un appel VoIP **avant** qu'il soit composé. La seule piste réaliste serait
-  un overlay piloté par un service d'accessibilité à l'ouverture de l'app (voir la feuille de
-  route), avec deux compromis assumés : il faudrait la permission « Accessibilité », très
-  intrusive, et il bloquerait aussi les messages — sauf à exiger le code pour entrer.
+- **Appels VoIP non couverts** (WhatsApp, Signal, Messenger, Telegram) — *chantier reporté,
+  hors périmètre 1.2.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
+  flux audio, et `CallScreeningService` n'est jamais consulté. Aucune API Android ne permet à
+  une app tierce de voir ni de refuser un appel VoIP. Concrètement, pendant une plage
+  protégée :
+  - un appel WhatsApp ou Signal part **normalement** ;
+  - Instant Pause ne le voit pas, ne l'affiche pas dans l'historique et ne montre pas l'écran
+    de pause ;
+  - seuls les **appels téléphoniques classiques** sont couverts.
+
+  La seule piste réaliste est un **service d'accessibilité** qui repère l'ouverture de la
+  fenêtre d'appel et superpose l'écran de pause. Trois raisons de ne pas l'avoir fait :
+  1. le blocage serait **partiel et tardif** : on peut interposer un écran avant la connexion,
+     pas annuler un appel déjà établi ;
+  2. la permission « Accessibilité » donne lecture de **tout** ce qui s'affiche, messages
+     compris ; pour une app qui vend la tranquillité, ce compromis doit être choisi
+     explicitement par l'utilisateur, pas hérité d'une mise à jour ;
+  3. la détection dépend du libellé et de la structure de l'UI de chaque app : elle casse à
+     chaque refonte de WhatsApp ou de Signal.
+
+  En attendant, le périmètre est assumé et affiché comme tel : **les appels d'applications ne
+  sont pas bloqués**. Voir la [feuille de route](#feuille-de-route).
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
@@ -429,7 +445,9 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 
 - [ ] Réponse interactive via `redirectCall()` (autoriser l'appel depuis l'écran de pause)
 - [ ] Blocage des appels VoIP : overlay via service d'accessibilité à l'ouverture de
-      WhatsApp/Signal/Telegram pendant une plage protégée (code ou respiration pour entrer)
+      WhatsApp/Signal/Telegram pendant une plage protégée (code ou respiration pour entrer).
+      **Reporté** — voir [Limites connues](#limites-connues) pour les compromis à trancher
+      avant d'écrire du code.
 - [ ] Plages par défaut proposées au premier lancement
 - [ ] Import de contacts pour la whitelist
 - [ ] Statistiques (appels évités par semaine)
