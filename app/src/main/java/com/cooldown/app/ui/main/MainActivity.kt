@@ -39,6 +39,7 @@ import com.cooldown.app.ui.security.SecurityViewModel
 import com.cooldown.app.ui.security.SetupScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
 import com.cooldown.app.ui.whitelist.WhitelistScreen
+import com.cooldown.app.ui.whitelist.WhitelistViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private var hasOverlayPermission by mutableStateOf(false)
     private var batteryOptimized by mutableStateOf(false)
+    private var canHangUp by mutableStateOf(false)
 
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -57,6 +59,11 @@ class MainActivity : ComponentActivity() {
     private val notificationsPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { }
+
+    /** Raccrocher un appel autorisé à la fin des 3 minutes (TelecomManager.endCall). */
+    private val hangupPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> canHangUp = granted }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +77,14 @@ class MainActivity : ComponentActivity() {
             PackageManager.PERMISSION_GRANTED
         ) {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        // Raccrochage à 3:00 : permission dangereuse, demandée une fois au démarrage.
+        // Refusée, le minuteur redevient un simple rappel (bouton dans le bandeau).
+        if (checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            hangupPermissionLauncher.launch(Manifest.permission.ANSWER_PHONE_CALLS)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -89,6 +104,8 @@ class MainActivity : ComponentActivity() {
                 val roleHeld by viewModel.roleHeld.collectAsStateWithLifecycle()
                 val securityViewModel: SecurityViewModel = hiltViewModel()
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
+                val whitelistViewModel: WhitelistViewModel = hiltViewModel()
+                val trustedContacts by whitelistViewModel.entries.collectAsStateWithLifecycle()
 
                 when {
                     // Chargement du verrou : ne pas afficher l'onboarding par erreur.
@@ -109,6 +126,8 @@ class MainActivity : ComponentActivity() {
                     else -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
+                        canHangUp = canHangUp,
+                        hasTrustedContacts = trustedContacts.isNotEmpty(),
                         onRequestOverlayPermission = {
                             startActivity(
                                 Intent(
@@ -116,6 +135,9 @@ class MainActivity : ComponentActivity() {
                                     Uri.parse("package:$packageName")
                                 )
                             )
+                        },
+                        onRequestHangupPermission = {
+                            hangupPermissionLauncher.launch(Manifest.permission.ANSWER_PHONE_CALLS)
                         },
                         onRequestBatteryExemption = { requestBatteryExemption() }
                     )
@@ -129,6 +151,8 @@ class MainActivity : ComponentActivity() {
         viewModel.refreshRole()
         hasOverlayPermission = Settings.canDrawOverlays(this)
         batteryOptimized = isBatteryOptimized()
+        canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
+                PackageManager.PERMISSION_GRANTED
     }
 
     /** Vrai si l'app reste soumise à l'optimisation batterie du système. */
@@ -162,7 +186,10 @@ private fun LoadingScreen() {
 private fun MainScreen(
     hasOverlayPermission: Boolean,
     batteryOptimized: Boolean,
+    canHangUp: Boolean,
+    hasTrustedContacts: Boolean,
     onRequestOverlayPermission: () -> Unit,
+    onRequestHangupPermission: () -> Unit,
     onRequestBatteryExemption: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -201,6 +228,9 @@ private fun MainScreen(
             // Les bandeaux poussent le contenu vers le bas : aucun recouvrement.
             if (!hasOverlayPermission) {
                 HelpBanner(onRequestPermission = onRequestOverlayPermission)
+            }
+            if (!canHangUp && hasTrustedContacts) {
+                HangupBanner(onRequestPermission = onRequestHangupPermission)
             }
             if (batteryOptimized) {
                 BatteryBanner(onRequestExemption = onRequestBatteryExemption)

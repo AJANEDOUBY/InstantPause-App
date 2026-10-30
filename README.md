@@ -73,9 +73,12 @@ toujours, même en pleine plage de protection.
   action qui modifie la protection.
 - La comparaison se fait en **E.164**, donc `06 12 34 56 78`, `+33 6 12 34 56 78` et
   `0033612345678` sont reconnus comme le même numéro (via `libphonenumber`).
-- Un appel autorisé est **chronométré** : une pastille flottante et une notification
-  affichent le temps restant sur 3 minutes, avec vibration à 0:30 puis à 0:00
-  (« Temps écoulé — raccrochez »). Voir [Limites connues](#limites-connues).
+- Un appel autorisé est **limité à 3 minutes de conversation** : une pastille flottante et
+  une notification affichent le temps restant, avec vibration à 0:30 puis à 0:00.
+  Le décompte part de la **connexion** (la sonnerie ne mange pas le temps de parole) et, à
+  0:00, l'appel est **raccroché automatiquement** grâce à la permission `ANSWER_PHONE_CALLS`.
+  Si cette permission est refusée, la pastille affiche « raccrochez » et l'appel continue :
+  le bandeau violet en haut de l'écran propose de l'accorder.
 
 ### 🌬️ Écran de pause
 Quand un appel est bloqué, un écran plein écran s'affiche (même verrouillé) :
@@ -405,6 +408,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
+| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé (sinon simple rappel) |
 | `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée |
 
 ---
@@ -434,10 +438,10 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
   En attendant, le périmètre est assumé et affiché comme tel : **les appels d'applications ne
   sont pas bloqués**. Voir la [feuille de route](#feuille-de-route).
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
-- **Le minuteur de 3 minutes ne raccroche pas** : Android interdit à une application tierce de
-  couper une ligne qu'elle n'a pas établie. Le minuteur est donc un **rappel visuel** (pastille
-  flottante + notification) qui passe en alerte à 0:30, puis affiche « Temps écoulé —
-  raccrochez » à 0:00. Tenir la limite reste un geste de l'utilisateur.
+- **Raccrochage à 3:00 conditionné à une permission** : `TelecomManager.endCall()`, seule API
+  qui permette à une app tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`. Accordée,
+  l'appel est coupé net à la fin du minuteur ; refusée (ou refusée par un constructeur trop
+  restrictif), l'app se rabat sur « Temps écoulé — raccrochez » et l'utilisateur raccroche.
   La pastille disparaît d'elle-même au raccrochage ; si l'appel n'a jamais abouti (occupé,
   non décroché), elle peut rester jusqu'à l'échéance des 3 minutes.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,

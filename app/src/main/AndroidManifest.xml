@@ -21,6 +21,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
+    <!--
+        Raccrochage automatique à la fin des 3 minutes d'un appel autorisé.
+        ANSWER_PHONE_CALLS est la seule permission qui ouvre TelecomManager.endCall()
+        à une application tierce. Refusée, le minuteur reste un simple rappel.
+    -->
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+
     <application
         android:name=".CoolDownApplication"
         android:allowBackup="false"

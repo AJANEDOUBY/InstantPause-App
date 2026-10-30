@@ -1,11 +1,13 @@
 package com.cooldown.app.system
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.media.AudioManager
 import android.os.Build
@@ -16,6 +18,7 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.telecom.TelecomManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
@@ -45,6 +48,9 @@ class CallTimerService : Service() {
     private var callWasLive = false
     private var idleTicks = 0
 
+    /** Le décompte est décalé une seule fois, au moment où la ligne s'établit. */
+    private var countdownStartedOnConnect = false
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
@@ -61,6 +67,7 @@ class CallTimerService : Service() {
         lastNotifiedSecond = -1
         callWasLive = false
         idleTicks = 0
+        countdownStartedOnConnect = false
 
         overlay?.show()
         overlay?.updateText("${format(LIMIT_SECONDS)} / ${format(LIMIT_SECONDS)}")
@@ -77,6 +84,19 @@ class CallTimerService : Service() {
                 Log.i(TAG, "Appel terminé — arrêt du minuteur")
                 stopSelf()
                 return
+            }
+
+            // La sonnerie ne doit pas manger les 3 minutes : au premier signe de
+            // communication établie, on repart de 3 minutes pleines. On ne fait que
+            // **repousser** l'échéance, jamais l'avancer.
+            if (callWasLive && !countdownStartedOnConnect) {
+                countdownStartedOnConnect = true
+                deadline = maxOf(deadline, SystemClock.elapsedRealtime() + LIMIT_SECONDS * 1_000L)
+                // La sonnerie a pu consommer l'alerte des 30 s : on la ré-arme pour la
+                // vraie fin de conversation.
+                warned = false
+                lastNotifiedSecond = -1
+                overlay?.updateWarning(false)
             }
 
             val leftMs = deadline - SystemClock.elapsedRealtime()
@@ -101,9 +121,21 @@ class CallTimerService : Service() {
             } else {
                 if (!expiredShown) {
                     expiredShown = true
-                    overlay?.updateText("Temps écoulé — raccrochez")
-                    overlay?.updateWarning(true)
-                    updateNotification("Temps écoulé")
+                    if (hangUp()) {
+                        // La ligne est coupée par le système : la pastille s'efface au
+                        // prochain relevé (l'audio repasse en mode normal).
+                        Log.i(TAG, "Temps écoulé — appel coupé")
+                        overlay?.updateText("Temps écoulé — appel coupé")
+                        overlay?.updateWarning(true)
+                        updateNotification("Appel coupé")
+                    } else {
+                        // Permission absente ou constructeur récalcitrant : on ne peut
+                        // que prévenir. L'utilisateur raccroche lui-même.
+                        Log.w(TAG, "Raccrochage refusé par le système")
+                        overlay?.updateText("Temps écoulé — raccrochez")
+                        overlay?.updateWarning(true)
+                        updateNotification("Temps écoulé — raccrochez")
+                    }
                     vibrate(600)
                     handler.postDelayed({ stopSelf() }, END_GRACE_MS)
                 }
@@ -111,6 +143,30 @@ class CallTimerService : Service() {
                 handler.postDelayed(this, 500L)
             }
         }
+    }
+
+    /**
+     * Raccroche l'appel en cours.
+     *
+     * Android n'autorise une application tierce à couper une ligne qu'avec la permission
+     * [Manifest.permission.ANSWER_PHONE_CALLS] (c'est elle qui ouvre
+     * [TelecomManager.endCall]). Sans elle, ou si le constructeur refuse, on renvoie
+     * `false` : le minuteur reste un rappel visuel, il ne coupe rien.
+     *
+     * `endCall` est déprécié depuis Android 10 au profit d'`InCallService`, réservé à
+     * l'application de téléphone par défaut — hors de question de prendre ce rôle.
+     */
+    @Suppress("DEPRECATION")
+    private fun hangUp(): Boolean {
+        if (checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+        val telecom = getSystemService(TelecomManager::class.java) ?: return false
+        return runCatching { telecom.endCall() }
+            .onFailure { Log.w(TAG, "endCall() a échoué", it) }
+            .getOrDefault(false)
     }
 
     /**
