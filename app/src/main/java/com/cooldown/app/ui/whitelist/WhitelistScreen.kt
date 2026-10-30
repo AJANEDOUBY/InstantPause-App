@@ -192,8 +192,7 @@ private fun TrustCircleBanner() {
                 Text(
                     text = "Ces contacts ne sont jamais bloqués, même pendant une plage active. " +
                             "${WhitelistViewModel.MAX_CONTACTS} contacts maximum, et un appel " +
-                            "autorisé est chronométré : à 3 minutes, la pastille vous rappelle " +
-                            "de raccrocher.",
+                            "autorisé dure 3 minutes : il est coupé automatiquement ensuite.",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
