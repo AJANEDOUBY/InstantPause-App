@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Schedule
@@ -37,6 +38,7 @@ import com.cooldown.app.ui.security.SecurityScreen
 import com.cooldown.app.ui.security.SecurityViewModel
 import com.cooldown.app.ui.security.SetupScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
+import com.cooldown.app.ui.whitelist.WhitelistScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -177,12 +179,18 @@ private fun MainScreen(
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    icon = { Icon(Icons.Default.History, contentDescription = "Historique") },
-                    label = { Text("Historique") }
+                    icon = { Icon(Icons.Default.Contacts, contentDescription = "Contacts") },
+                    label = { Text("Contacts") }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
+                    icon = { Icon(Icons.Default.History, contentDescription = "Historique") },
+                    label = { Text("Historique") }
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
                     icon = { Icon(Icons.Default.Lock, contentDescription = "Sécurité") },
                     label = { Text("Sécurité") }
                 )
@@ -201,8 +209,9 @@ private fun MainScreen(
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 when (selectedTab) {
                     0 -> ScheduleScreen()
-                    1 -> LogsScreen()
-                    2 -> SecurityScreen()
+                    1 -> WhitelistScreen()
+                    2 -> LogsScreen()
+                    3 -> SecurityScreen()
                 }
             }
         }

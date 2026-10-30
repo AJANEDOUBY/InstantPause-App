@@ -21,6 +21,11 @@ interface WhitelistRepository {
     suspend fun isWhitelisted(candidates: List<String>): Boolean
     suspend fun add(contactName: String, rawNumber: String, regionHint: String): AddWhitelistResult
     suspend fun remove(id: Long)
+
+    companion object {
+        /** Le cercle reste volontairement minuscule : 3 personnes, pas une liste. */
+        const val MAX_ENTRIES = 3
+    }
 }
 
 interface BlockedLogRepository {

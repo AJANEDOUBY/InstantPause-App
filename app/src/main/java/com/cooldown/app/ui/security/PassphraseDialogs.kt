@@ -60,7 +60,8 @@ internal fun resultMessage(result: AppLockManager.Result, now: Long = System.cur
         is AppLockManager.Result.RateLimited ->
             "Trop d'essais. Réessayez dans ${formatWait(result.until - now)}."
         is AppLockManager.Result.Wrong ->
-            "Code incorrect. Encore ${result.attemptsLeft} essai(s) avant une temporisation."
+            "Code incorrect (majuscules et minuscules comptent). " +
+                    "Encore ${result.attemptsLeft} essai(s) avant une temporisation."
         is AppLockManager.Result.Rejected -> violationText(result.violations)
         is AppLockManager.Result.StorageError ->
             "Impossible d'enregistrer le code. Vérifiez l'espace de stockage et réessayez."

@@ -73,6 +73,16 @@
                 android:value="blocking_impulsive_calls" />
         </service>
 
+        <!-- Minuteur des appels autorisés : pastille + notification, sans couper la ligne -->
+        <service
+            android:name=".system.CallTimerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="countdown_for_trusted_contacts_calls" />
+        </service>
+
         <!-- Service de veille : maintient l'app en vie sur les téléphones agressifs -->
         <service
             android:name=".system.CoolDownWatchdogService"

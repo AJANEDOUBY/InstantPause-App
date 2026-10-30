@@ -17,8 +17,8 @@ android {
         applicationId = "com.cooldown.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 6
-        versionName = "1.2.2"
+        versionCode = 7
+        versionName = "1.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -26,7 +26,11 @@ android {
         release {
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                // ⚠️ `kotlin.**` est volontairement exclu du repackaging R8 : la stdlib
+                // Kotlin est découpée en classes « multi-file » dont la hiérarchie
+                // (SequencesKt__… extends SequencesKt__…) casse si R8 les renomme,
+                // ce qui provoquait un IllegalAccessError au démarrage.
+                packageScope = setOf("androidx.**", "kotlinx.**")
             }
         }
     }

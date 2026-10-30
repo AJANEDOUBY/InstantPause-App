@@ -114,6 +114,10 @@ class CoolDownCallRedirectionService : CallRedirectionService() {
                             BlockStatus.ALLOWED_WHITELIST
                         )
                     }.onFailure { Log.w(TAG, "Échec journalisation whitelist", it) }
+
+                    // Appel autorisé : on lance le compte à rebours (3 minutes).
+                    runCatching { CallTimerService.start(this@CoolDownCallRedirectionService) }
+                        .onFailure { Log.w(TAG, "Échec démarrage du minuteur", it) }
                 }
                 respondUnmodified(responded)
             }

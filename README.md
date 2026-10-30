@@ -62,10 +62,20 @@ Les **numéros d'urgence** (112, 15, 17, 18, 19…) ne sont **jamais** bloqués.
 Un bouton « Besoin d'une pause maintenant ? » active une protection immédiate de **2 heures**,
 sans créer de plage permanente.
 
-### ⭐ Whitelist
-Ajoutez un contact : il sonnera normalement, même en pleine plage de protection.
-La comparaison se fait en **E.164**, donc `06 12 34 56 78`, `+33 6 12 34 56 78` et
-`0033612345678` sont reconnus comme le même numéro (via `libphonenumber`).
+### 📇 Cercle de confiance (whitelist)
+Un onglet **Contacts** permet de désigner jusqu'à **3 personnes** dont les appels passent
+toujours, même en pleine plage de protection.
+- Le contact est choisi dans le répertoire Android (bouton **+**) : le sélecteur système
+  ne prête que la fiche choisie, l'app ne demande donc **jamais** la permission
+  `READ_CONTACTS` et ne lit pas le reste du carnet.
+- Le compteur `1 / 3` reste visible ; à 3, le bouton d'ajout disparaît.
+- Comme couper une plage, **ajouter ou retirer** un contact exige le code : c'est une
+  action qui modifie la protection.
+- La comparaison se fait en **E.164**, donc `06 12 34 56 78`, `+33 6 12 34 56 78` et
+  `0033612345678` sont reconnus comme le même numéro (via `libphonenumber`).
+- Un appel autorisé est **chronométré** : une pastille flottante et une notification
+  affichent le temps restant sur 3 minutes, avec vibration à 0:30 puis à 0:00
+  (« Temps écoulé — raccrochez »). Voir [Limites connues](#limites-connues).
 
 ### 🌬️ Écran de pause
 Quand un appel est bloqué, un écran plein écran s'affiche (même verrouillé) :
@@ -424,6 +434,12 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
   En attendant, le périmètre est assumé et affiché comme tel : **les appels d'applications ne
   sont pas bloqués**. Voir la [feuille de route](#feuille-de-route).
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
+- **Le minuteur de 3 minutes ne raccroche pas** : Android interdit à une application tierce de
+  couper une ligne qu'elle n'a pas établie. Le minuteur est donc un **rappel visuel** (pastille
+  flottante + notification) qui passe en alerte à 0:30, puis affiche « Temps écoulé —
+  raccrochez » à 0:00. Tenir la limite reste un geste de l'utilisateur.
+  La pastille disparaît d'elle-même au raccrochage ; si l'appel n'a jamais abouti (occupé,
+  non décroché), elle peut rester jusqu'à l'échéance des 3 minutes.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
 - **Verrou contournable** : le code protège les réglages de l'app, pas le système. Un

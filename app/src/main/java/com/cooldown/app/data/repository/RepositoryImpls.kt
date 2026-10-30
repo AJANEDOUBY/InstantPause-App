@@ -72,7 +72,7 @@ class WhitelistRepositoryImpl @Inject constructor(
                 phoneDisplay = rawNumber.trim(),
                 regionCode = regionHint
             ),
-            max = WHITELIST_MAX
+            max = WhitelistRepository.MAX_ENTRIES
         )
         return when (outcome) {
             InsertOutcome.INSERTED -> AddWhitelistResult.ADDED
@@ -82,10 +82,6 @@ class WhitelistRepositoryImpl @Inject constructor(
     }
 
     override suspend fun remove(id: Long) = dao.deleteById(id)
-
-    private companion object {
-        const val WHITELIST_MAX = 5
-    }
 }
 
 @Singleton
