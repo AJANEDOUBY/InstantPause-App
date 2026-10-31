@@ -17,12 +17,18 @@ android {
         applicationId = "com.cooldown.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 9
-        versionName = "1.3.2"
+        versionCode = 10
+        versionName = "1.3.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            // Package distinct : permet de tester l'onboarding à neuf sur un appareil
+            // où la version release est déjà installée, sans toucher à ses données.
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
             optimization {
                 enable = true

@@ -2,6 +2,8 @@ package com.cooldown.app.ui.main
 
 import android.Manifest
 import android.app.NotificationManager
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cooldown.app.domain.security.AppLockManager
+import com.cooldown.app.system.CoolDownDeviceAdminReceiver
 import com.cooldown.app.system.CoolDownWatchdogService
 import com.cooldown.app.system.WatchdogAlarmReceiver
 import com.cooldown.app.ui.logs.LogsScreen
@@ -37,6 +40,7 @@ import com.cooldown.app.ui.schedule.ScheduleScreen
 import com.cooldown.app.ui.security.SecurityScreen
 import com.cooldown.app.ui.security.SecurityViewModel
 import com.cooldown.app.ui.security.SetupScreen
+import com.cooldown.app.ui.security.UninstallGuardScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
 import com.cooldown.app.ui.whitelist.WhitelistScreen
 import com.cooldown.app.ui.whitelist.WhitelistViewModel
@@ -49,6 +53,22 @@ class MainActivity : ComponentActivity() {
     private var hasOverlayPermission by mutableStateOf(false)
     private var batteryOptimized by mutableStateOf(false)
     private var canHangUp by mutableStateOf(false)
+    private var adminActive by mutableStateOf(false)
+
+    private val adminComponent by lazy {
+        ComponentName(this, CoolDownDeviceAdminReceiver::class.java)
+    }
+
+    /**
+     * Administration d'appareil : seule protection contre une désinstallation impulsive.
+     *
+     * Android impose une confirmation système, donc l'app ne peut pas s'activer seule.
+     * En revanche elle peut refuser d'aller plus loin tant que ce n'est pas fait —
+     * c'est ce que fait [UninstallGuardScreen] pendant l'onboarding.
+     */
+    private val adminLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { refreshAdmin() }
 
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -71,6 +91,7 @@ class MainActivity : ComponentActivity() {
         CoolDownWatchdogService.startIfNeeded(this)
         WatchdogAlarmReceiver.startAlarm(this)
         batteryOptimized = isBatteryOptimized()
+        refreshAdmin()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -106,16 +127,26 @@ class MainActivity : ComponentActivity() {
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
                 val whitelistViewModel: WhitelistViewModel = hiltViewModel()
                 val trustedContacts by whitelistViewModel.entries.collectAsStateWithLifecycle()
+                val guardAcknowledged by viewModel.uninstallGuardDone.collectAsStateWithLifecycle()
 
-                when {
+                when (onboardingStage(
+                    loading = lockState.status == AppLockManager.Status.LOADING,
+                    hasCode = lockState.status != AppLockManager.Status.DISABLED,
+                    roleHeld = roleHeld,
+                    adminActive = adminActive,
+                    guardAcknowledged = guardAcknowledged
+                )) {
                     // Chargement du verrou : ne pas afficher l'onboarding par erreur.
-                    lockState.status == AppLockManager.Status.LOADING -> LoadingScreen()
+                    OnboardingStage.LOADING -> LoadingScreen()
 
                     // Aucun code : l'app ne va pas plus loin. Le verrou n'est pas une option.
-                    lockState.status == AppLockManager.Status.DISABLED ->
-                        SetupScreen(vm = securityViewModel)
+                    OnboardingStage.SETUP_CODE -> SetupScreen(vm = securityViewModel)
 
-                    !roleHeld -> RoleActivationScreen(
+                    // Protection anti-désinstallation : obligatoire avant tout le reste.
+                    OnboardingStage.PROTECT_UNINSTALL ->
+                        UninstallGuardScreen(onActivate = { requestAdmin() })
+
+                    OnboardingStage.ACTIVATE_ROLE -> RoleActivationScreen(
                         onActivateClick = {
                             viewModel.createRequestRoleIntent()?.let { intent ->
                                 roleRequestLauncher.launch(intent)
@@ -123,7 +154,7 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
-                    else -> MainScreen(
+                    OnboardingStage.MAIN -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
                         canHangUp = canHangUp,
@@ -153,6 +184,33 @@ class MainActivity : ComponentActivity() {
         batteryOptimized = isBatteryOptimized()
         canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
                 PackageManager.PERMISSION_GRANTED
+        refreshAdmin()
+    }
+
+    private fun refreshAdmin() {
+        val dpm = getSystemService(DevicePolicyManager::class.java)
+        adminActive = dpm?.isAdminActive(adminComponent) == true
+        if (adminActive) viewModel.markUninstallGuardDone()
+    }
+
+    /**
+     * Ouvre l'écran système d'activation de l'administrateur.
+     *
+     * C'est le seul chemin possible : `ACTION_ADD_DEVICE_ADMIN` demande toujours une
+     * confirmation explicite. On l'appelle donc au moment de l'installation, et on ne
+     * laisse pas l'onboarding continuer sans elle.
+     */
+    private fun requestAdmin() {
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
+            putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "Instant Pause empêchera sa désinstallation accidentelle ou impulsive. " +
+                        "Aucun autre droit n'est demandé."
+            )
+        }
+        runCatching { adminLauncher.launch(intent) }
+            .onFailure { refreshAdmin() }
     }
 
     /** Vrai si l'app reste soumise à l'optimisation batterie du système. */

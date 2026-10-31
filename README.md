@@ -158,9 +158,17 @@ Le compteur est persisté : tuer l'app ne le remet pas à zéro ; redémarrer le
 
 ### Anti-désinstallation (Device Admin)
 
-L'écran **Sécurité** permet d'activer un administrateur d'appareil **sans aucune politique**
-(pas de verrouillage d'écran, pas d'effacement de données). Android refuse alors de désinstaller
-l'app tant que cet administrateur est actif.
+L'administrateur d'appareil est **sans aucune politique** (pas de verrouillage d'écran, pas
+d'effacement de données). Android refuse alors de désinstaller l'app tant que cet
+administrateur est actif.
+
+Il est demandé **pendant l'installation**, juste après la création du code : l'app ne passe
+pas à l'autorisation des appels tant qu'il n'est pas actif. Android exige une confirmation
+système (aucune app ne peut s'activer seule), mais Instant Pause ouvre cet écran
+automatiquement plutôt que d'attendre que vous le trouviez dans l'onglet Sécurité.
+
+Une fois l'étape franchie, elle ne réapparaît plus : retirer l'administrateur avec son code
+depuis l'onglet Sécurité reste possible, et n'enferme pas l'utilisateur dans une boucle.
 
 > **Soyons honnêtes** : aucune application ne peut empêcher une désinstallation. L'administrateur
 > ajoute deux étapes (Paramètres → Sécurité → Administrateurs → désactiver), et c'est tout.
@@ -309,13 +317,14 @@ sha256sum InstantPause-1.2.2.apk
 1. Installez l'APK (release ou build locale).
 2. Ouvrez l'app → **choisissez votre code de protection**. Il est obligatoire : l'écran ne se
    contourne pas, et le code ne pourra plus être supprimé ensuite.
-3. Acceptez le rôle **Redirection d'appels**.
-4. Accordez les permissions demandées :
+3. Confirmez la protection **anti-désinstallation** (Device Admin) : l'écran système s'ouvre
+   automatiquement à cette étape, et l'app ne continue pas tant qu'elle n'est pas active.
+4. Acceptez le rôle **Redirection d'appels**.
+5. Accordez les permissions demandées :
    - **Notifications** (Android 13+) — pour l'alerte de blocage ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
-   - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
-5. Activez si vous le souhaitez la protection **anti-désinstallation** (Device Admin), dans
-   l'onglet **Sécurité**.
+   - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé ;
+   - **Passer et gérer des appels téléphoniques** — pour raccrocher à 3 minutes.
 6. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---

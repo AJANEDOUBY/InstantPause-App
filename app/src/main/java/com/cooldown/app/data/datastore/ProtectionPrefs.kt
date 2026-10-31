@@ -69,6 +69,22 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit { it[HELP_BANNER_DISMISSED] = value }
     }
 
+    // === Protection anti-désinstallation franchie à l'installation ===
+    //
+    // L'administrateur d'appareil ne peut pas être activé sans confirmation système :
+    // on mémorise donc que l'étape a bien été franchie (admin actif au moins une fois).
+    // Sans ce drapeau, un utilisateur déjà installé (rôle Telecom obtenu avant la 1.3.3)
+    // échapperait à l'étape obligatoire.
+    val uninstallGuardDone: Flow<Boolean> =
+        data.map { it[UNINSTALL_GUARD_DONE] ?: false }.distinctUntilChanged()
+
+    suspend fun isUninstallGuardDone(): Boolean =
+        data.first()[UNINSTALL_GUARD_DONE] ?: false
+
+    suspend fun setUninstallGuardDone(value: Boolean) {
+        dataStore.edit { it[UNINSTALL_GUARD_DONE] = value }
+    }
+
     // === Verrou de configuration (code alphanumérique) ===
     //
     // Seul le couple sel + empreinte PBKDF2 est stocké : le code lui-même
@@ -116,6 +132,7 @@ class ProtectionPrefs @Inject constructor(
         val EMERGENCY_UNTIL = longPreferencesKey("emergency_until_wall_ms")
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
         val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
+        val UNINSTALL_GUARD_DONE = booleanPreferencesKey("uninstall_guard_done")
         val PASSPHRASE_SALT = stringPreferencesKey("passphrase_salt")
         val PASSPHRASE_HASH = stringPreferencesKey("passphrase_hash")
         val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")
