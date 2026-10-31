@@ -9,10 +9,19 @@ Pour cela, Instant Pause demande une permission supplémentaire : **« passer et
 appels téléphoniques »** (`ANSWER_PHONE_CALLS`). C'est la seule qui autorise une application
 tiers à couper une ligne — sans elle, Android l'interdit.
 
-- Accordée : à 0:00, la ligne est coupée, la notification affiche « Appel coupé ».
+- Accordée : à 0:00, la ligne est coupée, la notification affiche « Temps écoulé — appel coupé ».
 - Refusée : rien de cassé, le minuteur redevient un rappel (« Temps écoulé — raccrochez »).
   Un bandeau violet en haut de l'écran propose de l'accorder, et la question est reposée à
   chaque lancement de l'app.
+
+## La pastille annonce « Temps restant »
+
+Le décompte n'affichait qu'un « 0:58 / 3:00 » : un chiffre qui tourne sans dire ce qu'il
+mesure ne retient pas l'attention. La pastille affiche maintenant **« Temps restant »**
+au-dessus du chronomètre, et la notification reprend la mention en clair
+(« Temps restant : 2:59 / 3:00 »).
+
+Les chiffres restent latins même sur un téléphone configuré en arabe ou en hindi.
 
 ## Le décompte part de la connexion
 

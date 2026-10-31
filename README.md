@@ -73,8 +73,9 @@ toujours, même en pleine plage de protection.
   action qui modifie la protection.
 - La comparaison se fait en **E.164**, donc `06 12 34 56 78`, `+33 6 12 34 56 78` et
   `0033612345678` sont reconnus comme le même numéro (via `libphonenumber`).
-- Un appel autorisé est **limité à 3 minutes de conversation** : une pastille flottante et
-  une notification affichent le temps restant, avec vibration à 0:30 puis à 0:00.
+- Un appel autorisé est **limité à 3 minutes de conversation** : une pastille flottante
+  affiche « Temps restant » et le chronomètre (`2:59 / 3:00`), la notification reprend la
+  mention, et une vibration signale 0:30 puis 0:00.
   Le décompte part de la **connexion** (la sonnerie ne mange pas le temps de parole) et, à
   0:00, l'appel est **raccroché automatiquement** grâce à la permission `ANSWER_PHONE_CALLS`.
   Si cette permission est refusée, la pastille affiche « raccrochez » et l'appel continue :

@@ -59,7 +59,7 @@ class CallTimerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startInForeground(format(LIMIT_SECONDS))
+        startInForeground(CallTimerText.notificationLine(LIMIT_SECONDS, LIMIT_SECONDS))
 
         deadline = SystemClock.elapsedRealtime() + LIMIT_SECONDS * 1_000L
         warned = false
@@ -70,7 +70,10 @@ class CallTimerService : Service() {
         countdownStartedOnConnect = false
 
         overlay?.show()
-        overlay?.updateText("${format(LIMIT_SECONDS)} / ${format(LIMIT_SECONDS)}")
+        overlay?.updateText(
+            CallTimerText.countdown(LIMIT_SECONDS, LIMIT_SECONDS),
+            prefix = CallTimerText.PREFIX
+        )
 
         handler.removeCallbacks(tick)
         handler.post(tick)
@@ -103,7 +106,10 @@ class CallTimerService : Service() {
             val leftSec = ((leftMs + 999) / 1000).coerceAtLeast(0L).toInt()
 
             if (leftSec > 0) {
-                overlay?.updateText("${format(leftSec)} / ${format(LIMIT_SECONDS)}")
+                overlay?.updateText(
+                    CallTimerText.countdown(leftSec, LIMIT_SECONDS),
+                    prefix = CallTimerText.PREFIX
+                )
 
                 if (leftSec <= WARN_SECONDS && !warned) {
                     warned = true
@@ -114,7 +120,7 @@ class CallTimerService : Service() {
                 // Rafraîchit la notification sans spammer : une fois par tranche de 30 s.
                 if (leftSec % 30 == 0 && leftSec != lastNotifiedSecond) {
                     lastNotifiedSecond = leftSec
-                    updateNotification(format(leftSec))
+                    updateNotification(CallTimerText.notificationLine(leftSec, LIMIT_SECONDS))
                 }
 
                 handler.postDelayed(this, 500L)
@@ -127,7 +133,7 @@ class CallTimerService : Service() {
                         Log.i(TAG, "Temps écoulé — appel coupé")
                         overlay?.updateText("Temps écoulé — appel coupé")
                         overlay?.updateWarning(true)
-                        updateNotification("Appel coupé")
+                        updateNotification("Temps écoulé — appel coupé")
                     } else {
                         // Permission absente ou constructeur récalcitrant : on ne peut
                         // que prévenir. L'utilisateur raccroche lui-même.
@@ -194,11 +200,11 @@ class CallTimerService : Service() {
         return idleTicks >= IDLE_TICKS_TO_STOP
     }
 
-    private fun startInForeground(remaining: String) {
+    private fun startInForeground(content: String) {
         ServiceCompat.startForeground(
             this,
             NOTIF_ID,
-            buildNotification(remaining),
+            buildNotification(content),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
             } else {
@@ -207,11 +213,11 @@ class CallTimerService : Service() {
         )
     }
 
-    private fun buildNotification(remaining: String): Notification {
+    private fun buildNotification(content: String): Notification {
         ensureChannel()
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Appel autorisé")
-            .setContentText("Temps restant : $remaining")
+            .setContentText(content)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOnlyAlertOnce(true)
@@ -220,10 +226,10 @@ class CallTimerService : Service() {
             .build()
     }
 
-    private fun updateNotification(remaining: String) {
+    private fun updateNotification(content: String) {
         runCatching {
             getSystemService(NotificationManager::class.java)
-                ?.notify(NOTIF_ID, buildNotification(remaining))
+                ?.notify(NOTIF_ID, buildNotification(content))
         }
     }
 
@@ -269,9 +275,6 @@ class CallTimerService : Service() {
             }
         }
     }
-
-    private fun format(totalSeconds: Int): String =
-        "%d:%02d".format(totalSeconds / 60, totalSeconds % 60)
 
     companion object {
         private const val TAG = "CallTimerService"

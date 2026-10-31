@@ -6,6 +6,11 @@ import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
@@ -58,8 +63,32 @@ class CallTimerOverlay(private val context: Context) {
             .onFailure { Log.w(TAG, "Pastille impossible à afficher", it) }
     }
 
-    fun updateText(value: String) {
-        view?.text = value
+    /**
+     * Met à jour le texte de la pastille.
+     *
+     * Avec un [prefix], il est affiché en petite taille au-dessus du décompte : un
+     * chronomètre seul ne dit pas à quoi il correspond, et passe donc inaperçu.
+     */
+    fun updateText(value: String, prefix: String? = null) {
+        val current = view ?: return
+        current.text = if (prefix.isNullOrEmpty()) {
+            value
+        } else {
+            SpannableString("$prefix\n$value").apply {
+                setSpan(
+                    RelativeSizeSpan(PREFIX_SCALE),
+                    0,
+                    prefix.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                setSpan(
+                    ForegroundColorSpan(PREFIX_COLOR),
+                    0,
+                    prefix.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+        }
     }
 
     fun updateWarning(warning: Boolean) {
@@ -95,5 +124,9 @@ class CallTimerOverlay(private val context: Context) {
         const val TAG = "CallTimerOverlay"
         const val NORMAL_BACKGROUND = 0xCC1B1B1F.toInt()
         const val WARNING_BACKGROUND = 0xDDD97706.toInt()
+
+        /** Le libellé reste lisible mais laisse la vedette au décompte. */
+        const val PREFIX_SCALE = 0.62f
+        const val PREFIX_COLOR = 0xCCFFFFFF.toInt()
     }
 }
