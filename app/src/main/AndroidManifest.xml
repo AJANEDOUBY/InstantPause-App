@@ -6,6 +6,13 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!--
+        Écran de pause en plein écran quand un appel est bloqué. Sur Android 14+, cette
+        permission n'est accordée d'office qu'aux apps dont le cœur de métier est l'alarme
+        ou les appels ; les autres doivent obtenir le consentement de l'utilisateur.
+        L'app vérifie donc NotificationManager.canUseFullScreenIntent() au démarrage et
+        ouvre les réglages dédiés si nécessaire (MainActivity).
+    -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <!-- Redémarrage du téléphone -->
@@ -18,13 +25,20 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- Foreground Services (Android 14+) -->
+    <!--
+        Type `specialUse` pour les trois services (pause, minuteur, veille) : aucun des
+        types standard ne couvre le blocage d'appel par une app tierce. Le sous-type est
+        justifié dans le manifeste via PROPERTY_SPECIAL_USE_FGS_SUBTYPE ; Play Console
+        demande en plus une justification écrite (formulaire) si l'app y est publiée.
+    -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <!--
         Raccrochage automatique à la fin des 3 minutes d'un appel autorisé.
         ANSWER_PHONE_CALLS est la seule permission qui ouvre TelecomManager.endCall()
-        à une application tierce. Refusée, le minuteur reste un simple rappel.
+        à une application tierce. Elle est OBLIGATOIRE : demandée pendant l'installation,
+        l'app ne s'ouvre pas sans elle (sinon la limite n'est qu'un rappel visuel).
     -->
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
@@ -32,6 +46,7 @@
         android:name=".CoolDownApplication"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
