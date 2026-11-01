@@ -33,6 +33,10 @@ class MainViewModel @Inject constructor(
     private val _uninstallGuardDone = MutableStateFlow<Boolean?>(null)
     val uninstallGuardDone: StateFlow<Boolean?> = _uninstallGuardDone.asStateFlow()
 
+    /** `null` tant que la valeur n'est pas chargée : l'onboarding ne doit pas clignoter. */
+    private val _fullScreenIntentDone = MutableStateFlow<Boolean?>(null)
+    val fullScreenIntentDone: StateFlow<Boolean?> = _fullScreenIntentDone.asStateFlow()
+
     init {
         // Charge l'état initial du bandeau d'aide (visible si pas encore fermé)
         viewModelScope.launch {
@@ -40,6 +44,9 @@ class MainViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _uninstallGuardDone.value = prefs.isUninstallGuardDone()
+        }
+        viewModelScope.launch {
+            _fullScreenIntentDone.value = prefs.isFullScreenIntentDone()
         }
     }
 
@@ -55,6 +62,20 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.setUninstallGuardDone(true)
             _uninstallGuardDone.value = true
+        }
+    }
+
+    /**
+     * Mémorise que l'étape « pause en plein écran » a été vue.
+     *
+     * Appelée quand la permission est accordée, ou quand l'utilisateur choisit de
+     * continuer sans : dans les deux cas, l'étape ne revient plus au lancement.
+     */
+    fun markFullScreenIntentDone() {
+        if (_fullScreenIntentDone.value == true) return
+        viewModelScope.launch {
+            prefs.setFullScreenIntentDone(true)
+            _fullScreenIntentDone.value = true
         }
     }
 

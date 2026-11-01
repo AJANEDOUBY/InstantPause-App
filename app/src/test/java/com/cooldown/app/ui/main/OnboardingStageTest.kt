@@ -17,9 +17,18 @@ class OnboardingStageTest {
         roleHeld: Boolean = false,
         adminActive: Boolean = false,
         guardAcknowledged: Boolean? = false,
-        canHangUp: Boolean = true
+        canHangUp: Boolean = true,
+        canUseFullScreenIntent: Boolean = true,
+        fullScreenAcknowledged: Boolean? = false
     ) = onboardingStage(
-        loading, hasCode, roleHeld, adminActive, guardAcknowledged, canHangUp
+        loading,
+        hasCode,
+        roleHeld,
+        adminActive,
+        guardAcknowledged,
+        canHangUp,
+        canUseFullScreenIntent,
+        fullScreenAcknowledged
     )
 
     @Test
@@ -121,5 +130,68 @@ class OnboardingStageTest {
             OnboardingStage.MAIN,
             stage(roleHeld = true, adminActive = true, guardAcknowledged = true, canHangUp = true)
         )
+    }
+
+    // === Plein écran : proposé une fois, non bloquant ===
+
+    @Test
+    fun `plein ecran refuse et jamais vu, l'etape est proposee`() {
+        assertEquals(
+            OnboardingStage.FULL_SCREEN_INTENT,
+            stage(
+                roleHeld = true,
+                adminActive = true,
+                guardAcknowledged = true,
+                canUseFullScreenIntent = false,
+                fullScreenAcknowledged = false
+            )
+        )
+    }
+
+    @Test
+    fun `plein ecran refuse mais deja vu, on n'insiste plus`() {
+        assertEquals(
+            OnboardingStage.MAIN,
+            stage(
+                roleHeld = true,
+                adminActive = true,
+                guardAcknowledged = true,
+                canUseFullScreenIntent = false,
+                fullScreenAcknowledged = true
+            )
+        )
+    }
+
+    @Test
+    fun `plein ecran accorde, l'etape est inutile`() {
+        assertEquals(
+            OnboardingStage.MAIN,
+            stage(
+                roleHeld = true,
+                adminActive = true,
+                guardAcknowledged = true,
+                canUseFullScreenIntent = true,
+                fullScreenAcknowledged = false
+            )
+        )
+    }
+
+    @Test
+    fun `le plein ecran vient apres le role Telecom`() {
+        assertEquals(
+            OnboardingStage.ACTIVATE_ROLE,
+            stage(
+                roleHeld = false,
+                adminActive = true,
+                guardAcknowledged = true,
+                canUseFullScreenIntent = false,
+                fullScreenAcknowledged = false
+            )
+        )
+    }
+
+    @Test
+    fun `ecran de chargement tant que la preference plein ecran est inconnue`() {
+        assertEquals(OnboardingStage.LOADING, stage(fullScreenAcknowledged = null))
     }
 }

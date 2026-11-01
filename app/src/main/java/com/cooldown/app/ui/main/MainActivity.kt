@@ -37,6 +37,7 @@ import com.cooldown.app.system.CoolDownWatchdogService
 import com.cooldown.app.system.WatchdogAlarmReceiver
 import com.cooldown.app.ui.logs.LogsScreen
 import com.cooldown.app.ui.schedule.ScheduleScreen
+import com.cooldown.app.ui.security.FullScreenIntentScreen
 import com.cooldown.app.ui.security.HangupPermissionScreen
 import com.cooldown.app.ui.security.SecurityScreen
 import com.cooldown.app.ui.security.SecurityViewModel
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
     private var canHangUp by mutableStateOf(false)
     private var adminActive by mutableStateOf(false)
     private var hangupAsked by mutableStateOf(false)
+    private var fullScreenIntentAllowed by mutableStateOf(true)
 
     private val adminComponent by lazy {
         ComponentName(this, CoolDownDeviceAdminReceiver::class.java)
@@ -105,6 +107,7 @@ class MainActivity : ComponentActivity() {
         WatchdogAlarmReceiver.startAlarm(this)
         batteryOptimized = isBatteryOptimized()
         refreshAdmin()
+        refreshFullScreenIntent()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -117,24 +120,14 @@ class MainActivity : ComponentActivity() {
         // d'installation dédiée (HangupPermissionScreen) — sinon le dialogue surgirait
         // par-dessus l'écran de création du code.
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            val nm = getSystemService(NotificationManager::class.java)
-            if (nm != null && !nm.canUseFullScreenIntent()) {
-                runCatching {
-                    startActivity(
-                        Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT)
-                            .setData(Uri.parse("package:$packageName"))
-                    )
-                }
-            }
-        }
-
         setContent {
             CoolDownTheme {
                 val roleHeld by viewModel.roleHeld.collectAsStateWithLifecycle()
                 val securityViewModel: SecurityViewModel = hiltViewModel()
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
                 val guardAcknowledged by viewModel.uninstallGuardDone.collectAsStateWithLifecycle()
+                val fullScreenAcknowledged by
+                    viewModel.fullScreenIntentDone.collectAsStateWithLifecycle()
 
                 when (onboardingStage(
                     loading = lockState.status == AppLockManager.Status.LOADING,
@@ -142,7 +135,9 @@ class MainActivity : ComponentActivity() {
                     roleHeld = roleHeld,
                     adminActive = adminActive,
                     guardAcknowledged = guardAcknowledged,
-                    canHangUp = canHangUp
+                    canHangUp = canHangUp,
+                    canUseFullScreenIntent = fullScreenIntentAllowed,
+                    fullScreenAcknowledged = fullScreenAcknowledged
                 )) {
                     // Chargement du verrou : ne pas afficher l'onboarding par erreur.
                     OnboardingStage.LOADING -> LoadingScreen()
@@ -173,6 +168,13 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
+                    // Plein écran : proposé une fois, non bloquant. Refusé, la pause
+                    // reste accessible par la notification.
+                    OnboardingStage.FULL_SCREEN_INTENT -> FullScreenIntentScreen(
+                        onAllow = { openFullScreenIntentSettings() },
+                        onSkip = { viewModel.markFullScreenIntentDone() }
+                    )
+
                     OnboardingStage.MAIN -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
@@ -199,6 +201,32 @@ class MainActivity : ComponentActivity() {
         canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
                 PackageManager.PERMISSION_GRANTED
         refreshAdmin()
+        refreshFullScreenIntent()
+    }
+
+    /**
+     * Android 14+ restreint `USE_FULL_SCREEN_INTENT` : l'accord ne se lit que via
+     * `NotificationManager.canUseFullScreenIntent()`. Avant Android 14, la permission
+     * est normale et donc acquise à l'installation.
+     */
+    private fun refreshFullScreenIntent() {
+        val allowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE ||
+                getSystemService(NotificationManager::class.java)?.canUseFullScreenIntent() == true
+        fullScreenIntentAllowed = allowed
+        // Accordée (ou inutile car ancien Android) : l'étape ne doit plus se présenter.
+        if (allowed) viewModel.markFullScreenIntentDone()
+    }
+
+    private fun openFullScreenIntentSettings() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) return
+        runCatching {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                    Uri.parse("package:$packageName")
+                )
+            )
+        }.onFailure { openAppSettings() }
     }
 
     private fun refreshAdmin() {

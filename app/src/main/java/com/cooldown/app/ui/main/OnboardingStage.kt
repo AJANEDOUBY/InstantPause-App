@@ -13,6 +13,7 @@ internal enum class OnboardingStage {
     PROTECT_UNINSTALL,
     HANGUP_PERMISSION,
     ACTIVATE_ROLE,
+    FULL_SCREEN_INTENT,
     MAIN
 }
 
@@ -23,6 +24,10 @@ internal enum class OnboardingStage {
  * @param guardAcknowledged l'étape anti-désinstallation a déjà été franchie un jour
  *   (`null` tant que la préférence n'est pas chargée)
  * @param canHangUp l'app peut couper un appel (`ANSWER_PHONE_CALLS` accordée)
+ * @param canUseFullScreenIntent l'écran de pause peut s'afficher par-dessus le
+ *   verrouillage (toujours vrai avant Android 14)
+ * @param fullScreenAcknowledged l'étape « plein écran » a déjà été vue (`null` tant que
+ *   la préférence n'est pas chargée)
  *
  * Les deux étapes de protection sont **volontairement** placées avant le rôle : elles
  * doivent être franchie à l'installation, pas découvertes plus tard dans un onglet.
@@ -34,6 +39,10 @@ internal enum class OnboardingStage {
  * Le raccrochage, lui, est vérifié **en permanence** : sans `ANSWER_PHONE_CALLS`, les
  * 3 minutes ne sont pas garanties, donc l'app ne s'ouvre pas. Retirer la permission
  * depuis les réglages Android ramène ici au lancement suivant — c'est voulu.
+ *
+ * Le plein écran, enfin, est proposé **une seule fois** : refusé puis acquitté, il ne
+ * revient plus (la pause reste accessible par la notification). Sans ce drapeau,
+ * l'écran de réglages s'ouvrirait à chaque lancement — plus intrusif que le problème.
  */
 internal fun onboardingStage(
     loading: Boolean,
@@ -41,12 +50,16 @@ internal fun onboardingStage(
     roleHeld: Boolean,
     adminActive: Boolean,
     guardAcknowledged: Boolean?,
-    canHangUp: Boolean
+    canHangUp: Boolean,
+    canUseFullScreenIntent: Boolean,
+    fullScreenAcknowledged: Boolean?
 ): OnboardingStage = when {
-    loading || guardAcknowledged == null -> OnboardingStage.LOADING
+    loading || guardAcknowledged == null || fullScreenAcknowledged == null ->
+        OnboardingStage.LOADING
     !hasCode -> OnboardingStage.SETUP_CODE
     !adminActive && (!roleHeld || !guardAcknowledged) -> OnboardingStage.PROTECT_UNINSTALL
     !canHangUp -> OnboardingStage.HANGUP_PERMISSION
     !roleHeld -> OnboardingStage.ACTIVATE_ROLE
+    !canUseFullScreenIntent && !fullScreenAcknowledged -> OnboardingStage.FULL_SCREEN_INTENT
     else -> OnboardingStage.MAIN
 }

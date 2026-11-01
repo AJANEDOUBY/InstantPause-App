@@ -85,6 +85,22 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit { it[UNINSTALL_GUARD_DONE] = value }
     }
 
+    // === Écran de pause en plein écran (Android 14+) ===
+    //
+    // Sur Android 14+, USE_FULL_SCREEN_INTENT n'est plus accordée d'office. L'étape
+    // d'installation propose de l'accorder une fois ; si l'utilisateur refuse, on ne
+    // le relance plus à chaque ouverture (drapeau), la pause restant accessible par
+    // la notification.
+    val fullScreenIntentDone: Flow<Boolean> =
+        data.map { it[FULL_SCREEN_INTENT_DONE] ?: false }.distinctUntilChanged()
+
+    suspend fun isFullScreenIntentDone(): Boolean =
+        data.first()[FULL_SCREEN_INTENT_DONE] ?: false
+
+    suspend fun setFullScreenIntentDone(value: Boolean) {
+        dataStore.edit { it[FULL_SCREEN_INTENT_DONE] = value }
+    }
+
     // === Verrou de configuration (code alphanumérique) ===
     //
     // Seul le couple sel + empreinte PBKDF2 est stocké : le code lui-même
@@ -133,6 +149,7 @@ class ProtectionPrefs @Inject constructor(
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
         val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
         val UNINSTALL_GUARD_DONE = booleanPreferencesKey("uninstall_guard_done")
+        val FULL_SCREEN_INTENT_DONE = booleanPreferencesKey("fullscreen_intent_done")
         val PASSPHRASE_SALT = stringPreferencesKey("passphrase_salt")
         val PASSPHRASE_HASH = stringPreferencesKey("passphrase_hash")
         val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")

@@ -323,11 +323,13 @@ sha256sum InstantPause-1.2.2.apk
    l'appel à 3 minutes. Cette étape est obligatoire — sans elle, un contact autorisé
    pourrait vous garder une heure au téléphone.
 5. Acceptez le rôle **Redirection d'appels**.
-6. Accordez les permissions demandées :
+6. Autorisez l'**affichage plein écran** (Android 14+) : le réglage Android s'ouvre
+   automatiquement. Cette étape est proposée **une seule fois** et n'est pas bloquante —
+   sans elle, l'écran de pause s'affiche comme une simple notification à toucher.
+7. Accordez les permissions restantes :
    - **Notifications** (Android 13+) — pour l'alerte de blocage ;
-   - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
-   - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
-7. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+   - **Affichage par-dessus les autres apps** — pour l'écran de pause.
+8. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---
 
@@ -415,7 +417,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `POST_NOTIFICATIONS` | Alerte unique de blocage |
 | `VIBRATE` | Retour haptique de l'écran de pause |
 | `SYSTEM_ALERT_WINDOW` | Affichage de l'écran de pause au-dessus du dialer |
-| `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé |
+| `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé — proposé une fois à l'installation sur Android 14+ (non bloquant) |
 | `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
