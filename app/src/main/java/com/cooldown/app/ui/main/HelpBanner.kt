@@ -3,7 +3,6 @@ package com.cooldown.app.ui.main
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
-import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -84,28 +83,6 @@ fun HelpBanner(
         actionLabel = "Autoriser",
         containerColor = Color(0xFF059669),
         icon = Icons.Default.Security,
-        onClick = onRequestPermission,
-        modifier = modifier
-    )
-}
-
-/**
- * Bandeau affiché quand l'app ne peut pas raccrocher elle-même à la fin du minuteur.
- *
- * Volontairement conditionné à l'existence d'un contact autorisé : sans cercle de
- * confiance, la permission ne sert à rien et le bandeau ne serait que du bruit.
- */
-@Composable
-fun HangupBanner(
-    modifier: Modifier = Modifier,
-    onRequestPermission: () -> Unit
-) {
-    CompactBanner(
-        title = "Raccrochage automatique",
-        message = "Sans cette autorisation, l'appel continue après les 3 minutes.",
-        actionLabel = "Autoriser",
-        containerColor = Color(0xFF7C3AED),
-        icon = Icons.Default.CallEnd,
         onClick = onRequestPermission,
         modifier = modifier
     )

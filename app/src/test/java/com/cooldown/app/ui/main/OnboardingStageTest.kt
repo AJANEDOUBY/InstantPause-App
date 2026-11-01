@@ -5,8 +5,9 @@ import org.junit.Test
 
 /**
  * L'ordre des étapes est la protection elle-même : si l'étape anti-désinstallation
- * peut être sautée, un utilisateur arrive dans l'app avec une désinstallation en
- * trois taps. Ces tests verrouillent cet ordre.
+ * ou celle du raccrochage peut être sautée, un utilisateur arrive dans l'app avec une
+ * désinstallation en trois taps et des appels qui durent une heure. Ces tests
+ * verrouillent cet ordre.
  */
 class OnboardingStageTest {
 
@@ -15,8 +16,11 @@ class OnboardingStageTest {
         hasCode: Boolean = true,
         roleHeld: Boolean = false,
         adminActive: Boolean = false,
-        guardAcknowledged: Boolean? = false
-    ) = onboardingStage(loading, hasCode, roleHeld, adminActive, guardAcknowledged)
+        guardAcknowledged: Boolean? = false,
+        canHangUp: Boolean = true
+    ) = onboardingStage(
+        loading, hasCode, roleHeld, adminActive, guardAcknowledged, canHangUp
+    )
 
     @Test
     fun `pas de code, pas d'app`() {
@@ -63,6 +67,59 @@ class OnboardingStageTest {
         assertEquals(
             OnboardingStage.MAIN,
             stage(roleHeld = true, adminActive = true, guardAcknowledged = true)
+        )
+    }
+
+    // === Raccrochage à 3 minutes : obligatoire, pas une option ===
+
+    @Test
+    fun `sans permission de raccrocher, l'app ne s'ouvre pas`() {
+        assertEquals(
+            OnboardingStage.HANGUP_PERMISSION,
+            stage(
+                roleHeld = true,
+                adminActive = true,
+                guardAcknowledged = true,
+                canHangUp = false
+            )
+        )
+    }
+
+    @Test
+    fun `le raccrochage vient avant le role Telecom`() {
+        assertEquals(
+            OnboardingStage.HANGUP_PERMISSION,
+            stage(
+                hasCode = true,
+                roleHeld = false,
+                adminActive = true,
+                guardAcknowledged = true,
+                canHangUp = false
+            )
+        )
+    }
+
+    @Test
+    fun `l'anti-desinstallation reste prioritaire sur le raccrochage`() {
+        assertEquals(
+            OnboardingStage.PROTECT_UNINSTALL,
+            stage(adminActive = false, guardAcknowledged = false, canHangUp = false)
+        )
+    }
+
+    @Test
+    fun `permission de raccrocher retiree apres coup, l'app redemande`() {
+        assertEquals(
+            OnboardingStage.HANGUP_PERMISSION,
+            stage(roleHeld = true, adminActive = true, guardAcknowledged = true, canHangUp = false)
+        )
+    }
+
+    @Test
+    fun `permission accordee, on entre dans l'app`() {
+        assertEquals(
+            OnboardingStage.MAIN,
+            stage(roleHeld = true, adminActive = true, guardAcknowledged = true, canHangUp = true)
         )
     }
 }

@@ -37,13 +37,13 @@ import com.cooldown.app.system.CoolDownWatchdogService
 import com.cooldown.app.system.WatchdogAlarmReceiver
 import com.cooldown.app.ui.logs.LogsScreen
 import com.cooldown.app.ui.schedule.ScheduleScreen
+import com.cooldown.app.ui.security.HangupPermissionScreen
 import com.cooldown.app.ui.security.SecurityScreen
 import com.cooldown.app.ui.security.SecurityViewModel
 import com.cooldown.app.ui.security.SetupScreen
 import com.cooldown.app.ui.security.UninstallGuardScreen
 import com.cooldown.app.ui.theme.CoolDownTheme
 import com.cooldown.app.ui.whitelist.WhitelistScreen
-import com.cooldown.app.ui.whitelist.WhitelistViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
     private var batteryOptimized by mutableStateOf(false)
     private var canHangUp by mutableStateOf(false)
     private var adminActive by mutableStateOf(false)
+    private var hangupAsked by mutableStateOf(false)
 
     private val adminComponent by lazy {
         ComponentName(this, CoolDownDeviceAdminReceiver::class.java)
@@ -83,7 +84,19 @@ class MainActivity : ComponentActivity() {
     /** Raccrocher un appel autorisé à la fin des 3 minutes (TelecomManager.endCall). */
     private val hangupPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { granted -> canHangUp = granted }
+    ) { granted ->
+        canHangUp = granted
+        hangupAsked = true
+    }
+
+    /**
+     * Android ne réaffiche plus la demande après deux refus : il faut passer par les
+     * réglages. On ne le propose qu'après une première demande, sinon l'écran
+     * afficherait « ouvrez les réglages » avant même d'avoir demandé.
+     */
+    private val hangupNeedsSettings: Boolean
+        get() = hangupAsked && !canHangUp &&
+                !shouldShowRequestPermissionRationale(Manifest.permission.ANSWER_PHONE_CALLS)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,13 +113,9 @@ class MainActivity : ComponentActivity() {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        // Raccrochage à 3:00 : permission dangereuse, demandée une fois au démarrage.
-        // Refusée, le minuteur redevient un simple rappel (bouton dans le bandeau).
-        if (checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) !=
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            hangupPermissionLauncher.launch(Manifest.permission.ANSWER_PHONE_CALLS)
-        }
+        // Raccrochage à 3:00 : la permission n'est plus demandée ici, mais dans l'étape
+        // d'installation dédiée (HangupPermissionScreen) — sinon le dialogue surgirait
+        // par-dessus l'écran de création du code.
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val nm = getSystemService(NotificationManager::class.java)
@@ -125,8 +134,6 @@ class MainActivity : ComponentActivity() {
                 val roleHeld by viewModel.roleHeld.collectAsStateWithLifecycle()
                 val securityViewModel: SecurityViewModel = hiltViewModel()
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
-                val whitelistViewModel: WhitelistViewModel = hiltViewModel()
-                val trustedContacts by whitelistViewModel.entries.collectAsStateWithLifecycle()
                 val guardAcknowledged by viewModel.uninstallGuardDone.collectAsStateWithLifecycle()
 
                 when (onboardingStage(
@@ -134,7 +141,8 @@ class MainActivity : ComponentActivity() {
                     hasCode = lockState.status != AppLockManager.Status.DISABLED,
                     roleHeld = roleHeld,
                     adminActive = adminActive,
-                    guardAcknowledged = guardAcknowledged
+                    guardAcknowledged = guardAcknowledged,
+                    canHangUp = canHangUp
                 )) {
                     // Chargement du verrou : ne pas afficher l'onboarding par erreur.
                     OnboardingStage.LOADING -> LoadingScreen()
@@ -145,6 +153,17 @@ class MainActivity : ComponentActivity() {
                     // Protection anti-désinstallation : obligatoire avant tout le reste.
                     OnboardingStage.PROTECT_UNINSTALL ->
                         UninstallGuardScreen(onActivate = { requestAdmin() })
+
+                    // Raccrochage à 3 minutes : obligatoire, ce n'est pas une option.
+                    OnboardingStage.HANGUP_PERMISSION -> HangupPermissionScreen(
+                        needsSettings = hangupNeedsSettings,
+                        onRequest = {
+                            hangupPermissionLauncher.launch(
+                                Manifest.permission.ANSWER_PHONE_CALLS
+                            )
+                        },
+                        onOpenSettings = { openAppSettings() }
+                    )
 
                     OnboardingStage.ACTIVATE_ROLE -> RoleActivationScreen(
                         onActivateClick = {
@@ -157,8 +176,6 @@ class MainActivity : ComponentActivity() {
                     OnboardingStage.MAIN -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
-                        canHangUp = canHangUp,
-                        hasTrustedContacts = trustedContacts.isNotEmpty(),
                         onRequestOverlayPermission = {
                             startActivity(
                                 Intent(
@@ -166,9 +183,6 @@ class MainActivity : ComponentActivity() {
                                     Uri.parse("package:$packageName")
                                 )
                             )
-                        },
-                        onRequestHangupPermission = {
-                            hangupPermissionLauncher.launch(Manifest.permission.ANSWER_PHONE_CALLS)
                         },
                         onRequestBatteryExemption = { requestBatteryExemption() }
                     )
@@ -219,6 +233,21 @@ class MainActivity : ComponentActivity() {
         return !pm.isIgnoringBatteryOptimizations(packageName)
     }
 
+    /**
+     * Réglages Android de l'app : seul recours quand une permission a été refusée
+     * définitivement (Android ne réaffiche plus la demande).
+     */
+    private fun openAppSettings() {
+        runCatching {
+            startActivity(
+                Intent(
+                    Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:$packageName")
+                )
+            )
+        }
+    }
+
     private fun requestBatteryExemption() {
         val direct = Intent(
             Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
@@ -244,10 +273,7 @@ private fun LoadingScreen() {
 private fun MainScreen(
     hasOverlayPermission: Boolean,
     batteryOptimized: Boolean,
-    canHangUp: Boolean,
-    hasTrustedContacts: Boolean,
     onRequestOverlayPermission: () -> Unit,
-    onRequestHangupPermission: () -> Unit,
     onRequestBatteryExemption: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -286,9 +312,6 @@ private fun MainScreen(
             // Les bandeaux poussent le contenu vers le bas : aucun recouvrement.
             if (!hasOverlayPermission) {
                 HelpBanner(onRequestPermission = onRequestOverlayPermission)
-            }
-            if (!canHangUp && hasTrustedContacts) {
-                HangupBanner(onRequestPermission = onRequestHangupPermission)
             }
             if (batteryOptimized) {
                 BatteryBanner(onRequestExemption = onRequestBatteryExemption)

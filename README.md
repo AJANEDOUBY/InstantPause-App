@@ -78,8 +78,8 @@ toujours, même en pleine plage de protection.
   mention, et une vibration signale 0:30 puis 0:00.
   Le décompte part de la **connexion** (la sonnerie ne mange pas le temps de parole) et, à
   0:00, l'appel est **raccroché automatiquement** grâce à la permission `ANSWER_PHONE_CALLS`.
-  Si cette permission est refusée, la pastille affiche « raccrochez » et l'appel continue :
-  le bandeau violet en haut de l'écran propose de l'accorder.
+  Cette permission est **obligatoire** : elle est demandée pendant l'installation et l'app
+  ne s'ouvre pas sans elle, sinon la limite de 3 minutes ne serait qu'un rappel visuel.
 
 ### 🌬️ Écran de pause
 Quand un appel est bloqué, un écran plein écran s'affiche (même verrouillé) :
@@ -319,13 +319,15 @@ sha256sum InstantPause-1.2.2.apk
    contourne pas, et le code ne pourra plus être supprimé ensuite.
 3. Confirmez la protection **anti-désinstallation** (Device Admin) : l'écran système s'ouvre
    automatiquement à cette étape, et l'app ne continue pas tant qu'elle n'est pas active.
-4. Acceptez le rôle **Redirection d'appels**.
-5. Accordez les permissions demandées :
+4. Accordez **Passer et gérer des appels téléphoniques** : c'est ce qui permet de couper
+   l'appel à 3 minutes. Cette étape est obligatoire — sans elle, un contact autorisé
+   pourrait vous garder une heure au téléphone.
+5. Acceptez le rôle **Redirection d'appels**.
+6. Accordez les permissions demandées :
    - **Notifications** (Android 13+) — pour l'alerte de blocage ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause ;
-   - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé ;
-   - **Passer et gérer des appels téléphoniques** — pour raccrocher à 3 minutes.
-6. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+   - **Plein écran** (Android 14+) — pour l'affichage écran verrouillé.
+7. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---
 
@@ -418,8 +420,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
-| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé (sinon simple rappel) |
-| `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée |
+| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
+| `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée, étape obligatoire à l'installation |
 
 ---
 
@@ -448,12 +450,12 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
   En attendant, le périmètre est assumé et affiché comme tel : **les appels d'applications ne
   sont pas bloqués**. Voir la [feuille de route](#feuille-de-route).
 - **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
-- **Raccrochage à 3:00 conditionné à une permission** : `TelecomManager.endCall()`, seule API
-  qui permette à une app tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`. Accordée,
-  l'appel est coupé net à la fin du minuteur ; refusée (ou refusée par un constructeur trop
-  restrictif), l'app se rabat sur « Temps écoulé — raccrochez » et l'utilisateur raccroche.
-  La pastille disparaît d'elle-même au raccrochage ; si l'appel n'a jamais abouti (occupé,
-  non décroché), elle peut rester jusqu'à l'échéance des 3 minutes.
+- **Raccrochage à 3:00 garanti par une permission obligatoire** : `TelecomManager.endCall()`,
+  seule API qui permette à une app tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`.
+  Cette permission fait partie de l'installation : sans elle, l'app ne s'ouvre pas (sinon la
+  limite ne serait qu'un rappel). Une fois accordée, l'appel est coupé net à la fin du
+  minuteur. La pastille disparaît d'elle-même au raccrochage ; si l'appel n'a jamais abouti
+  (occupé, non décroché), elle peut rester jusqu'à l'échéance des 3 minutes.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
 - **Verrou contournable** : le code protège les réglages de l'app, pas le système. Un
