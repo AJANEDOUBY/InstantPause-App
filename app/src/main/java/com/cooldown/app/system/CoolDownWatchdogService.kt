@@ -1,5 +1,6 @@
 package com.cooldown.app.system
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -27,18 +28,18 @@ class CoolDownWatchdogService : Service() {
         createChannel()
     }
 
+    // `FOREGROUND_SERVICE_TYPE_SPECIAL_USE` n'existe que depuis l'API 34, mais c'est une
+    // constante `static final int` : elle est recopiée à la compilation et ServiceCompat
+    // ignore le type sous Android 14. Rien à garder derrière un test de version.
+    @SuppressLint("InlinedApi")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = buildNotification()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ServiceCompat.startForeground(
-                this,
-                NOTIF_ID,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
-            )
-        } else {
-            startForeground(NOTIF_ID, notification)
-        }
+        ServiceCompat.startForeground(
+            this,
+            NOTIF_ID,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+        )
         return START_STICKY
     }
 
@@ -90,11 +91,7 @@ class CoolDownWatchdogService : Service() {
 
         fun start(context: Context) {
             val intent = Intent(context, CoolDownWatchdogService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
+            context.startForegroundService(intent)
         }
 
         fun stop(context: Context) {

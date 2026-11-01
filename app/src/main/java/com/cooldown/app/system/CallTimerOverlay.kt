@@ -5,8 +5,6 @@ import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
-import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -52,7 +50,7 @@ class CallTimerOverlay(private val context: Context) {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-            PixelFormat.TRANSLUCENT
+            PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
             y = dp(24)
@@ -109,13 +107,11 @@ class CallTimerOverlay(private val context: Context) {
         setColor(color)
     }
 
-    private fun overlayType(): Int =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
+    /**
+     * Superposition système. `TYPE_APPLICATION_OVERLAY` existe depuis Android 8 et le
+     * projet cible au minimum Android 10 : aucun repli sur `TYPE_PHONE` n'est utile.
+     */
+    private fun overlayType(): Int = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 
     private fun dp(value: Int): Int =
         (value * context.resources.displayMetrics.density).toInt()

@@ -163,14 +163,9 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
         if (currentPeak == Peak.NONE || currentPeak == lastPeak) return@LaunchedEffect
         lastPeak = currentPeak
         if (!vibrator.hasVibrator()) return@LaunchedEffect
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE)
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(35)
-        }
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE)
+        )
     }
 
     val scale = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * phase.value

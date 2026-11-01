@@ -101,12 +101,7 @@ class ProtectionAlertNotifier @Inject constructor(
         }
         vibrator?.let {
             if (it.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    it.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
-                    @Suppress("DEPRECATION")
-                    it.vibrate(500)
-                }
+                it.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
             }
         }
     }

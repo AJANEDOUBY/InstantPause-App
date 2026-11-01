@@ -61,7 +61,7 @@ class CallTimerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startInForeground(CallTimerText.notificationLine(LIMIT_SECONDS, LIMIT_SECONDS))
 
-        deadline = SystemClock.elapsedRealtime() + LIMIT_SECONDS * 1_000L
+        deadline = SystemClock.elapsedRealtime() + (LIMIT_SECONDS * 1_000L)
         warned = false
         expiredShown = false
         lastNotifiedSecond = -1
@@ -72,7 +72,7 @@ class CallTimerService : Service() {
         overlay?.show()
         overlay?.updateText(
             CallTimerText.countdown(LIMIT_SECONDS, LIMIT_SECONDS),
-            prefix = CallTimerText.PREFIX
+            prefix = CallTimerText.PREFIX,
         )
 
         handler.removeCallbacks(tick)
@@ -94,12 +94,15 @@ class CallTimerService : Service() {
             // **repousser** l'échéance, jamais l'avancer.
             if (callWasLive && !countdownStartedOnConnect) {
                 countdownStartedOnConnect = true
-                deadline = maxOf(deadline, SystemClock.elapsedRealtime() + LIMIT_SECONDS * 1_000L)
+                deadline = maxOf(
+                    deadline,
+                    SystemClock.elapsedRealtime() + (LIMIT_SECONDS * 1_000L)
+                )
                 // La sonnerie a pu consommer l'alerte des 30 s : on la ré-arme pour la
                 // vraie fin de conversation.
                 warned = false
                 lastNotifiedSecond = -1
-                overlay?.updateWarning(false)
+                overlay?.updateWarning(warning = false)
             }
 
             val leftMs = deadline - SystemClock.elapsedRealtime()
@@ -108,7 +111,7 @@ class CallTimerService : Service() {
             if (leftSec > 0) {
                 overlay?.updateText(
                     CallTimerText.countdown(leftSec, LIMIT_SECONDS),
-                    prefix = CallTimerText.PREFIX
+                    prefix = CallTimerText.PREFIX,
                 )
 
                 if (leftSec <= WARN_SECONDS && !warned) {
@@ -234,7 +237,6 @@ class CallTimerService : Service() {
     }
 
     private fun ensureChannel() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager = getSystemService(NotificationManager::class.java) ?: return
         if (manager.getNotificationChannel(CHANNEL_ID) != null) return
         manager.createNotificationChannel(
@@ -258,22 +260,15 @@ class CallTimerService : Service() {
 
     private fun vibrate(durationMs: Long) {
         val vibrator: Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            (getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+            (getSystemService(VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            getSystemService(VIBRATOR_SERVICE) as? Vibrator
         }
 
-        vibrator?.takeIf { it.hasVibrator() }?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                it.vibrate(
-                    VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                it.vibrate(durationMs)
-            }
-        }
+        vibrator?.takeIf { it.hasVibrator() }?.vibrate(
+            VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE)
+        )
     }
 
     companion object {

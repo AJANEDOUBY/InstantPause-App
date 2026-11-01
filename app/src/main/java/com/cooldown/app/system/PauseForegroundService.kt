@@ -1,5 +1,6 @@
 package com.cooldown.app.system
 
+import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.app.Service
@@ -29,6 +30,9 @@ class PauseForegroundService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    // Voir CoolDownWatchdogService : constante recopiée à la compilation, sans danger
+    // sur les Android antérieurs à 14 (ServiceCompat ignore le type).
+    @SuppressLint("InlinedApi")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val number = intent?.getStringExtra(EXTRA_NUMBER).orEmpty()
 
@@ -38,11 +42,7 @@ class PauseForegroundService : Service() {
             this,
             NOTIF_ID,
             notification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
-            } else {
-                0
-            }
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
         )
 
         // 2. Ouvrir PauseActivity via PendingIntent + mode BAL autorisé (Android 14+).
@@ -103,11 +103,7 @@ class PauseForegroundService : Service() {
         fun start(context: Context, number: String) {
             val intent = Intent(context, PauseForegroundService::class.java)
                 .putExtra(EXTRA_NUMBER, number)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
+            context.startForegroundService(intent)
         }
     }
 }

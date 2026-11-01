@@ -6,7 +6,6 @@ import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -29,6 +28,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cooldown.app.domain.security.AppLockManager
@@ -70,11 +70,11 @@ class MainActivity : ComponentActivity() {
      * c'est ce que fait [UninstallGuardScreen] pendant l'onboarding.
      */
     private val adminLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult(),
     ) { refreshAdmin() }
 
     private val roleRequestLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult(),
     ) {
         viewModel.refreshRole()
     }
@@ -110,8 +110,8 @@ class MainActivity : ComponentActivity() {
         refreshFullScreenIntent()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
-            PackageManager.PERMISSION_GRANTED
+            (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED)
         ) {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
                             startActivity(
                                 Intent(
                                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                    Uri.parse("package:$packageName")
+                                    "package:$packageName".toUri(),
                                 )
                             )
                         },
@@ -223,7 +223,7 @@ class MainActivity : ComponentActivity() {
             startActivity(
                 Intent(
                     Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
-                    Uri.parse("package:$packageName")
+                    "package:$packageName".toUri(),
                 )
             )
         }.onFailure { openAppSettings() }
@@ -270,7 +270,7 @@ class MainActivity : ComponentActivity() {
             startActivity(
                 Intent(
                     Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.parse("package:$packageName")
+                    "package:$packageName".toUri(),
                 )
             )
         }
@@ -279,7 +279,7 @@ class MainActivity : ComponentActivity() {
     private fun requestBatteryExemption() {
         val direct = Intent(
             Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-            Uri.parse("package:$packageName")
+            "package:$packageName".toUri(),
         )
         runCatching { startActivity(direct) }.onFailure {
             // Certains constructeurs désactivent cette action : on ouvre la liste générale.
