@@ -355,12 +355,15 @@ l'app créée dans la Play Console.
 | Cible | `targetSdk 37`, `minSdk 29` |
 | Signature | keystore de release ; Play App Signing gère ensuite la clé de distribution |
 | Collecte de données | **aucune** (voir [Confidentialité](#confidentialité)) |
+| Politique de confidentialité | **https://ajanedouby.github.io/instant-pause-privacy/** |
 
 Avant la première publication, la Play Console réclame :
 
-1. une **URL de politique de confidentialité** publique (le fichier
-   [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) doit être accessible en ligne, pas seulement dans
-   le dépôt) ;
+1. une **URL de politique de confidentialité** publique — c'est chose faite :
+   **https://ajanedouby.github.io/instant-pause-privacy/** (page GitHub Pages du dépôt public
+   [`instant-pause-privacy`](https://github.com/AJANEDOUBY/instant-pause-privacy), générée
+   depuis [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) et servie aussi en
+   [Markdown](https://ajanedouby.github.io/instant-pause-privacy/PRIVACY_POLICY.md)) ;
 2. le formulaire **Sécurité des données** — ici, tout est local : « aucune donnée collectée » ;
 3. la **justification des permissions sensibles**, à rédiger au moment de l'envoi :
    - `ANSWER_PHONE_CALLS` : couper à 3 minutes un appel vers un contact autorisé ;
@@ -548,7 +551,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 
 ## Confidentialité
 
-La politique complète est dans [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md).
+La politique complète est dans [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) et publiée en ligne sur
+**https://ajanedouby.github.io/instant-pause-privacy/**.
 
 - **Aucune connexion réseau.** L'app ne contient ni client HTTP ni SDK publicitaire.
 - **Aucun compte, aucun identifiant.**
