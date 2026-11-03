@@ -26,3 +26,6 @@ local.properties
 /keystore/
 *.jks
 *.keystore
+
+# Symboles de debogage natifs pour la Play Console
+*symboles-natifs.zip
