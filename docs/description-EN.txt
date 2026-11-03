@@ -1,0 +1,54 @@
+INSTANT PAUSE — GOOGLE PLAY STORE LISTING
+English (en-US)
+==================================================
+
+SHORT DESCRIPTION (80 characters max)
+--------------------------------------------------
+Block impulsive calls during your windows: think, then decide.
+
+
+FULL DESCRIPTION (4,000 characters max)
+--------------------------------------------------
+It's 11 p.m. You know perfectly well you shouldn't call. You call anyway.
+
+Instant Pause exists for that minute.
+
+During the time windows you set, every outgoing call is intercepted and replaced by a pause
+screen: breathe, calm down, then decide. Not a wall. Not a punishment. A few seconds between
+the impulse and the act.
+
+WHAT THE APP DOES
+• You choose time windows (for example 10 p.m. – 7 a.m., every day).
+• Any outgoing call during a window opens the pause screen instead of dialling.
+• A Zen mode can block calls on demand, for 2 hours.
+• Three trusted contacts can always be reached: their call is automatically cut at 3 minutes.
+
+WHAT MAKES IT DIFFERENT
+• The protection code is created cold, before anything else, and is never stored in clear text.
+• Cutting a window, removing an allowed contact or turning off uninstall protection requires
+  that code.
+• No account. No ads. No analytics. No server.
+• The app does not ask for permission to read your contacts: you pick one contact with
+  Android's own picker, and only that entry is stored.
+
+EMERGENCY NUMBERS ARE NEVER BLOCKED
+
+On error or doubt, the call goes through. Always. Better to let a call through than block an
+emergency.
+
+YOUR DATA STAYS WITH YOU
+
+No network connection, no cloud backup. Windows, contacts and settings live in the app's
+private storage, on your phone. The full policy is here:
+https://ajanedouby.github.io/instant-pause-privacy/
+
+SETUP IN 6 STEPS
+
+1. Choose your code.
+2. Turn on uninstall protection.
+3. Allow the 3-minute hang-up.
+4. Accept the call redirection role.
+5. Allow drawing over calls.
+6. Create a time window. That's it.
+
+A code fix, a doubt, a crash: write to janedouby@gmail.com.
