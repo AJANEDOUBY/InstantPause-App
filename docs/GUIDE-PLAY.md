@@ -193,6 +193,42 @@ avec un numéro neutre — **jamais** un vrai numéro d'urgence.
 L'examen des permissions peut prendre **plusieurs semaines**. C'est le point de friction du
 projet, pas le code.
 
+### L'avertissement « code natif sans symboles de débogage »
+
+La Console affiche, à l'import de l'AAB :
+
+> Cet App Bundle contient du code natif, et vous n'avez pas importé de symboles de débogage.
+
+Ce n'est **pas bloquant** : la release se publie quand même. Le projet ne compile aucun code
+natif ; les deux bibliothèques `.so` présentes viennent d'AndroidX :
+
+| Bibliothèque | Origine |
+|---|---|
+| `libandroidx.graphics.path.so` | Compose (`androidx.graphics:graphics-path`) |
+| `libdatastore_shared_counter.so` | DataStore (`androidx.datastore`) |
+
+Elles sont fournies déjà compilées par Google, sans fichiers de symboles DWARF : il n'y a rien à
+générer côté projet, et `ndk.debugSymbolLevel = 'FULL'` n'aurait aucun effet ici.
+
+Deux choix :
+
+1. **Ignorer l'avertissement.** Conséquence réelle : dans Android Vitals, les traces de plantage
+   qui traversent ces deux bibliothèques afficheront des adresses au lieu de noms de fonctions.
+   Rien à voir avec le code de l'application, qui reste désobscurci normalement.
+2. **Importer le zip préparé**, qui contient les `.so` extraits du bundle :
+
+   ```
+   InstantPause-1.4.0-symboles-natifs.zip
+   ```
+
+   Chemin dans la Console : **Tester et publier → Explorateur d'app bundle → sélectionner
+   l'artefact → onglet Téléchargements → section « Éléments » → flèche d'importation à côté de
+   « symboles de débogage »**. L'avertissement disparaît.
+
+Dans les deux cas, le **fichier de mappage Java n'est pas à fournir** : il est déjà dans le
+bundle (`BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map`, 30 Mo), et Play le
+récupère seul depuis AGP 4.1.
+
 ---
 
 ## Étape 6 — Le test fermé : 12 personnes, 14 jours (le vrai délai)
