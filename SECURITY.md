@@ -25,8 +25,8 @@ Le dépôt du code est privé et son plan GitHub ne permet pas les avis de sécu
 formulaire est donc ouvert sur le dépôt public `instant-pause-privacy`, seul point de contact
 anonyme. Le rapport y reste **privé** et visible de l'auteur uniquement jusqu'à publication.
 
-Si vous préférez l'e-mail, écrivez à l'adresse indiquée sur la fiche Google Play de
-l'application.
+Si vous préférez l'e-mail : **janedouby@gmail.com**. Les rapports y sont traités avec la même
+confidentialité, mais GitHub reste préférable pour le suivi et le crédit.
 
 ### Délais
 

@@ -13,9 +13,10 @@ l'application sait reste sur votre téléphone, dans son espace de stockage priv
 
 ## 1. Responsable du traitement
 
-L'éditeur de l'application est **AJANEDOUBY** (projet Instant Pause, anciennement CoolDown).
+L'éditeur de l'application est **JANEDOUBY** (projet Instant Pause, anciennement CoolDown).
 
-Contact : <https://github.com/AJANEDOUBY/instant-pause-privacy/issues>
+Contact : **janedouby@gmail.com** — ou, pour un signalement public,
+<https://github.com/AJANEDOUBY/instant-pause-privacy/issues>
 
 Aucune donnée n'étant transmise à l'éditeur, il n'existe pas de registre de traitement à
 consulter : l'application n'a aucun serveur.
@@ -123,5 +124,5 @@ permission, no account, no analytics, no ads and no third-party SDK. Your passph
 as a salted PBKDF2 hash), schedules, allow-listed contacts and a block log (purged after 90
 days) stay in the app's private storage on your device. All permissions are used only to
 intercept calls, show the pause screen, hang up after 3 minutes and keep the protection alive;
-each can be revoked in Android settings. Contact:
+each can be revoked in Android settings. Contact: **janedouby@gmail.com** —
 <https://github.com/AJANEDOUBY/instant-pause-privacy/issues>
