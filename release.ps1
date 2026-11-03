@@ -143,14 +143,11 @@ if (-not $SkipTests) {
 Write-Step "Assemblage de la release (R8)"
 Invoke-Checked (Join-Path $root 'gradlew.bat') @(':app:assembleRelease', '--offline', '--console=plain')
 
-$unsigned = Join-Path $root 'app/build/outputs/apk/release/app-release-unsigned.apk'
-if (-not (Test-Path $unsigned)) { Fail "APK non signee introuvable : $unsigned" }
+$agpSigned   = Join-Path $root 'app/build/outputs/apk/release/app-release.apk'
+$agpUnsigned = Join-Path $root 'app/build/outputs/apk/release/app-release-unsigned.apk'
 
 # ---------------------------------------------------------------- signature
 Write-Step "Signature"
-$aligned = Join-Path $env:TEMP "cooldown-aligned-$versionName.apk"
-Invoke-Checked $zipalign @('-p', '-f', '4', $unsigned, $aligned)
-Write-Ok "zipalign"
 
 if ($DryRun) {
     $outApk = Join-Path $env:TEMP $apkName
@@ -158,20 +155,34 @@ if ($DryRun) {
     $outApk = Join-Path $root $apkName
 }
 
-Invoke-Checked $apksigner @(
-    'sign',
-    '--ks', $ksFile,
-    '--ks-key-alias', 'cooldown',
-    '--ks-pass', "pass:$ksPassword",
-    '--key-pass', "pass:$ksPassword",
-    '--v1-signing-enabled', 'false',
-    '--v2-signing-enabled', 'true',
-    '--v3-signing-enabled', 'true',
-    '--v4-signing-enabled', 'false',
-    '--out', $outApk,
-    $aligned
-)
-Write-Ok "APK signee : $outApk"
+if (Test-Path $agpSigned) {
+    # `signingConfig` est déclaré dans build.gradle.kts : Gradle produit déjà un APK
+    # signé (et zipaligné). Le re-signer ici donnerait une double signature.
+    Copy-Item $agpSigned $outApk -Force
+    Write-Ok "APK signee par Gradle (signingConfig)"
+} else {
+    if (-not (Test-Path $agpUnsigned)) {
+        Fail "APK de release introuvable (ni signee ni non signee) dans app/build/outputs/apk/release"
+    }
+    $aligned = Join-Path $env:TEMP "instantpause-aligned-$versionName.apk"
+    Invoke-Checked $zipalign @('-p', '-f', '4', $agpUnsigned, $aligned)
+    Write-Ok "zipalign"
+
+    Invoke-Checked $apksigner @(
+        'sign',
+        '--ks', $ksFile,
+        '--ks-key-alias', 'cooldown',
+        '--ks-pass', "pass:$ksPassword",
+        '--key-pass', "pass:$ksPassword",
+        '--v1-signing-enabled', 'false',
+        '--v2-signing-enabled', 'true',
+        '--v3-signing-enabled', 'true',
+        '--v4-signing-enabled', 'false',
+        '--out', $outApk,
+        $aligned
+    )
+    Write-Ok "APK signee : $outApk"
+}
 
 $verify = & $apksigner verify --verbose $outApk 2>&1
 if ($LASTEXITCODE -ne 0) { Fail "Verification de signature en echec" }
