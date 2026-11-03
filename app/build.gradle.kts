@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,13 +24,52 @@ android {
     }
 
     // === CONFIGURATION DE LA SIGNATURE RELEASE ===
+    // Aucun secret ici : ce fichier est versionné. Les identifiants viennent de
+    // `local.properties` (non versionné, voir .gitignore) ou, à défaut, de variables
+    // d'environnement — utile pour une CI.
+    //
+    //   signing.storePassword=…
+    //   signing.keyPassword=…        (facultatif : même valeur que storePassword)
+    //   signing.keyAlias=cooldown    (facultatif)
+    //   signing.storeFile=keystore/cooldown-release.jks   (facultatif)
+    //
+    // Si rien n'est fourni ou si le keystore est absent, aucune signature de release n'est
+    // configurée : `assembleRelease` produit alors un APK non signé, que `release.ps1` signe
+    // lui-même. Le build ne casse pas sur une machine sans keystore.
+    val localProperties = Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) file.inputStream().use { load(it) }
+    }
+
+    fun signingValue(localKey: String, envKey: String): String? =
+        localProperties.getProperty(localKey)?.takeIf { it.isNotBlank() }
+            ?: System.getenv(envKey)?.takeIf { it.isNotBlank() }
+
+    val releaseStorePassword = signingValue("signing.storePassword", "SIGNING_STORE_PASSWORD")
+    val releaseKeyPassword = signingValue("signing.keyPassword", "SIGNING_KEY_PASSWORD")
+        ?: releaseStorePassword
+    val releaseKeyAlias = signingValue("signing.keyAlias", "SIGNING_KEY_ALIAS") ?: "cooldown"
+    val releaseStoreFile = rootProject.file(
+        signingValue("signing.storeFile", "SIGNING_STORE_FILE")
+            ?: "keystore/cooldown-release.jks"
+    )
+    val canSignRelease = releaseStorePassword != null && releaseStoreFile.exists()
+
+    if (!canSignRelease) {
+        logger.info(
+            "Signature release non configurée (keystore absent ou mot de passe manquant) : " +
+                "l'APK sera signé par release.ps1."
+        )
+    }
+
     signingConfigs {
-        create("release") {
-            // Chemin relatif vers le fichier JKS dans votre projet
-            storeFile = file("../keystore/cooldown-release.jks")
-            storePassword = "v5wpAmhWGQ9TF4nQJU5cKw3QLRh7"
-            keyAlias = "cooldown"
-            keyPassword = "v5wpAmhWGQ9TF4nQJU5cKw3QLRh7"
+        if (canSignRelease) {
+            create("release") {
+                storeFile = releaseStoreFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
         }
     }
 
@@ -41,8 +81,10 @@ android {
             versionNameSuffix = "-debug"
         }
         release {
-            // Associe la clé de signature release définie ci-dessus
-            signingConfig = signingConfigs.getByName("release")
+            // Associe la clé de signature release si les identifiants sont disponibles
+            if (canSignRelease) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             optimization {
                 enable = true

@@ -412,9 +412,9 @@ tag git et publication GitHub avec l'APK en asset.
 .\release.ps1 -Notes .\notes-1.4.0.md
 ```
 
-Si `signingConfig` est déclaré dans `app/build.gradle.kts`, Gradle produit directement un APK
-signé : le script le vérifie au lieu de le re-signer. Sinon, il le zipaligne et le signe
-lui-même avec le keystore.
+Si les identifiants de signature sont renseignés (voir ci-dessous), Gradle produit directement un
+APK signé : le script le vérifie au lieu de le re-signer. Sinon, il produit un APK non signé, que
+le script zipaligne et signe lui-même avec le keystore.
 
 Pour un dépôt sur Google Play, produire en plus le bundle :
 
@@ -423,10 +423,35 @@ Pour un dépôt sur Google Play, produire en plus le bundle :
 # → app/build/outputs/bundle/release/app-release.aab
 ```
 
+### Signature : aucun secret dans le dépôt
+
+`app/build.gradle.kts` ne contient **aucun** mot de passe : il est versionné. Les identifiants
+de signature sont lus dans `local.properties` (ignoré par git) ou, à défaut, dans des variables
+d'environnement — pratique pour une CI.
+
+```properties
+# local.properties — ne jamais committer (déjà dans .gitignore)
+signing.storeFile=keystore/cooldown-release.jks
+signing.storePassword=…
+signing.keyAlias=cooldown
+signing.keyPassword=…
+```
+
+Variables équivalentes : `SIGNING_STORE_FILE`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`,
+`SIGNING_KEY_PASSWORD`.
+
+Sans ces valeurs (ou sans keystore), le build **ne casse pas** : `assembleRelease` produit un
+APK non signé, et `release.ps1` le signe avec `keystore/cooldown-release.jks`.
+
+> ⚠️ Le mot de passe a figuré en clair dans `app/build.gradle.kts` jusqu'au commit `2fe34c4`.
+> Le retirer du fichier **ne l'efface pas** de l'historique git. Si le dépôt devient public,
+> réécrivez l'historique (`git filter-repo`) ou, plus simple et plus sûr, changez le mot de
+> passe du keystore et enregistrez la nouvelle clé comme *clé d'upload* dans la Play Console.
+
 Prérequis :
 
-- un **keystore** dans `keystore/cooldown-release.jks` + `keystore/KEYSTORE-INFO.txt`
-  (voir `.gitignore` : ces fichiers ne doivent **jamais** être committés) ;
+- un **keystore** dans `keystore/cooldown-release.jks` (voir `.gitignore` : ce fichier ne doit
+  **jamais** être committé) ;
 - un **token GitHub** dans `$env:GITHUB_TOKEN`, ou des identifiants enregistrés
   auprès du gestionnaire d'identifiants git (`git credential approve`).
 

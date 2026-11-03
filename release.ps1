@@ -92,18 +92,30 @@ if (-not $Tag) { $Tag = "v$versionName" }
 $ksDir    = Join-Path $root 'keystore'
 $ksFile   = Join-Path $ksDir 'cooldown-release.jks'
 $ksInfo   = Join-Path $ksDir 'KEYSTORE-INFO.txt'
+$localProps = Join-Path $root 'local.properties'
 $apkName  = "InstantPause-$versionName.apk"
 
 Write-Host ""
 Write-Host "Instant Pause $versionName (versionCode $versionCode)  ->  tag $Tag" -ForegroundColor White
 
-if (-not (Test-Path $ksFile) -or -not (Test-Path $ksInfo)) {
-    Fail "Keystore manquant : $ksFile / $ksInfo. Voir README (section Signature)."
+if (-not (Test-Path $ksFile)) {
+    Fail "Keystore manquant : $ksFile. Voir README (section Signature)."
 }
 
-$ksPassword = (Get-Content $ksInfo | Where-Object { $_ -like 'Store/key:*' } | Select-Object -First 1)
-if (-not $ksPassword) { Fail "Mot de passe introuvable dans KEYSTORE-INFO.txt" }
-$ksPassword = $ksPassword.Substring(10).Trim()
+# Mot de passe : `local.properties` fait foi (c'est aussi ce que lit build.gradle.kts),
+# `KEYSTORE-INFO.txt` sert de repli pour les installations antérieures.
+$ksPassword = $null
+if (Test-Path $localProps) {
+    $ksPassword = (Get-Content $localProps | Where-Object { $_ -like 'signing.storePassword=*' } | Select-Object -First 1)
+    if ($ksPassword) { $ksPassword = $ksPassword.Substring('signing.storePassword='.Length).Trim() }
+}
+if (-not $ksPassword -and (Test-Path $ksInfo)) {
+    $ksPassword = (Get-Content $ksInfo | Where-Object { $_ -like 'Store/key:*' } | Select-Object -First 1)
+    if ($ksPassword) { $ksPassword = $ksPassword.Substring(10).Trim() }
+}
+if (-not $ksPassword) {
+    Fail "Mot de passe introuvable : renseignez signing.storePassword dans local.properties."
+}
 
 $sdk = if ($env:ANDROID_HOME) { $env:ANDROID_HOME }
        elseif ($env:ANDROID_SDK_ROOT) { $env:ANDROID_SDK_ROOT }
