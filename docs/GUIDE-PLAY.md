@@ -1,6 +1,8 @@
 # Publier Instant Pause sur Google Play — pas à pas
 
-Guide écrit pour être suivi sans rien connaître à la Play Console. Chaque étape dit **où
+> Tous les textes à copier sont aussi rassemblés seuls dans [FICHE-PLAY.md](FICHE-PLAY.md).
+>
+> Guide écrit pour être suivi sans rien connaître à la Play Console. Chaque étape dit **où
 cliquer**, **ce qu'on écrit** et **combien de temps ça prend**.
 
 > Version concernée : **1.4.0** (`com.instantpause.app`), bundle `InstantPause-1.4.0.aab`.
