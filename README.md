@@ -1,7 +1,8 @@
 # Instant Pause
 
-> Ancien nom : **CoolDown**. Le dépôt, le paquet `com.cooldown.app` et les classes internes
-> gardent cet identifiant pour ne pas casser les mises à jour : seul le nom affiché change.
+> Ancien nom : **CoolDown**. Depuis la 1.4.0, le paquet est `com.instantpause.app` (l'ancien
+> `com.cooldown.app` était déjà pris sur Google Play). Seuls les noms de classes internes
+> (`CoolDown*`) restent inchangés.
 
 > **Attendez demain avant d'appeler.**
 

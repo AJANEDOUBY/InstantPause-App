@@ -8,18 +8,29 @@ plugins {
 }
 
 android {
-    namespace = "com.cooldown.app"
+    namespace = "com.instantpause.app"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.cooldown.app"
+        applicationId = "com.instantpause.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 13
-        versionName = "1.3.6"
+        versionCode = 14
+        versionName = "1.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // === CONFIGURATION DE LA SIGNATURE RELEASE ===
+    signingConfigs {
+        create("release") {
+            // Chemin relatif vers le fichier JKS dans votre projet
+            storeFile = file("../keystore/cooldown-release.jks")
+            storePassword = "v5wpAmhWGQ9TF4nQJU5cKw3QLRh7"
+            keyAlias = "cooldown"
+            keyPassword = "v5wpAmhWGQ9TF4nQJU5cKw3QLRh7"
+        }
     }
 
     buildTypes {
@@ -30,6 +41,9 @@ android {
             versionNameSuffix = "-debug"
         }
         release {
+            // Associe la clé de signature release définie ci-dessus
+            signingConfig = signingConfigs.getByName("release")
+
             optimization {
                 enable = true
                 // ⚠️ `kotlin.**` est volontairement exclu du repackaging R8 : la stdlib

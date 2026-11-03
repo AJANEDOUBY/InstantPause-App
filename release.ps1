@@ -230,7 +230,7 @@ horaires definies ou un mode Zen, puis propose un ecran de pause sensoriel.
 
 | | |
 |---|---|
-| Package | com.cooldown.app |
+| Package | com.instantpause.app |
 | Version | $versionName (versionCode $versionCode) |
 | Taille | $sizeMb Mo |
 | minSdk | $minSdk |
