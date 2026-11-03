@@ -90,6 +90,26 @@ Une correction de code, un doute, un plantage : écrivez à janedouby@gmail.com.
 | Type | Application · Gratuite |
 | Langue par défaut | Français (France) |
 
+### Étiquettes (5 maximum)
+
+À saisir dans **Développer → Présence sur le Play Store → Fiche principale → Étiquettes**
+(ou *Paramètres du Store → Étiquettes* selon la version de la Console).
+
+| # | Étiquette | Pourquoi celle-là |
+|---|---|---|
+| 1 | **Santé et remise en forme** | Le cœur du produit : reprendre la main sur un comportement compulsif |
+| 2 | **Style de vie** | La catégorie principale, cohérente avec la fiche |
+| 3 | **Productivité** | L'angle « je protège mon temps et mon sommeil » |
+| 4 | **Outils** | C'est un utilitaire qui agit sur le téléphone, pas un contenu |
+| 5 | **Communication** | L'app intervient sur les appels : c'est factuellement vrai |
+
+Remplacements possibles si une étiquette n'existe pas dans la liste proposée :
+**Bien-être**, **Personnalisation**, **Outils de téléphone**, **Minuteries**.
+
+À éviter absolument : *Médical* (l'app n'est pas un dispositif médical et la déclaration Santé
+deviendrait obligatoire), *Social*, *Dating*, *Parentalité* (aucune fonction pour enfants).
+
+
 ---
 
 ## Justifications de permissions sensibles
