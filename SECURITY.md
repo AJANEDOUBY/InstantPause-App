@@ -17,12 +17,16 @@ antérieures ne reçoivent aucun correctif : il faut installer la dernière rele
 
 **Ne créez pas d'issue publique.** Utilisez le formulaire privé de GitHub :
 
-> **https://github.com/AJANEDOUBY/CoolDown/security/advisories/new**
+> **https://github.com/AJANEDOUBY/instant-pause-privacy/security/advisories/new**
 >
 > Onglet *Security* → *Report a vulnerability*
 
-Si le formulaire est indisponible, ouvrez une issue **vide** intitulée `security contact` et
-l'auteur vous répondra en privé.
+Le dépôt du code est privé et son plan GitHub ne permet pas les avis de sécurité : le
+formulaire est donc ouvert sur le dépôt public `instant-pause-privacy`, seul point de contact
+anonyme. Le rapport y reste **privé** et visible de l'auteur uniquement jusqu'à publication.
+
+Si vous préférez l'e-mail, écrivez à l'adresse indiquée sur la fiche Google Play de
+l'application.
 
 ### Délais
 
