@@ -1,8 +1,10 @@
 # Instant Pause
 
-> Ancien nom : **CoolDown**. Depuis la 1.4.0, le paquet est `com.instantpause.app` (l'ancien
-> `com.cooldown.app` était déjà pris sur Google Play). Seuls les noms de classes internes
-> (`CoolDown*`) restent inchangés.
+> **Ancien nom : CoolDown.** Depuis la version **1.4.0**, l'identifiant de l'application est
+> `com.instantpause.app` : `com.cooldown.app` et `com.cooldown` étaient déjà réservés sur
+> Google Play. Android considère donc la 1.4.0 comme une **application différente** — les
+> données de l'ancienne version ne suivent pas. Seuls les noms de classes internes
+> (`CoolDown*`) gardent l'ancienne appellation.
 
 > **Attendez demain avant d'appeler.**
 
@@ -23,6 +25,7 @@ Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur v
 - [Architecture](#architecture)
 - [Stack technique](#stack-technique)
 - [Installation](#installation)
+- [Google Play](#google-play)
 - [Compilation](#compilation)
 - [Tests](#tests)
 - [Permissions](#permissions)
@@ -227,7 +230,7 @@ Points de conception importants :
 Organisation en quatre couches, sans dépendance du domaine vers l'UI ou Android.
 
 ```
-app/src/main/java/com/cooldown/app/
+app/src/main/java/com/instantpause/app/
 ├── CoolDownApplication.kt          # @HiltAndroidApp
 ├── data/
 │   ├── datastore/ProtectionPrefs.kt    # DataStore : Zen, rôle, bandeau, empreinte du code
@@ -293,16 +296,22 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ InstantPause-1.2.2.apk](../../releases/download/v1.2.2/InstantPause-1.2.2.apk)** — 4,3 Mo · Android 10+
+**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6,4 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum InstantPause-1.2.2.apk
+sha256sum InstantPause-1.4.0.apk
 # → voir le hash publié dans la release (recalculé à chaque build)
 ```
 
+> 🔄 **Paquet renommé en 1.4.0** : les versions 1.3.x et antérieures utilisaient
+> `com.cooldown.app`. Android ne sait pas passer d'un paquet à l'autre : pour installer la
+> 1.4.0, **désinstallez d'abord l'ancienne version** (en désactivant son administrateur
+> d'appareil depuis l'onglet Sécurité). Code, plages et contacts autorisés sont à recréer.
+
 > ⚠️ Si une version de **debug** est déjà installée, désinstallez-la d'abord : la signature
-> diffère, Android refusera la mise à jour (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`).
+> diffère, Android refusera la mise à jour (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Le paquet
+> de debug est `com.instantpause.app.debug`.
 
 > 🛡️ Certains antivirus préinstallés (AVG/Avast sur itel, Infinix…) affichent « application
 > suspecte » pour tout APK installé hors Play Store. C'est une heuristique sur la **source**,
@@ -334,6 +343,39 @@ sha256sum InstantPause-1.2.2.apk
 
 ---
 
+## Google Play
+
+L'application est publiée sous l'identifiant **`com.instantpause.app`** — immuable une fois
+l'app créée dans la Play Console.
+
+| Élément | Valeur |
+|---|---|
+| Identifiant | `com.instantpause.app` (debug : `com.instantpause.app.debug`) |
+| Format à déposer | **`.aab`** (`gradlew :app:bundleRelease`) |
+| Cible | `targetSdk 37`, `minSdk 29` |
+| Signature | keystore de release ; Play App Signing gère ensuite la clé de distribution |
+| Collecte de données | **aucune** (voir [Confidentialité](#confidentialité)) |
+
+Avant la première publication, la Play Console réclame :
+
+1. une **URL de politique de confidentialité** publique (le fichier
+   [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) doit être accessible en ligne, pas seulement dans
+   le dépôt) ;
+2. le formulaire **Sécurité des données** — ici, tout est local : « aucune donnée collectée » ;
+3. la **justification des permissions sensibles**, à rédiger au moment de l'envoi :
+   - `ANSWER_PHONE_CALLS` : couper à 3 minutes un appel vers un contact autorisé ;
+   - administrateur d'appareil : freiner une désinstallation impulsive (aucune politique
+     n'est demandée à l'appareil) ;
+   - service de premier plan `specialUse` : maintien de la protection et minuteur d'appel ;
+   - `USE_FULL_SCREEN_INTENT` : afficher l'écran de pause par-dessus le verrouillage ;
+4. la déclaration d'usage des **services de premier plan** (formulaire séparé).
+
+> ⚠️ La revue Play est le point de friction, pas le code : l'administrateur d'appareil et
+> `ANSWER_PHONE_CALLS` sont les deux permissions les plus scrutées. Le dépôt GitHub reste le
+> canal de distribution des APK signés, indépendamment du Store.
+
+---
+
 ## Compilation
 
 ```bash
@@ -356,15 +398,26 @@ automatiquement, ou renseignez `sdk.dir=/chemin/vers/Android/Sdk`.
 
 ### Publier une release
 
-Le script `release.ps1` enchaîne tout : tests, build release (R8), `zipalign`, signature,
-vérification, tag git et publication GitHub avec l'APK en asset.
+Le script `release.ps1` enchaîne tout : tests, build release (R8), signature, vérification,
+tag git et publication GitHub avec l'APK en asset.
 
 ```powershell
 # Simulation complète, sans tag ni publication
 .\release.ps1 -DryRun
 
 # Avec des notes de release personnalisées
-.\release.ps1 -Notes .\notes-1.1.md
+.\release.ps1 -Notes .\notes-1.4.0.md
+```
+
+Si `signingConfig` est déclaré dans `app/build.gradle.kts`, Gradle produit directement un APK
+signé : le script le vérifie au lieu de le re-signer. Sinon, il le zipaligne et le signe
+lui-même avec le keystore.
+
+Pour un dépôt sur Google Play, produire en plus le bundle :
+
+```bash
+./gradlew :app:bundleRelease
+# → app/build/outputs/bundle/release/app-release.aab
 ```
 
 Prérequis :
@@ -382,7 +435,7 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 
 ## Tests
 
-60 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+81 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
 
 | Suite | Couverture |
 |---|---|
@@ -393,8 +446,10 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 | `PassphraseHasherTest` (7) | déterminisme, sel, bon/mauvais code, empreinte corrompue |
 | `LockoutPolicyTest` (4) | essais libres, doublement, plafond 15 min, compteur |
 | `AppLockManagerTest` (20) | cycle de vie, code créé verrouillé, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
+| `CallTimerTextTest` (4) | format `2:59 / 3:00`, secondes toujours sur deux chiffres, chiffres latins quelle que soit la locale |
+| `OnboardingStageTest` (17) | ordre des étapes : code → anti-désinstallation → raccrochage → rôle → plein écran → app |
 
-Soit **60 tests** au total.
+Soit **81 tests** au total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -430,8 +485,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 
 ## Limites connues
 
-- **Appels VoIP non couverts** (WhatsApp, Signal, Messenger, Telegram) — *chantier reporté,
-  hors périmètre 1.2.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
+- **Appels VoIP non couverts** (WhatsApp, Signal, Messenger, Telegram) — *prochain chantier,
+  hors périmètre de la 1.4.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
   flux audio, et `CallScreeningService` n'est jamais consulté. Aucune API Android ne permet à
   une app tierce de voir ni de refuser un appel VoIP. Concrètement, pendant une plage
   protégée :
@@ -492,6 +547,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 ---
 
 ## Confidentialité
+
+La politique complète est dans [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md).
 
 - **Aucune connexion réseau.** L'app ne contient ni client HTTP ni SDK publicitaire.
 - **Aucun compte, aucun identifiant.**
