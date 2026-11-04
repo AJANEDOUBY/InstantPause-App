@@ -269,6 +269,14 @@ Il ne s'affiche dans la Console que lorsque le statut est **Publiée**. En « Br
 « En attente de publication », la page répond qu'aucun test n'est disponible : c'est normal,
 pas une panne.
 
+Le message exact de cette page est :
+
+> **App not available**
+> A testing version of this app hasn't been published yet or isn't available for this account.
+
+Il dit littéralement les deux seules causes possibles : **aucune version de test publiée**, ou
+**ce compte n'est pas dans la liste cochée**. Il n'y en a pas d'autre.
+
 **Le lien doit être envoyé par vos soins** — WhatsApp, e-mail, SMS. Google ne le fait pas.
 
 ### Piège : interne et fermé s'excluent
