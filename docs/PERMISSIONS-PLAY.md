@@ -6,6 +6,74 @@ française suit chaque bloc pour contrôle.
 
 ---
 
+## 0. Accès à l'application (« Informations de connexion manquantes »)
+
+**Politique → Contenu de l'application → Accès à l'application.**
+
+Play signale ce blocage parce que son analyse automatique a vu des champs de type mot de passe
+dans l'app. C'est `SetupScreen` : l'écran de **création** du code de protection, au premier
+lancement. Ce n'est pas un écran de connexion — il n'y a ni compte, ni serveur, ni mot de passe
+existant.
+
+### Choix à faire
+
+> **Certaines fonctionnalités de mon application sont restreintes**
+
+Pas « toutes les fonctionnalités sont accessibles » : ce serait contredit par l'écran que
+l'analyseur a détecté, et le bandeau reviendrait.
+
+### Champs
+
+| Champ | Valeur |
+|---|---|
+| Nom de l'instruction | `Local protection code (no account)` |
+| Nom d'utilisateur | `not applicable` |
+| Mot de passe | `review2026` |
+
+### Instructions
+
+```
+There is no account, no login and no server. Everything runs offline on the device.
+
+At first launch the app asks you to CREATE a local protection code. It is not an existing
+credential: type the code below, twice, and it becomes the code for this installation.
+
+  Suggested code: review2026
+  Rules: at least 6 characters, at least one letter and one digit.
+
+This code is only requested later, and only to weaken the protection: delete a time window,
+remove an allowed contact, or deactivate uninstall protection. Browsing the app, creating a
+window or enabling Zen mode never asks for it. If you forget it, clear the app data.
+
+After creating the code, the onboarding asks for four system grants, which are normal Android
+consents, not credentials:
+  1. Device admin — used only to slow down uninstalling the app. No policy is enforced.
+  2. Phone permission (ANSWER_PHONE_CALLS) — used only to hang up at 3:00 on the three
+     trusted contacts.
+  3. Call redirection role — the API that intercepts an outgoing call before it connects.
+  4. Full-screen intent — shows the pause screen over the dialer.
+
+To verify the core feature, place an outgoing call to any non-emergency number during an
+active time window: the pause screen appears instead of the call connecting. This requires a
+device with a SIM card; call redirection is unavailable on Wi-Fi-only devices.
+
+Emergency numbers are never intercepted, and the app has no INTERNET permission.
+```
+
+### Version française (contrôle)
+
+Identique en substance. Le point à ne pas perdre : **le code est créé par l'examinateur**, il
+n'existe pas à l'avance. Le champ « Mot de passe » sert à donner la valeur à saisir, pas une
+valeur déjà enregistrée.
+
+### Ne jamais mettre ici
+
+- le code réellement utilisé sur votre tablette — il est propre à chaque installation, donc
+  inutile, et c'est votre code personnel ;
+- une adresse e-mail ou un mot de passe de compte Google : il n'y en a aucun.
+
+---
+
 ## 1. `FOREGROUND_SERVICE_SPECIAL_USE`
 
 **Choix dans la liste déroulante : « Autre » (Other).**
