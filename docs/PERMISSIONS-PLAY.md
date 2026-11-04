@@ -117,7 +117,35 @@ pre-granted permission.
 
 ---
 
-## 3. Script de la vidéo de démonstration (`specialUse`)
+## 3. `ANSWER_PHONE_CALLS` (groupe Téléphone)
+
+Aucun formulaire dédié n'est demandé pour cette permission tant que l'app ne lit pas le journal
+d'appels. Mais elle fait partie du groupe « Téléphone » et peut être contestée à l'examen. Texte
+de défense, à garder sous la main plutôt qu'à coller au hasard.
+
+```
+Instant Pause's core feature is a hard 3-minute cap on calls to the three trusted contacts the
+user explicitly authorizes. Those calls are allowed on purpose, but the user asks the app to
+guarantee they never exceed 3 minutes — that cap is the feature, not a side effect.
+
+ANSWER_PHONE_CALLS is the only permission that grants a third-party app access to
+TelecomManager.endCall(), the only API able to terminate an ongoing call. Without it the app
+could only display a countdown that the user is free to ignore, which is precisely the
+behaviour the app exists to prevent. There is no alternative API.
+
+The app does not place calls, does not read or modify the call log, does not read phone state
+or subscriber identifiers, and has no INTERNET permission.
+```
+
+### À vérifier avant de coller ce texte
+
+Le raccrochage doit **réellement fonctionner** sur la tablette : appel vers un contact autorisé,
+attente de 3:00. Si la ligne n'est pas coupée, ce texte est faux et Google aura raison de
+refuser la permission. Voir `docs/FEUILLE-DE-ROUTE.md`, section 2.
+
+---
+
+## 4. Script de la vidéo de démonstration (`specialUse`)
 
 Contraintes : **montrer l'app réelle en fonctionnement**, pas de diapositives, pas de montage
 trompeur. 60 à 90 secondes suffisent. Google veut voir la tâche visible par l'utilisateur
