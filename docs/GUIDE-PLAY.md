@@ -246,6 +246,40 @@ C'est la règle qui surprend tout le monde, et elle est incontournable pour un c
 
 > Prévoir 3 à 4 semaines au total entre « je veux publier » et « c'est en ligne ».
 
+### Google n'envoie aucune invitation
+
+C'est la confusion la plus fréquente. Ajouter une adresse dans une liste de testeurs
+**n'envoie aucun e-mail**. La liste est une liste d'autorisation, pas un envoi.
+
+Trois conditions doivent être réunies **en même temps** pour qu'un testeur puisse entrer :
+
+1. l'adresse figure dans une liste **sélectionnée dans l'onglet Testeurs du canal**, puis
+   enregistrée (créer la liste ne suffit pas) ;
+2. une release est **publiée** sur ce canal — pas « brouillon », pas « en attente de
+   publication » ;
+3. le testeur ouvre lui-même le **lien d'inscription** et appuie sur « Accepter ».
+
+Le lien est déterministe :
+
+```
+https://play.google.com/apps/testing/com.instantpause.app
+```
+
+Il ne s'affiche dans la Console que lorsque le statut est **Publiée**. En « Brouillon » ou
+« En attente de publication », la page répond qu'aucun test n'est disponible : c'est normal,
+pas une panne.
+
+**Le lien doit être envoyé par vos soins** — WhatsApp, e-mail, SMS. Google ne le fait pas.
+
+### Piège : interne et fermé s'excluent
+
+Un testeur inscrit au canal **interne** ne peut **pas** recevoir les versions en test fermé.
+Il doit d'abord **se désinscrire** du test interne (`play.google.com/apps/testing/...` →
+« Quitter le programme »), puis accepter le lien fermé.
+
+Conséquence pratique : pour les 12 testeurs qui comptent, **ne pas les inscrire d'abord en
+interne**. Le canal interne sert à vous, pas à eux.
+
 ---
 
 ## Étape 7 — Demander l'accès à la production (20 min + 1 semaine d'examen)
