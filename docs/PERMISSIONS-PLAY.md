@@ -30,7 +30,23 @@ l'analyseur a détecté, et le bandeau reviendrait.
 | Nom d'utilisateur | `not applicable` |
 | Mot de passe | `review2026` |
 
-### Instructions
+### Instructions — version courte (481 caractères, limite 500)
+
+Le champ est limité à **500 caractères**. Celle-ci en fait 481, comptés par script.
+
+```
+No account, no login, no server. At first launch, CREATE a protection code (not an existing credential): enter review2026 twice (6+ chars, one letter, one digit). It is only asked later to weaken protection. Then accept 4 normal consents: device admin (uninstall guard only), phone permission (3-min hang-up), call redirection role, full-screen intent. To test: call during an active window; the pause screen appears. Needs a SIM. Emergencies never blocked. No INTERNET permission.
+```
+
+### Secours (342 caractères)
+
+Si la Console refuse encore, ou s'il reste une champ plus court :
+
+```
+No account, no server. On first launch, CREATE a code (not a login): type review2026 twice (6+ chars, letter+digit). It is only asked to weaken protection. Then accept device admin, phone permission, call redirection and full-screen intent. To test, call during an active window: the pause screen appears. Needs a SIM. No INTERNET permission.
+```
+
+### Version longue — pour un e-mail au support, pas pour le formulaire
 
 ```
 There is no account, no login and no server. Everything runs offline on the device.
