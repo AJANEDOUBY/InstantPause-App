@@ -163,3 +163,85 @@ Happy to test your app in return — post your link.
 La question de production demandera **comment vous avez trouvé vos testeurs et ce que vous avez
 corrigé grâce à eux**. Répondez franchement : « Reddit, 20 inscrits, 14 retours, 3 corrections »
 est une bonne réponse. « 12 inconnus n'ont jamais ouvert l'app » en est une mauvaise.
+
+---
+
+## 8. Le brouillon « [MUTUAL TEST] … Default PIN 1234 » — à ne pas publier tel quel
+
+Cinq problèmes, dont trois éliminatoires.
+
+| # | Ce qui est écrit | Problème |
+|---|---|---|
+| 1 | « Default PIN (if prompted): 1234 » | **Faux.** L'app demande de **créer** un code : 6 caractères minimum, au moins une lettre et un chiffre. `1234` est refusé par `PassphrasePolicy`. Le testeur reste bloqué au premier écran. |
+| 2 | « leave a review » / « provide … a 5-star review » | **Manipulation d'avis.** Échanger une note contre une installation est contraire aux règles Play, sanctionnable sur l'app et le compte. Et matériellement impossible : les testeurs **ne peuvent pas** laisser d'avis public sur une version de test. |
+| 3 | « block distractions, mute unwanted calls » | **Descriptif faux.** L'app ne touche pas aux appels entrants et ne « mute » rien. C'est un bloqueur d'appels **sortants**. Un testeur venu pour de l'anti-spam désinstalle. |
+| 4 | « Google Group / Join Test » sans lien de groupe | Le canal fermé n'accepte que les comptes de la liste **ou** les membres du groupe. Sans groupe, le clic donne « App not available ». |
+| 5 | Lien `details?id=…` pour une app en test fermé | Un non-testeur voit « introuvable ». Seul le lien `/apps/testing/…` a du sens avant la production. |
+
+Deux manques qui coûtent des testeurs :
+
+- **les permissions** (administrateur d'appareil, `ANSWER_PHONE_CALLS`) ne sont pas annoncées ;
+  sur ce sub, les gens les découvrent à l'écran système et abandonnent ;
+- **les pays**. Un testeur hors France/Maroc ne peut pas installer.
+
+### Version corrigée
+
+```
+[Closed test] Instant Pause — stop impulsive outgoing calls (12 testers, 14 days)
+Happy to test your app in return.
+
+WHAT IT DOES
+During time windows you choose (e.g. 22:30–07:30), any outgoing call is intercepted and
+replaced by a pause screen: breathe, then decide. Three trusted contacts stay reachable,
+capped at 3 minutes. Emergency numbers are never intercepted.
+
+WHAT IT IS NOT
+Not a spam blocker. It never touches incoming calls, never mutes anything, and is not a
+parental control tool. It slows down one specific impulse: calling someone you will regret
+calling.
+
+PRIVACY
+No account, no ads, no analytics, no server. The app has no INTERNET permission at all,
+so everything stays in its private storage on the device.
+
+PERMISSIONS YOU WILL BE ASKED FOR (and why)
+• Call redirection role — Android's own API to intercept an outgoing call before it connects.
+• Device admin — only to make uninstalling take a few extra taps. No policy, no wipe.
+• Phone permission (ANSWER_PHONE_CALLS) — only to hang up at 3:00 on the three trusted contacts.
+• Full-screen intent — to show the pause screen over the dialer.
+
+SETUP
+On first launch the app asks you to CREATE a protection code — there is no existing PIN.
+Rules: at least 6 characters, with at least one letter and one digit. For example: review2026
+You will only be asked for it again to weaken the protection.
+
+WHAT I NEED
+12 testers who stay opted in for 14 consecutive days. Please install and keep the app.
+
+HOW TO JOIN
+1. Join the Google Group: <lien du groupe>
+2. Open: https://play.google.com/apps/testing/com.instantpause.app
+3. Accept, install, keep it 14 days.
+
+Available in: France, Morocco, <autres pays>.
+Privacy policy: https://ajanedouby.github.io/instant-pause-privacy/
+
+FEEDBACK
+Reply in this thread or email janedouby@gmail.com. I will fix what you report.
+
+IN RETURN
+Drop your link and I will join your test and keep your app installed for 14 days.
+I will not promise reviews: test builds cannot receive public reviews anyway.
+
+Thanks!
+```
+
+Différences qui comptent : le PIN devient « créez un code », l'échange d'avis disparaît, le
+descriptif redevient exact, les permissions sont annoncées avant le clic, le groupe et les pays
+sont explicites.
+
+### Si le post est déjà en ligne
+
+Modifiez-le dans l'heure. Les deux lignes à retirer en priorité : le PIN `1234` et la promesse
+d'avis. La première bloque vos testeurs, la seconde vous expose.
+
