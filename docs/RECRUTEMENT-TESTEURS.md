@@ -70,6 +70,14 @@ Le canal fermé accepte deux modes :
 Créez un groupe Google (`instantpause-testers@googlegroups.com`), mettez-le comme accès testeur
 du canal, et les Redditors n'ont plus qu'à le rejoindre. C'est le mode standard du sub.
 
+**Si vous tenez à la liste d'e-mails**, une étape est obligatoire dans le post : dire au
+testeur d'**attendre votre réponse avant de cliquer**. Sans ça, il clique dans la seconde, voit
+« App not available », conclut que c'est cassé et ne revient pas. Vous avez perdu un testeur
+pour un délai d'ajout de dix minutes.
+
+Précisez aussi que l'adresse donnée doit être **le compte Google connecté sur son téléphone**,
+pas une adresse de contact.
+
 ### c. Les 14 jours consécutifs
 
 Chaque testeur doit rester **inscrit 14 jours d'affilée**. S'il quitte le programme, **son**
