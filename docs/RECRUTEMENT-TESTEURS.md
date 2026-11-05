@@ -286,9 +286,14 @@ seul ; il abandonne avant de vous avoir écrit.
 |---|---|---|
 | Qui peut rechercher le groupe | **Tous les internautes** | le groupe doit être trouvable par un inconnu |
 | Qui peut rejoindre le groupe | **Tout le monde peut rejoindre le groupe** | adhésion immédiate, sans votre validation |
-| Qui peut afficher les conversations | **Membres du groupe** | rien à voir, et pas de contenu public inutile |
+| Qui peut afficher les conversations | **Tous les internautes** | sinon la page du groupe est **fermée aux non-membres** : le visiteur voit « Vous ne pouvez pas voir les contenus de ce groupe » et aucun bouton Rejoindre |
 | Qui peut publier des messages | **Gestionnaires du groupe** (ou propriétaires) | un groupe ouvert en écriture devient une boîte à spam |
 | Qui peut afficher la liste des membres | **Gestionnaires du groupe** | protège les adresses des testeurs |
+
+Le réglage « conversations visibles par les membres seulement » paraît plus propre, et il casse
+tout : Google Groupes masque alors la page entière aux non-membres. Un testeur qui clique sur le
+lien ne voit pas un bouton « Rejoindre », il voit une erreur. La page doit être publique ; c'est
+l'écriture qui doit rester privée.
 
 Ne pas choisir « Tout le monde peut **demander à** rejoindre » : chaque adhésion attend votre
 approbation, et un testeur qui attend une approbation le soir ne revient pas le lendemain.
