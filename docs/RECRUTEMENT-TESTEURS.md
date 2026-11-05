@@ -253,3 +253,85 @@ sont explicites.
 Modifiez-le dans l'heure. Les deux lignes à retirer en priorité : le PIN `1234` et la promesse
 d'avis. La première bloque vos testeurs, la seconde vous expose.
 
+---
+
+## 9. Créer le Google Groupe des testeurs
+
+Un compte `@gmail.com` suffit. Aucun abonnement Workspace, aucun nom de domaine à acheter : le
+groupe sera créé dans le domaine public `googlegroups.com`.
+
+### a. Création
+
+1. Ouvrir <https://groups.google.com> avec `janedouby@gmail.com` (le même compte que la Play
+   Console, pour éviter de chercher où est le groupe plus tard).
+2. En haut de la page : **Créer un groupe**.
+3. Renseigner :
+
+| Champ | Valeur |
+|---|---|
+| Nom du groupe | `Instant Pause Testers` |
+| E-mail du groupe | `instant-pause-testers` (le domaine `googlegroups.com` est imposé) |
+| Description | `Closed testers for Instant Pause (com.instantpause.app). Join, then open the Play testing link.` |
+
+L'adresse complète devient `instant-pause-testers@googlegroups.com`. Si le nom est déjà pris,
+ajouter une lettre : `instant-pause-test` ou `instantpause-testers`. L'adresse exacte n'a aucune
+importance ; seul le lien du groupe compte.
+
+### b. Les paramètres qui comptent
+
+C'est ici que se joue l'inscription. Un réglage trop strict et le Redditor ne peut pas rejoindre
+seul ; il abandonne avant de vous avoir écrit.
+
+| Paramètre | Valeur | Pourquoi |
+|---|---|---|
+| Qui peut rechercher le groupe | **Tous les internautes** | le groupe doit être trouvable par un inconnu |
+| Qui peut rejoindre le groupe | **Tout le monde peut rejoindre le groupe** | adhésion immédiate, sans votre validation |
+| Qui peut afficher les conversations | **Membres du groupe** | rien à voir, et pas de contenu public inutile |
+| Qui peut publier des messages | **Gestionnaires du groupe** (ou propriétaires) | un groupe ouvert en écriture devient une boîte à spam |
+| Qui peut afficher la liste des membres | **Gestionnaires du groupe** | protège les adresses des testeurs |
+
+Ne pas choisir « Tout le monde peut **demander à** rejoindre » : chaque adhésion attend votre
+approbation, et un testeur qui attend une approbation le soir ne revient pas le lendemain.
+« Rejoindre » direct, oui ; « demander à rejoindre », non.
+
+### c. Récupérer le lien
+
+Après création, le groupe a une URL de la forme :
+
+```
+https://groups.google.com/g/instant-pause-testers
+```
+
+C'est cette adresse qui remplace `<lien du groupe>` dans le post Reddit. Elle doit s'ouvrir dans
+une fenêtre de navigation privée, sans être connecté, et proposer un bouton **Rejoindre le
+groupe**. Si la page demande une connexion sans proposer le bouton, le paramètre « Qui peut
+rejoindre » est encore sur « Utilisateurs invités uniquement ».
+
+### d. Brancher le groupe dans la Play Console
+
+1. `Tester et publier → Tests fermés → Gérer le canal`.
+2. Onglet **Testeurs**.
+3. Choisir **Google Groupes** (et non « Adresse e-mail »).
+4. Coller `instant-pause-testers@googlegroups.com`.
+5. **Enregistrer**, puis vérifier que le groupe apparaît bien dans la liste des accès.
+
+Le compte Google utilisé pour installer l'app doit être **le compte membre du groupe**. Un
+testeur qui rejoint le groupe avec une adresse et installe avec une autre verra « App not
+available ».
+
+### e. Vérifier avant de poster
+
+- Se déconnecter (ou navigation privée), ouvrir le lien du groupe : le bouton **Rejoindre** est
+  visible.
+- Rejoindre avec un compte secondaire, puis ouvrir
+  <https://play.google.com/apps/testing/com.instantpause.app> : la page doit proposer
+  **Accepter et télécharger**, pas « App not available ».
+- Compter quelques minutes après la création du groupe : la propagation entre Google Groupes et
+  la Play Console n'est pas instantanée.
+
+### f. Piège à connaître
+
+Le canal fermé accepte **une seule** méthode d'accès : soit une liste d'adresses, soit un groupe.
+Basculer sur le groupe **remplace** la liste. Si des adresses ont déjà été ajoutées à la main, il
+faut les réinviter à rejoindre le groupe, sinon elles perdent l'accès au prochain enregistrement.
+
