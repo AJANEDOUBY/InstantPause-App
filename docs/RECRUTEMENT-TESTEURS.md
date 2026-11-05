@@ -334,9 +334,25 @@ available ».
 - Compter quelques minutes après la création du groupe : la propagation entre Google Groupes et
   la Play Console n'est pas instantanée.
 
-### f. Piège à connaître
+### f. Faut-il supprimer les adresses saisies à la main ?
 
-Le canal fermé accepte **une seule** méthode d'accès : soit une liste d'adresses, soit un groupe.
-Basculer sur le groupe **remplace** la liste. Si des adresses ont déjà été ajoutées à la main, il
-faut les réinviter à rejoindre le groupe, sinon elles perdent l'accès au prochain enregistrement.
+**Non, pas avant d'avoir vérifié.** Trois règles.
+
+1. **Ne supprimez jamais un testeur déjà installé.** Le retirer de la liste lui coupe l'accès au
+   canal et peut remettre à zéro sa période de 14 jours. Un testeur perdu se remplace mal.
+2. **Basculez la méthode d'accès, pas la liste.** L'onglet Testeurs propose « Adresse e-mail »
+   ou « Google Groupes ». Choisir le groupe désactive la liste d'adresses sans la détruire :
+   elle reste dans le compte et peut être réactivée plus tard.
+3. **Faites rejoindre le groupe avant de basculer** à ceux qui testent déjà par adresse e-mail.
+   Sinon ils perdent l'accès au prochain enregistrement.
+
+Les adresses qui n'ont jamais installé l'application ne risquent rien : elles peuvent être
+supprimées après coup, sans effet sur le quota.
+
+### g. Le piège du test interne
+
+Un compte qui a activé le **test interne** ne peut pas recevoir le test fermé. Il doit d'abord
+désactiver le test interne dans l'application Play Store, puis accepter le test fermé. C'est
+notamment le cas de la tablette de développement : tant qu'elle est en test interne, elle ne
+compte pas parmi les 12.
 
