@@ -1,596 +1,600 @@
 # Instant Pause
 
-> **Ancien nom : CoolDown.** Depuis la version **1.4.0**, l'identifiant de l'application est
-> `com.instantpause.app` : `com.cooldown.app` et `com.cooldown` étaient déjà réservés sur
-> Google Play. Android considère donc la 1.4.0 comme une **application différente** — les
-> données de l'ancienne version ne suivent pas. Seuls les noms de classes internes
-> (`CoolDown*`) gardent l'ancienne appellation.
+**English** · [Español](README.es.md) · [Français](README.fr.md)
 
-> **Attendez demain avant d'appeler.**
+> **Former name: CoolDown.** Since version **1.4.0**, the application ID is
+> `com.instantpause.app`: `com.cooldown.app` and `com.cooldown` were already taken on
+> Google Play. Android therefore treats 1.4.0 as a **different app** — data from the old
+> version does not carry over. Only internal class names (`CoolDown*`) keep the old name.
 
-Instant Pause est une application Android open source qui vous aide à **résister aux appels impulsifs**.
-Pendant les plages horaires que vous définissez, chaque appel sortant est intercepté et remplacé par
-un **écran de pause sensoriel** : respirer, se calmer, puis décider.
+> **Wait until tomorrow before calling.**
 
-Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur votre téléphone.
+Instant Pause is an open-source Android app that helps you **resist impulsive calls**.
+During the time windows you set, every outgoing call is intercepted and replaced by a
+**sensory pause screen**: breathe, calm down, then decide.
+
+No emergency blocking, no surveillance, no server: everything stays on your phone.
 
 ---
 
-## Sommaire
+## Contents
 
-- [Le concept](#le-concept)
-- [Fonctionnalités](#fonctionnalités)
-- [Verrou de protection](#verrou-de-protection)
-- [Comment ça marche](#comment-ça-marche)
+- [The concept](#the-concept)
+- [Features](#features)
+- [Protection lock](#protection-lock)
+- [How it works](#how-it-works)
 - [Architecture](#architecture)
-- [Stack technique](#stack-technique)
+- [Tech stack](#tech-stack)
 - [Installation](#installation)
 - [Google Play](#google-play)
-- [Compilation](#compilation)
+- [Build](#build)
 - [Tests](#tests)
 - [Permissions](#permissions)
-- [Limites connues](#limites-connues)
-- [Feuille de route](#feuille-de-route)
-- [Confidentialité](#confidentialité)
+- [Known limitations](#known-limitations)
+- [Roadmap](#roadmap)
+- [Privacy](#privacy)
 
 ---
 
-## Le concept
+## The concept
 
-Beaucoup d'appels sont passés dans un moment de colère, de fatigue ou d'impulsivité — et regrettés
-dix minutes plus tard. Instant Pause ne supprime pas la possibilité d'appeler : il **insère un délai
-conscient** entre l'envie et l'action.
+Many calls are made in a moment of anger, fatigue or impulsiveness — and regretted ten
+minutes later. Instant Pause does not remove the ability to call: it **inserts a conscious
+delay** between the urge and the action.
 
-Trois mécanismes, tous contrôlés par vous :
+Three mechanisms, all controlled by you:
 
-| Mécanisme | Effet |
+| Mechanism | Effect |
 |---|---|
-| **Plages horaires** | Récurrentes, par jour de la semaine (ex. 22:00 → 07:00) |
-| **Mode Zen** | Blocage ponctuel de 2 heures, déclenché en un tap |
-| **Whitelist** | Contacts toujours joignables, même pendant une plage active |
+| **Time windows** | Recurring, per day of the week (e.g. 22:00 → 07:00) |
+| **Zen mode** | One-off 2-hour block, triggered with a single tap |
+| **Whitelist** | Contacts always reachable, even during an active window |
 
-Les **numéros d'urgence** (112, 15, 17, 18, 19…) ne sont **jamais** bloqués.
-
----
-
-## Fonctionnalités
-
-### 🕐 Plages de protection
-- Plages récurrentes sur un ou plusieurs jours de la semaine.
-- **Franchissement de minuit** géré nativement (22:00 → 07:00 couvre bien le lendemain matin,
-  en tenant compte du jour de départ).
-- Borne de début incluse, borne de fin exclue.
-- Activation / désactivation instantanée par un interrupteur.
-
-### 🧘 Mode Zen
-Un bouton « Besoin d'une pause maintenant ? » active une protection immédiate de **2 heures**,
-sans créer de plage permanente.
-
-### 📇 Cercle de confiance (whitelist)
-Un onglet **Contacts** permet de désigner jusqu'à **3 personnes** dont les appels passent
-toujours, même en pleine plage de protection.
-- Le contact est choisi dans le répertoire Android (bouton **+**) : le sélecteur système
-  ne prête que la fiche choisie, l'app ne demande donc **jamais** la permission
-  `READ_CONTACTS` et ne lit pas le reste du carnet.
-- Le compteur `1 / 3` reste visible ; à 3, le bouton d'ajout disparaît.
-- Comme couper une plage, **ajouter ou retirer** un contact exige le code : c'est une
-  action qui modifie la protection.
-- La comparaison se fait en **E.164**, donc `06 12 34 56 78`, `+33 6 12 34 56 78` et
-  `0033612345678` sont reconnus comme le même numéro (via `libphonenumber`).
-- Un appel autorisé est **limité à 3 minutes de conversation** : une pastille flottante
-  affiche « Temps restant » et le chronomètre (`2:59 / 3:00`), la notification reprend la
-  mention, et une vibration signale 0:30 puis 0:00.
-  Le décompte part de la **connexion** (la sonnerie ne mange pas le temps de parole) et, à
-  0:00, l'appel est **raccroché automatiquement** grâce à la permission `ANSWER_PHONE_CALLS`.
-  Cette permission est **obligatoire** : elle est demandée pendant l'installation et l'app
-  ne s'ouvre pas sans elle, sinon la limite de 3 minutes ne serait qu'un rappel visuel.
-
-### 🌬️ Écran de pause
-Quand un appel est bloqué, un écran plein écran s'affiche (même verrouillé) :
-- cercle de respiration animé et **vibration douce synchronisée** ;
-- message bienveillant plutôt qu'un simple « Appel bloqué » ;
-- bouton **Fermer** volontairement inactif quelques secondes.
-
-### 🔔 Une seule alerte
-Quand un appel est bloqué, **une** notification « Appel bloqué » s'affiche et vibre une fois.
-Elle n'est jamais répétée : l'appel est déjà refusé, insister toutes les 30 secondes n'apporte
-rien et pousse à couper les notifications de l'app. Elle disparaît d'un tap (écran de pause) ou
-d'un balayage.
-
-### 📜 Historique
-Chaque décision est journalisée localement : numéro, date, statut
-(`Bloqué`, `Autorisé (whitelist)`, `Fermé par l'utilisateur`).
-Les entrées de plus de **90 jours** sont purgées automatiquement.
-
-### 🔒 Verrou de protection
-Un **code alphanumérique** (6 caractères minimum, au moins une lettre et un chiffre) est
-**obligatoire dès la première ouverture** de l'app : impossible de l'ignorer, impossible de le
-supprimer ensuite. Il empêche de couper la protection sur un coup de tête. Il n'est demandé
-que pour les actions qui **affaiblissent** la protection — jamais pour bloquer un appel ou
-ajouter une plage.
-Voir la section [Verrou de protection](#verrou-de-protection).
-
-### 🛡️ Robustesse
-- **Watchdog** en foreground service : l'app survit aux gestionnaires de batterie agressifs
-  (constructeurs chinois notamment).
-- **Redémarrage** : la protection est ré-armée après un reboot ou une mise à jour.
-- **Fail-open** : toute erreur, tout timeout ou une mort du service laisse passer l'appel.
-  Le pire scénario est « l'appel passe », jamais « l'appel est perdu ».
+**Emergency numbers** (112, 15, 17, 18, 19…) are **never** blocked.
 
 ---
 
-## Verrou de protection
+## Features
 
-L'ennemi n'est pas un attaquant : c'est **vous**, dans un mauvais jour. Le verrou est donc
-conçu pour résister à l'impulsivité, pas pour protéger un secret.
+### 🕐 Protection windows
+- Recurring windows on one or more days of the week.
+- **Midnight crossing** handled natively (22:00 → 07:00 covers the next morning, taking
+  the starting day into account).
+- Start bound included, end bound excluded.
+- Instant on/off with a switch.
 
-### Obligatoire, pas optionnel
+### 🧘 Zen mode
+A "Need a pause now?" button enables an immediate **2-hour** protection, without creating
+a permanent window.
 
-Au premier lancement, l'app affiche un écran unique : **choisir le code**. Tant qu'il n'existe
-pas, aucune plage, aucun rôle Telecom, aucun réglage n'est accessible. La version 1.1.0 laissait
-le code facultatif : on pouvait activer la protection puis la couper sans jamais rien définir.
-C'est corrigé : le code est créé à froid, avant tout le reste, et il ne peut plus être supprimé
-depuis l'app (seul un **changement**, avec l'ancien code, est possible).
+### 📇 Trusted circle (whitelist)
+A **Contacts** tab lets you designate up to **3 people** whose calls always go through,
+even in the middle of a protection window.
+- The contact is picked from the Android address book (**+** button): the system picker
+  only lends the chosen entry, so the app **never** requests the `READ_CONTACTS`
+  permission and does not read the rest of the address book.
+- The `1 / 3` counter stays visible; at 3, the add button disappears.
+- Like switching off a window, **adding or removing** a contact requires the code: it is
+  an action that changes the protection.
+- Comparison is done in **E.164**, so `06 12 34 56 78`, `+33 6 12 34 56 78` and
+  `0033612345678` are recognised as the same number (via `libphonenumber`).
+- An allowed call is **capped at 3 minutes**: a floating pill shows "Time left" and the
+  timer (`2:59 / 3:00`), the notification repeats it, and a vibration warns at 0:30 then
+  0:00.
+  The countdown starts at **connection** (ringing does not eat into talk time) and, at
+  0:00, the call is **automatically hung up** through the `ANSWER_PHONE_CALLS` permission.
+  This permission is **mandatory**: it is requested during installation and the app will
+  not open without it, otherwise the 3-minute limit would only be a visual reminder.
 
-Le code est créé **verrouillé** : même dans les secondes qui suivent sa création, couper une
-plage redemande le code. Pas de fenêtre de gratuité.
+### 🌬️ Pause screen
+When a call is blocked, a full-screen screen appears (even when locked):
+- animated breathing circle and **synchronised gentle vibration**;
+- a kind message rather than a plain "Call blocked";
+- a **Close** button deliberately inactive for a few seconds.
 
-### Ce qui demande le code
+### 🔔 A single alert
+When a call is blocked, **one** "Call blocked" notification appears and vibrates once.
+It is never repeated: the call is already declined, insisting every 30 seconds achieves
+nothing and pushes people to turn off the app's notifications. It disappears with a tap
+(pause screen) or a swipe.
 
-| Action | Code requis |
+### 📜 History
+Every decision is logged locally: number, date, status
+(`Blocked`, `Allowed (whitelist)`, `Closed by user`).
+Entries older than **90 days** are purged automatically.
+
+### 🔒 Protection lock
+An **alphanumeric code** (at least 6 characters, at least one letter and one digit) is
+**mandatory from the first launch** of the app: impossible to skip, impossible to delete
+afterwards. It prevents turning off the protection on impulse. It is only requested for
+actions that **weaken** the protection — never to block a call or add a window.
+See [Protection lock](#protection-lock).
+
+### 🛡️ Robustness
+- **Watchdog** in a foreground service: the app survives aggressive battery managers
+  (Chinese manufacturers in particular).
+- **Restart**: protection is re-armed after a reboot or an update.
+- **Fail-open**: any error, any timeout or a service death lets the call through. The
+  worst case is "the call goes through", never "the call is lost".
+
+---
+
+## Protection lock
+
+The enemy is not an attacker: it is **you**, on a bad day. The lock is therefore designed
+to resist impulsiveness, not to protect a secret.
+
+### Mandatory, not optional
+
+On first launch, the app shows a single screen: **choose the code**. As long as it does
+not exist, no window, no Telecom role, no setting is accessible. Version 1.1.0 left the
+code optional: you could enable protection and then turn it off without ever defining
+anything. That is fixed: the code is created cold, before anything else, and it can no
+longer be deleted from the app (only a **change**, with the old code, is possible).
+
+The code is created **locked**: even in the seconds after its creation, switching off a
+window asks for the code again. No grace period.
+
+### What requires the code
+
+| Action | Code required |
 |---|---|
-| Couper une plage active | ✅ |
-| Supprimer une plage (y compris Zen en cours) | ✅ |
-| Changer le code | ✅ |
-| Retirer la protection anti-désinstallation | ✅ |
-| Bloquer un appel, ajouter une plage, activer le Zen | ❌ |
-| Consulter l'historique | ❌ |
+| Switch off an active window | ✅ |
+| Delete a window (including an ongoing Zen) | ✅ |
+| Change the code | ✅ |
+| Remove the uninstall protection | ✅ |
+| Block a call, add a window, enable Zen | ❌ |
+| View the history | ❌ |
 
-### Comment il est stocké
+### How it is stored
 
-- **PBKDF2-HMAC-SHA256**, sel aléatoire de 16 octets, **120 000 itérations**, 256 bits.
-- Le code n'est **jamais** écrit en clair : seuls le sel, l'empreinte et le nombre d'itérations
-  sont conservés dans DataStore.
-- Comparaison à temps constant (`MessageDigest.isEqual`).
-- L'état « déverrouillé » n'existe qu'**en mémoire** : il meurt avec le processus et retombe
-  après **60 secondes** passées en arrière-plan.
+- **PBKDF2-HMAC-SHA256**, random 16-byte salt, **120,000 iterations**, 256 bits.
+- The code is **never** written in plain text: only the salt, the hash and the iteration
+  count are kept in DataStore.
+- Constant-time comparison (`MessageDigest.isEqual`).
+- The "unlocked" state exists **in memory only**: it dies with the process and resets
+  after **60 seconds** in the background.
 
-### Temporisation progressive
+### Progressive delay
 
-Trois essais libres, puis 30 s, 1 min, 2 min, 4 min… jusqu'à **15 minutes** entre deux essais.
-Le compteur est persisté : tuer l'app ne le remet pas à zéro ; redémarrer le téléphone non plus.
+Three free attempts, then 30 s, 1 min, 2 min, 4 min… up to **15 minutes** between attempts.
+The counter is persisted: killing the app does not reset it; neither does rebooting the
+phone.
 
-### Anti-désinstallation (Device Admin)
+### Anti-uninstall (Device Admin)
 
-L'administrateur d'appareil est **sans aucune politique** (pas de verrouillage d'écran, pas
-d'effacement de données). Android refuse alors de désinstaller l'app tant que cet
-administrateur est actif.
+Device admin is **without any policy** (no screen lock, no data wipe). Android then refuses
+to uninstall the app while this admin is active.
 
-Il est demandé **pendant l'installation**, juste après la création du code : l'app ne passe
-pas à l'autorisation des appels tant qu'il n'est pas actif. Android exige une confirmation
-système (aucune app ne peut s'activer seule), mais Instant Pause ouvre cet écran
-automatiquement plutôt que d'attendre que vous le trouviez dans l'onglet Sécurité.
+It is requested **during installation**, right after the code is created: the app does not
+move on to call authorisation until it is active. Android requires a system confirmation
+(no app can activate itself), but Instant Pause opens that screen automatically rather than
+waiting for you to find it in the Security tab.
 
-Une fois l'étape franchie, elle ne réapparaît plus : retirer l'administrateur avec son code
-depuis l'onglet Sécurité reste possible, et n'enferme pas l'utilisateur dans une boucle.
+Once this step is passed, it does not appear again: removing the admin with your code from
+the Security tab remains possible, and does not trap the user in a loop.
 
-> **Soyons honnêtes** : aucune application ne peut empêcher une désinstallation. L'administrateur
-> ajoute deux étapes (Paramètres → Sécurité → Administrateurs → désactiver), et c'est tout.
-> C'est un ralentisseur qui casse le geste réflexe, pas un cadenas.
+> **Let's be honest**: no application can prevent an uninstall. The admin adds two steps
+> (Settings → Security → Device admin apps → deactivate), and that's it. It is a speed
+> bump that breaks the reflex, not a padlock.
 
-### Ce que le verrou ne fait pas
+### What the lock does not do
 
-- Il ne bloque **pas** le lancement de l'app (choix assumé : la protection doit rester consultable).
-- Il ne résiste pas à `adb`, au mode sans échec, ni à un effacement des données de l'app.
-- Il ne protège pas contre une désactivation de l'administrateur depuis les Paramètres système.
-- **Code oublié = aucune récupération possible** : il faut effacer les données de l'app
-  (ce qui supprime aussi les plages) ou la désinstaller après avoir retiré l'administrateur.
+- It does **not** block launching the app (a deliberate choice: protection must remain
+  consultable).
+- It does not resist `adb`, safe mode, or clearing the app's data.
+- It does not protect against deactivating the admin from the system Settings.
+- **Forgotten code = no recovery possible**: you must clear the app's data (which also
+  deletes the windows) or uninstall it after removing the admin.
 
 ---
 
-Instant Pause exploite l'API **Android Telecom** `CallRedirectionService`, disponible depuis Android 10
-via le rôle système `ROLE_CALL_REDIRECTION`.
+## How it works
+
+Instant Pause uses the **Android Telecom** API `CallRedirectionService`, available since
+Android 10 through the system role `ROLE_CALL_REDIRECTION`.
 
 ```mermaid
 sequenceDiagram
-    participant U as Utilisateur
+    participant U as User
     participant T as Telecom
     participant S as CallRedirectionService
-    participant D as Domaine
+    participant D as Domain
     participant P as PauseActivity
 
-    U->>T: Appel sortant
+    U->>T: Outgoing call
     T->>S: onPlaceCall(handle, account, …)
-    Note over S: Urgence ? → placeCallUnmodified()
-    S->>D: ShouldBlockCallUseCase (async, timeout 2 s)
+    Note over S: Emergency? → placeCallUnmodified()
+    S->>D: ShouldBlockCallUseCase (async, 2 s timeout)
     D-->>S: Allow | Block
     alt Allow
         S->>T: placeCallUnmodified()
     else Block
         S->>T: cancelCall()
         S->>S: log + PauseForegroundService + notification
-        S->>P: Écran de pause
+        S->>P: Pause screen
     end
 ```
 
-Points de conception importants :
+Important design points:
 
-1. **Aucune I/O sur le thread du callback Telecom** — la décision est calculée dans un
-   `CoroutineScope(SupervisorJob + Dispatchers.IO)`, avec un timeout de 2 s.
-2. **Une seule réponse par appel** — une garde `AtomicBoolean` par appel empêche la double réponse
-   (qui provoquerait un `IllegalStateException` côté Telecom).
-3. **Fail-open explicite** — chaque échec est journalisé, jamais silencieux.
-4. **Notification synchrone dans `decline()`** — Telecom détruit le service juste après
-   `cancelCall()` ; un `launch()` serait annulé avant exécution.
+1. **No I/O on the Telecom callback thread** — the decision is computed in a
+   `CoroutineScope(SupervisorJob + Dispatchers.IO)`, with a 2 s timeout.
+2. **A single response per call** — an `AtomicBoolean` guard per call prevents double
+   responses (which would trigger an `IllegalStateException` on the Telecom side).
+3. **Explicit fail-open** — every failure is logged, never silent.
+4. **Synchronous notification in `decline()`** — Telecom destroys the service right after
+   `cancelCall()`; a `launch()` would be cancelled before running.
 
 ---
 
 ## Architecture
 
-Organisation en quatre couches, sans dépendance du domaine vers l'UI ou Android.
+Four layers, with no dependency from the domain to the UI or Android.
 
 ```
 app/src/main/java/com/instantpause/app/
 ├── CoolDownApplication.kt          # @HiltAndroidApp
 ├── data/
-│   ├── datastore/ProtectionPrefs.kt    # DataStore : Zen, rôle, bandeau, empreinte du code
-│   ├── local/                          # Room : entités, DAO, base, converters
-│   └── repository/RepositoryImpls.kt   # Implémentations + purge 90 jours
-├── di/                                 # Modules Hilt (DataStore, sécurité, hasher, horloge)
+│   ├── datastore/ProtectionPrefs.kt    # DataStore: Zen, role, banner, code hash
+│   ├── local/                          # Room: entities, DAOs, database, converters
+│   └── repository/RepositoryImpls.kt   # Implementations + 90-day purge
+├── di/                                 # Hilt modules (DataStore, security, hasher, clock)
 ├── domain/
 │   ├── model/Models.kt                 # Schedule, WhitelistEntry, BlockedLog
-│   ├── phone/                          # PhoneNumberAnalyzer (interface) + implémentation
-│   ├── repository/Repositories.kt      # Contrats
-│   ├── security/                       # PassphrasePolicy, PBKDF2, temporisations, AppLockManager
-│   └── usecase/ShouldBlockCallUseCase.kt  # Cœur métier : Allow / Block
+│   ├── phone/                          # PhoneNumberAnalyzer (interface) + implementation
+│   ├── repository/Repositories.kt      # Contracts
+│   ├── security/                       # PassphrasePolicy, PBKDF2, delays, AppLockManager
+│   └── usecase/ShouldBlockCallUseCase.kt  # Core logic: Allow / Block
 ├── system/
-│   ├── CoolDownCallRedirectionService.kt  # Interception Telecom
-│   ├── PauseForegroundService.kt          # Ouverture de l'UI depuis l'arrière-plan
-│   ├── CoolDownWatchdogService.kt         # Maintien en vie
-│   ├── WatchdogAlarmReceiver.kt           # Ré-armement périodique
-│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-désinstallation (aucune politique)
-│   ├── ProtectionAlertNotifier.kt         # Canaux + notifications
-│   └── BootReceiver.kt                    # Après reboot / mise à jour
+│   ├── CoolDownCallRedirectionService.kt  # Telecom interception
+│   ├── PauseForegroundService.kt          # Opens the UI from the background
+│   ├── CoolDownWatchdogService.kt         # Keeps the process alive
+│   ├── WatchdogAlarmReceiver.kt           # Periodic re-arming
+│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-uninstall (no policy)
+│   ├── ProtectionAlertNotifier.kt         # Channels + notifications
+│   └── BootReceiver.kt                    # After reboot / update
 └── ui/
-    ├── main/      # Accueil, bandeau d'aide, activation du rôle
-    ├── schedule/  # Plages + historique (Compose)
-    ├── security/  # Verrou : code, temporisations, administrateur
-    ├── pause/     # Écran de pause sensoriel
-    ├── logs/      # Journal détaillé
+    ├── main/      # Home, help banner, role activation
+    ├── schedule/  # Windows + history (Compose)
+    ├── security/  # Lock: code, delays, device admin
+    ├── pause/     # Sensory pause screen
+    ├── logs/      # Detailed log
     └── theme/     # Material 3
 ```
 
-**Décision métier** (`ShouldBlockCallUseCase`) :
+**Business decision** (`ShouldBlockCallUseCase`):
 
 ```
-Urgence ?            → Allow(EMERGENCY_NUMBER)   // jamais bloqué
-Mode Zen actif ?     → Block(EMERGENCY_MODE)
-Plage active ?       → Block(SCHEDULE_WINDOW)
-Whitelist ?          → Allow(WHITELISTED)
-Sinon                → Allow(PROTECTION_INACTIVE)
-Erreur / timeout     → Allow(FAIL_OPEN)
+Emergency?           → Allow(EMERGENCY_NUMBER)   // never blocked
+Zen mode active?     → Block(EMERGENCY_MODE)
+Window active?       → Block(SCHEDULE_WINDOW)
+Whitelist?           → Allow(WHITELISTED)
+Otherwise            → Allow(PROTECTION_INACTIVE)
+Error / timeout      → Allow(FAIL_OPEN)
 ```
 
 ---
 
-## Stack technique
+## Tech stack
 
-| Catégorie | Choix |
+| Category | Choice |
 |---|---|
-| Langage | Kotlin 2.2.10 |
+| Language | Kotlin 2.2.10 |
 | UI | Jetpack Compose + Material 3 (BOM 2026.02.01) |
-| Injection de dépendances | Hilt 2.60.1 (KSP) |
-| Base locale | Room 2.8.5 |
-| Préférences | DataStore Preferences 1.2.1 |
-| Numéros | libphonenumber 9.0.41 |
+| Dependency injection | Hilt 2.60.1 (KSP) |
+| Local database | Room 2.8.5 |
+| Preferences | DataStore Preferences 1.2.1 |
+| Phone numbers | libphonenumber 9.0.41 |
 | Build | AGP 9.4.1 · JDK 17 |
 | SDK | `minSdk 29` (Android 10) · `targetSdk 37` |
 
-Aucune dépendance réseau, aucun analytics, aucun compte.
+No network dependency, no analytics, no account.
 
 ---
 
 ## Installation
 
-### Téléchargement
+### Download
 
-La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
+The latest signed version is available in **[Releases](../../releases/latest)**:
 
-**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6,4 Mo · Android 10+
+**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6.4 MB · Android 10+
 
 ```bash
-# Vérifier l'intégrité du fichier téléchargé
+# Verify the integrity of the downloaded file
 sha256sum InstantPause-1.4.0.apk
-# → voir le hash publié dans la release (recalculé à chaque build)
+# → see the hash published in the release (recomputed on every build)
 ```
 
-> 🔄 **Paquet renommé en 1.4.0** : les versions 1.3.x et antérieures utilisaient
-> `com.cooldown.app`. Android ne sait pas passer d'un paquet à l'autre : pour installer la
-> 1.4.0, **désinstallez d'abord l'ancienne version** (en désactivant son administrateur
-> d'appareil depuis l'onglet Sécurité). Code, plages et contacts autorisés sont à recréer.
+> 🔄 **Package renamed in 1.4.0**: versions 1.3.x and earlier used
+> `com.cooldown.app`. Android cannot switch from one package to another: to install
+> 1.4.0, **uninstall the old version first** (by deactivating its device admin from the
+> Security tab). Code, windows and allowed contacts must be created again.
 
-> ⚠️ Si une version de **debug** est déjà installée, désinstallez-la d'abord : la signature
-> diffère, Android refusera la mise à jour (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). Le paquet
-> de debug est `com.instantpause.app.debug`.
+> ⚠️ If a **debug** build is already installed, uninstall it first: the signature
+> differs, Android will refuse the update (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`). The
+> debug package is `com.instantpause.app.debug`.
 
-> 🛡️ Certains antivirus préinstallés (AVG/Avast sur itel, Infinix…) affichent « application
-> suspecte » pour tout APK installé hors Play Store. C'est une heuristique sur la **source**,
-> pas une analyse du code : ne validez pas « SUPPRIMER ». (Et si l'administrateur Instant Pause est
-> actif, la désinstallation échouera de toute façon.)
+> 🛡️ Some preinstalled antivirus apps (AVG/Avast on itel, Infinix…) show "suspicious
+> application" for any APK installed outside the Play Store. It is a heuristic on the
+> **source**, not an analysis of the code: do not tap "REMOVE". (And if the Instant Pause
+> admin is active, uninstallation will fail anyway.)
 
-### Prérequis
-- Android **10 (API 29)** ou supérieur.
-- Le constructeur doit exposer le rôle **Call Redirection**
-  (disponible sur la quasi-totalité des appareils, non garanti sur certains forks très modifiés).
+### Requirements
+- Android **10 (API 29)** or higher.
+- The manufacturer must expose the **Call Redirection** role
+  (available on almost all devices, not guaranteed on heavily modified forks).
 
-### Étapes
-1. Installez l'APK (release ou build locale).
-2. Ouvrez l'app → **choisissez votre code de protection**. Il est obligatoire : l'écran ne se
-   contourne pas, et le code ne pourra plus être supprimé ensuite.
-3. Confirmez la protection **anti-désinstallation** (Device Admin) : l'écran système s'ouvre
-   automatiquement à cette étape, et l'app ne continue pas tant qu'elle n'est pas active.
-4. Accordez **Passer et gérer des appels téléphoniques** : c'est ce qui permet de couper
-   l'appel à 3 minutes. Cette étape est obligatoire — sans elle, un contact autorisé
-   pourrait vous garder une heure au téléphone.
-5. Acceptez le rôle **Redirection d'appels**.
-6. Autorisez l'**affichage plein écran** (Android 14+) : le réglage Android s'ouvre
-   automatiquement. Cette étape est proposée **une seule fois** et n'est pas bloquante —
-   sans elle, l'écran de pause s'affiche comme une simple notification à toucher.
-7. Accordez les permissions restantes :
-   - **Notifications** (Android 13+) — pour l'alerte de blocage ;
-   - **Affichage par-dessus les autres apps** — pour l'écran de pause.
-8. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+### Steps
+1. Install the APK (release or local build).
+2. Open the app → **choose your protection code**. It is mandatory: the screen cannot be
+   bypassed, and the code can no longer be deleted afterwards.
+3. Confirm the **anti-uninstall** protection (Device Admin): the system screen opens
+   automatically at this step, and the app does not continue until it is active.
+4. Grant **Pass and manage phone calls**: this is what allows the call to be cut at
+   3 minutes. This step is mandatory — without it, an allowed contact could keep you on
+   the phone for an hour.
+5. Accept the **Call redirection** role.
+6. Allow **full-screen display** (Android 14+): the Android setting opens
+   automatically. This step is offered **only once** and is not blocking — without it,
+   the pause screen appears as a simple notification to tap.
+7. Grant the remaining permissions:
+   - **Notifications** (Android 13+) — for the block alert;
+   - **Display over other apps** — for the pause screen.
+8. Create a time window (or enable Zen mode) and test with a neutral number.
 
 ---
 
 ## Google Play
 
-L'application est publiée sous l'identifiant **`com.instantpause.app`** — immuable une fois
-l'app créée dans la Play Console.
+The application is published under the identifier **`com.instantpause.app`** — immutable
+once the app is created in the Play Console.
 
-| Élément | Valeur |
+| Item | Value |
 |---|---|
-| Identifiant | `com.instantpause.app` (debug : `com.instantpause.app.debug`) |
-| Format à déposer | **`.aab`** (`gradlew :app:bundleRelease`) |
-| Cible | `targetSdk 37`, `minSdk 29` |
-| Signature | keystore de release ; Play App Signing gère ensuite la clé de distribution |
-| Collecte de données | **aucune** (voir [Confidentialité](#confidentialité)) |
-| Politique de confidentialité | **https://ajanedouby.github.io/instant-pause-privacy/** |
+| Identifier | `com.instantpause.app` (debug: `com.instantpause.app.debug`) |
+| Format to upload | **`.aab`** (`gradlew :app:bundleRelease`) |
+| Target | `targetSdk 37`, `minSdk 29` |
+| Signing | release keystore; Play App Signing then manages the distribution key |
+| Data collection | **none** (see [Privacy](#privacy)) |
+| Privacy policy | **https://ajanedouby.github.io/instant-pause-privacy/** |
 
-Avant la première publication, la Play Console réclame :
+Before the first publication, the Play Console requires:
 
-1. une **URL de politique de confidentialité** publique — c'est chose faite :
-   **https://ajanedouby.github.io/instant-pause-privacy/** (page GitHub Pages du dépôt public
-   [`instant-pause-privacy`](https://github.com/AJANEDOUBY/instant-pause-privacy), générée
-   depuis [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) et servie aussi en
-   [Markdown](https://ajanedouby.github.io/instant-pause-privacy/PRIVACY_POLICY.md)) ;
-2. le formulaire **Sécurité des données** — ici, tout est local : « aucune donnée collectée » ;
-3. la **justification des permissions sensibles**, à rédiger au moment de l'envoi :
-   - `ANSWER_PHONE_CALLS` : couper à 3 minutes un appel vers un contact autorisé ;
-   - administrateur d'appareil : freiner une désinstallation impulsive (aucune politique
-     n'est demandée à l'appareil) ;
-   - service de premier plan `specialUse` : maintien de la protection et minuteur d'appel ;
-   - `USE_FULL_SCREEN_INTENT` : afficher l'écran de pause par-dessus le verrouillage ;
-4. la déclaration d'usage des **services de premier plan** (formulaire séparé).
+1. a public **privacy policy URL** — done:
+   **https://ajanedouby.github.io/instant-pause-privacy/** (GitHub Pages of the public
+   repository [`instant-pause-privacy`](https://github.com/AJANEDOUBY/instant-pause-privacy),
+   generated from [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) and also served as
+   [Markdown](https://ajanedouby.github.io/instant-pause-privacy/PRIVACY_POLICY.md));
+2. the **Data safety** form — here everything is local: "no data collected";
+3. the **justification for sensitive permissions**, to be written when submitting:
+   - `ANSWER_PHONE_CALLS`: hang up at 3 minutes a call to an allowed contact;
+   - device admin: slow down an impulsive uninstall (no policy is requested from the
+     device);
+   - `specialUse` foreground service: keeping the protection alive and the call timer;
+   - `USE_FULL_SCREEN_INTENT`: show the pause screen over the lock screen;
+4. the **foreground services** usage declaration (separate form).
 
-> ⚠️ La revue Play est le point de friction, pas le code : l'administrateur d'appareil et
-> `ANSWER_PHONE_CALLS` sont les deux permissions les plus scrutées. Le dépôt GitHub reste le
-> canal de distribution des APK signés, indépendamment du Store.
+> ⚠️ Play review is the friction point, not the code: device admin and
+> `ANSWER_PHONE_CALLS` are the two most scrutinised permissions. The GitHub repository
+> remains the distribution channel for signed APKs, independently of the Store.
 
 ---
 
-## Compilation
+## Build
 
 ```bash
-# Cloner
+# Clone
 git clone https://github.com/AJANEDOUBY/CoolDown.git
 cd CoolDown
 
-# APK de debug
+# Debug APK
 ./gradlew :app:assembleDebug
 # → app/build/outputs/apk/debug/app-debug.apk
 
-# Tests unitaires
+# Unit tests
 ./gradlew :app:testDebugUnitTest
 ```
 
-Sous Windows : `gradlew.bat`.
+On Windows: `gradlew.bat`.
 
-Le fichier `local.properties` (chemin du SDK) n'est pas versionné — Android Studio le génère
-automatiquement, ou renseignez `sdk.dir=/chemin/vers/Android/Sdk`.
+The `local.properties` file (SDK path) is not versioned — Android Studio generates it
+automatically, or set `sdk.dir=/path/to/Android/Sdk`.
 
-### Publier une release
+### Publishing a release
 
-Le script `release.ps1` enchaîne tout : tests, build release (R8), signature, vérification,
-tag git et publication GitHub avec l'APK en asset.
+The `release.ps1` script chains everything: tests, release build (R8), signing,
+verification, git tag and GitHub publication with the APK as an asset.
 
 ```powershell
-# Simulation complète, sans tag ni publication
+# Full dry run, without tag or publication
 .\release.ps1 -DryRun
 
-# Avec des notes de release personnalisées
+# With custom release notes
 .\release.ps1 -Notes .\notes-1.4.0.md
 ```
 
-Si les identifiants de signature sont renseignés (voir ci-dessous), Gradle produit directement un
-APK signé : le script le vérifie au lieu de le re-signer. Sinon, il produit un APK non signé, que
-le script zipaligne et signe lui-même avec le keystore.
+If the signing credentials are set (see below), Gradle produces a signed APK directly:
+the script verifies it instead of re-signing it. Otherwise, it produces an unsigned APK,
+which the script zipaligns and signs itself with the keystore.
 
-Pour un dépôt sur Google Play, produire en plus le bundle :
+For a Google Play upload, also produce the bundle:
 
 ```bash
 ./gradlew :app:bundleRelease
 # → app/build/outputs/bundle/release/app-release.aab
 ```
 
-### Signature : aucun secret dans le dépôt
+### Signing: no secrets in the repository
 
-`app/build.gradle.kts` ne contient **aucun** mot de passe : il est versionné. Les identifiants
-de signature sont lus dans `local.properties` (ignoré par git) ou, à défaut, dans des variables
-d'environnement — pratique pour une CI.
+`app/build.gradle.kts` contains **no** password: it is versioned. Signing credentials are
+read from `local.properties` (ignored by git) or, failing that, from environment variables
+— handy for CI.
 
 ```properties
-# local.properties — ne jamais committer (déjà dans .gitignore)
+# local.properties — never commit (already in .gitignore)
 signing.storeFile=keystore/cooldown-release.jks
 signing.storePassword=…
 signing.keyAlias=cooldown
 signing.keyPassword=…
 ```
 
-Variables équivalentes : `SIGNING_STORE_FILE`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`,
+Equivalent variables: `SIGNING_STORE_FILE`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`,
 `SIGNING_KEY_PASSWORD`.
 
-Sans ces valeurs (ou sans keystore), le build **ne casse pas** : `assembleRelease` produit un
-APK non signé, et `release.ps1` le signe avec `keystore/cooldown-release.jks`.
+Without these values (or without a keystore), the build **does not break**:
+`assembleRelease` produces an unsigned APK, and `release.ps1` signs it with
+`keystore/cooldown-release.jks`.
 
-> ⚠️ Le mot de passe a figuré en clair dans `app/build.gradle.kts` jusqu'au commit `2fe34c4`.
-> Le retirer du fichier **ne l'efface pas** de l'historique git. Si le dépôt devient public,
-> réécrivez l'historique (`git filter-repo`) ou, plus simple et plus sûr, changez le mot de
-> passe du keystore et enregistrez la nouvelle clé comme *clé d'upload* dans la Play Console.
+> ⚠️ The password appeared in plain text in `app/build.gradle.kts` until commit
+> `2fe34c4`. Removing it from the file **does not erase it** from git history. If the
+> repository becomes public, rewrite the history (`git filter-repo`) or, simpler and
+> safer, change the keystore password and register the new key as an *upload key* in the
+> Play Console.
 
-Prérequis :
+Requirements:
 
-- un **keystore** dans `keystore/cooldown-release.jks` (voir `.gitignore` : ce fichier ne doit
-  **jamais** être committé) ;
-- un **token GitHub** dans `$env:GITHUB_TOKEN`, ou des identifiants enregistrés
-  auprès du gestionnaire d'identifiants git (`git credential approve`).
+- a **keystore** in `keystore/cooldown-release.jks` (see `.gitignore`: this file must
+  **never** be committed);
+- a **GitHub token** in `$env:GITHUB_TOKEN`, or credentials registered with the git
+  credential manager (`git credential approve`).
 
-Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`versionCode` dans
-`app/build.gradle.kts` avant chaque publication.
-
+The tag created is `v<versionName>`; `versionName`/`versionCode` must be incremented in
+`app/build.gradle.kts` before each release.
 
 ---
 
 ## Tests
 
-81 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+81 unit tests cover the business logic, with no Android dependency at runtime:
 
-| Suite | Couverture |
+| Suite | Coverage |
 |---|---|
-| `ScheduleTest` (11) | fenêtres, bornes incluses/exclues, jours, franchissement de minuit |
-| `ShouldBlockCallUseCaseTest` (8) | urgence, mode Zen, plage, whitelist, expiration, région par défaut |
-| `BlockStatusConvertersTest` (2) | mapping Room ↔ `BlockStatus`, valeur inconnue |
-| `PassphrasePolicyTest` (7) | longueur, lettre + chiffre, normalisation, accents |
-| `PassphraseHasherTest` (7) | déterminisme, sel, bon/mauvais code, empreinte corrompue |
-| `LockoutPolicyTest` (4) | essais libres, doublement, plafond 15 min, compteur |
-| `AppLockManagerTest` (20) | cycle de vie, code créé verrouillé, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
-| `CallTimerTextTest` (4) | format `2:59 / 3:00`, secondes toujours sur deux chiffres, chiffres latins quelle que soit la locale |
-| `OnboardingStageTest` (17) | ordre des étapes : code → anti-désinstallation → raccrochage → rôle → plein écran → app |
+| `ScheduleTest` (11) | windows, included/excluded bounds, days, midnight crossing |
+| `ShouldBlockCallUseCaseTest` (8) | emergency, Zen mode, window, whitelist, expiry, default region |
+| `BlockStatusConvertersTest` (2) | Room ↔ `BlockStatus` mapping, unknown value |
+| `PassphrasePolicyTest` (7) | length, letter + digit, normalisation, accents |
+| `PassphraseHasherTest` (7) | determinism, salt, correct/wrong code, corrupted hash |
+| `LockoutPolicyTest` (4) | free attempts, doubling, 15 min ceiling, counter |
+| `AppLockManagerTest` (20) | lifecycle, code created locked, restart, persisted delay, 60 s relock, change/removal, storage failure |
+| `CallTimerTextTest` (4) | `2:59 / 3:00` format, seconds always two digits, Latin digits whatever the locale |
+| `OnboardingStageTest` (17) | step order: code → anti-uninstall → hang-up → role → full screen → app |
 
-Soit **81 tests** au total.
+That is **81 tests** in total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
 # → app/build/reports/tests/testDebugUnitTest/index.html
 ```
 
-Le use case dépend de l'interface `PhoneNumberAnalyzer` (et non de l'implémentation Android),
-ce qui permet de l'exécuter avec des fakes en mémoire.
+The use case depends on the `PhoneNumberAnalyzer` interface (not on the Android
+implementation), which allows it to run with in-memory fakes.
 
-> Les scénarios impliquant Telecom (interception réelle, foreground services, notifications)
-> doivent être validés sur un **appareil physique** : l'émulateur n'expose pas toujours le rôle
-> `ROLE_CALL_REDIRECTION`.
+> Scenarios involving Telecom (real interception, foreground services, notifications)
+> must be validated on a **physical device**: the emulator does not always expose the
+> `ROLE_CALL_REDIRECTION` role.
 
 ---
 
 ## Permissions
 
-| Permission | Raison |
+| Permission | Reason |
 |---|---|
-| `BIND_CALL_REDIRECTION_SERVICE` | Accès au flux Telecom (accordé via le rôle système, pas par l'utilisateur) |
-| `POST_NOTIFICATIONS` | Alerte unique de blocage |
-| `VIBRATE` | Retour haptique de l'écran de pause |
-| `SYSTEM_ALERT_WINDOW` | Affichage de l'écran de pause au-dessus du dialer |
-| `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé — proposé une fois à l'installation sur Android 14+ (non bloquant) |
-| `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
-| `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
-| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
-| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
-| `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée, étape obligatoire à l'installation |
+| `BIND_CALL_REDIRECTION_SERVICE` | Access to the Telecom flow (granted through the system role, not by the user) |
+| `POST_NOTIFICATIONS` | Single block alert |
+| `VIBRATE` | Haptic feedback on the pause screen |
+| `SYSTEM_ALERT_WINDOW` | Show the pause screen above the dialer |
+| `USE_FULL_SCREEN_INTENT` | Display on the lock screen — offered once at install on Android 14+ (non-blocking) |
+| `RECEIVE_BOOT_COMPLETED` | Re-arming after reboot |
+| `SCHEDULE_EXACT_ALARM` | Safety alarm every 15 min (inexact fallback if denied) |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Offer the energy exemption from the banner |
+| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, opening the UI |
+| `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — mandatory permission at install |
+| `BIND_DEVICE_ADMIN` (on the receiver) | Anti-uninstall friction — no policy requested, mandatory step at install |
 
 ---
 
-## Limites connues
+## Known limitations
 
-- **Appels VoIP non couverts** (WhatsApp, Signal, Messenger, Telegram) — *prochain chantier,
-  hors périmètre de la 1.4.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
-  flux audio, et `CallScreeningService` n'est jamais consulté. Aucune API Android ne permet à
-  une app tierce de voir ni de refuser un appel VoIP. Concrètement, pendant une plage
-  protégée :
-  - un appel WhatsApp ou Signal part **normalement** ;
-  - Instant Pause ne le voit pas, ne l'affiche pas dans l'historique et ne montre pas l'écran
-    de pause ;
-  - seuls les **appels téléphoniques classiques** sont couverts.
+- **VoIP calls not covered** (WhatsApp, Signal, Messenger, Telegram) — *next project,
+  outside the scope of 1.4.x*. These apps do not place calls through Telecom: they open
+  their own audio stream, and `CallScreeningService` is never consulted. No Android API
+  allows a third-party app to see or reject a VoIP call. Concretely, during a protected
+  window:
+  - a WhatsApp or Signal call goes through **normally**;
+  - Instant Pause does not see it, does not show it in the history and does not display
+    the pause screen;
+  - only **classic phone calls** are covered.
 
-  La seule piste réaliste est un **service d'accessibilité** qui repère l'ouverture de la
-  fenêtre d'appel et superpose l'écran de pause. Trois raisons de ne pas l'avoir fait :
-  1. le blocage serait **partiel et tardif** : on peut interposer un écran avant la connexion,
-     pas annuler un appel déjà établi ;
-  2. la permission « Accessibilité » donne lecture de **tout** ce qui s'affiche, messages
-     compris ; pour une app qui vend la tranquillité, ce compromis doit être choisi
-     explicitement par l'utilisateur, pas hérité d'une mise à jour ;
-  3. la détection dépend du libellé et de la structure de l'UI de chaque app : elle casse à
-     chaque refonte de WhatsApp ou de Signal.
+  The only realistic lead is an **accessibility service** that detects the opening of the
+  call window and overlays the pause screen. Three reasons not to have done it:
+  1. blocking would be **partial and late**: a screen can be interposed before connection,
+     but an already established call cannot be cancelled;
+  2. the "Accessibility" permission grants reading of **everything** displayed, messages
+     included; for an app that sells peace of mind, this trade-off must be chosen
+     explicitly by the user, not inherited from an update;
+  3. detection depends on the wording and UI structure of each app: it breaks with every
+     WhatsApp or Signal redesign.
 
-  En attendant, le périmètre est assumé et affiché comme tel : **les appels d'applications ne
-  sont pas bloqués**. Voir la [feuille de route](#feuille-de-route).
-- **Numéros d'urgence** : volontairement hors périmètre, et **non testables** en développement.
-- **Raccrochage à 3:00 garanti par une permission obligatoire** : `TelecomManager.endCall()`,
-  seule API qui permette à une app tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`.
-  Cette permission fait partie de l'installation : sans elle, l'app ne s'ouvre pas (sinon la
-  limite ne serait qu'un rappel). Une fois accordée, l'appel est coupé net à la fin du
-  minuteur. La pastille disparaît d'elle-même au raccrochage ; si l'appel n'a jamais abouti
-  (occupé, non décroché), elle peut rester jusqu'à l'échéance des 3 minutes.
-- **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
-  mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
-- **Verrou contournable** : le code protège les réglages de l'app, pas le système. Un
-  `adb`, un effacement des données, le mode sans échec ou la désactivation de l'administrateur
-  depuis les Paramètres restent possibles. Voir [Verrou de protection](#verrou-de-protection).
-- **Réponse interactive** : l'autorisation en un tap (`allowInteractiveResponse` de Telecom)
-  n'est pas encore implémentée — le blocage est binaire.
-- **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent
-  tuer le watchdog et **retarder le `BOOT_COMPLETED`** au point de ne jamais le délivrer.
-  Sur ces appareils (itel/Transsion, Xiaomi, Infinix…), autorisez Instant Pause dans
-  **Démarrage automatique** et **sans restriction d'énergie**. L'app affiche un bandeau
-  ambre tant que l'exemption d'énergie manque.
-  L'interception d'appel, elle, **continue de fonctionner** : Telecom relance le processus
-  à froid à chaque appel, et le watchdog se ré-arme à cette occasion.
-
----
-
-## Feuille de route
-
-- [ ] Réponse interactive via `redirectCall()` (autoriser l'appel depuis l'écran de pause)
-- [ ] Blocage des appels VoIP : overlay via service d'accessibilité à l'ouverture de
-      WhatsApp/Signal/Telegram pendant une plage protégée (code ou respiration pour entrer).
-      **Reporté** — voir [Limites connues](#limites-connues) pour les compromis à trancher
-      avant d'écrire du code.
-- [ ] Plages par défaut proposées au premier lancement
-- [ ] Import de contacts pour la whitelist
-- [ ] Statistiques (appels évités par semaine)
-- [ ] Widget / tuile de réglages rapides pour le mode Zen
-- [ ] Tests instrumentés (PauseActivity, foreground services)
+  In the meantime, the scope is assumed and displayed as such: **app calls are not
+  blocked**. See the [roadmap](#roadmap).
+- **Emergency numbers**: deliberately out of scope, and **not testable** in development.
+- **Hang-up at 3:00 guaranteed by a mandatory permission**: `TelecomManager.endCall()`,
+  the only API that lets a third-party app cut a line, requires `ANSWER_PHONE_CALLS`.
+  This permission is part of the installation: without it, the app does not open
+  (otherwise the limit would only be a reminder). Once granted, the call is cut cleanly
+  at the end of the timer. The pill disappears by itself on hang-up; if the call never
+  connected (busy, not answered), it may remain until the 3-minute deadline.
+- **Revocable role**: if the system removes `ROLE_CALL_REDIRECTION` (another filtering
+  app, an update), protection stops; the app detects it and shows a banner.
+- **Bypassable lock**: the code protects the app's settings, not the system. `adb`,
+  clearing data, safe mode or deactivating the admin from Settings remain possible. See
+  [Protection lock](#protection-lock).
+- **Interactive response**: one-tap authorisation (Telecom's `allowInteractiveResponse`)
+  is not yet implemented — blocking is binary.
+- **Manufacturer fork**: very aggressive overlays (battery management, autostart) can kill
+  the watchdog and **delay `BOOT_COMPLETED`** to the point of never delivering it. On
+  these devices (itel/Transsion, Xiaomi, Infinix…), allow Instant Pause in
+  **Autostart** and **no battery restrictions**. The app shows an amber banner as long as
+  the energy exemption is missing. Call interception, however, **keeps working**: Telecom
+  restarts the process cold on every call, and the watchdog re-arms on that occasion.
 
 ---
 
-## Confidentialité
+## Roadmap
 
-La politique complète est dans [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) et publiée en ligne sur
+- [ ] Interactive response via `redirectCall()` (allow the call from the pause screen)
+- [ ] VoIP call blocking: overlay via accessibility service when
+      WhatsApp/Signal/Telegram opens during a protected window (code or breathing to
+      enter). **Postponed** — see [Known limitations](#known-limitations) for the
+      trade-offs to settle before writing code.
+- [ ] Default windows offered on first launch
+- [ ] Contact import for the whitelist
+- [ ] Statistics (calls avoided per week)
+- [ ] Widget / quick settings tile for Zen mode
+- [ ] Instrumented tests (PauseActivity, foreground services)
+
+---
+
+## Privacy
+
+The full policy is in [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) and published online at
 **https://ajanedouby.github.io/instant-pause-privacy/**.
 
-- **Aucune connexion réseau.** L'app ne contient ni client HTTP ni SDK publicitaire.
-- **Aucun compte, aucun identifiant.**
-- Plages, whitelist et historique restent dans le stockage privé de l'application
+- **No network connection.** The app contains neither an HTTP client nor an advertising
+  SDK.
+- **No account, no identifier.**
+- Windows, whitelist and history stay in the application's private storage
   (Room + DataStore).
-- `android:allowBackup="false"` : pas de sauvegarde cloud automatique des données.
-- L'historique des appels d'Instant Pause est **distinct** du journal d'appels système.
+- `android:allowBackup="false"`: no automatic cloud backup of data.
+- Instant Pause's call history is **separate** from the system call log.
 
 ---
 
-## Avertissement
+## Disclaimer
 
-Instant Pause est un outil d'auto-discipline, pas un dispositif médical ni un contrôle parental.
-Il ne remplace pas un accompagnement professionnel si vos difficultés sont liées à votre santé.
+Instant Pause is a self-discipline tool, not a medical device or parental control.
+It does not replace professional support if your difficulties are related to your health.
 
-Testez toujours l'application avec un **numéro neutre** avant de compter dessus au quotidien.
+Always test the application with a **neutral number** before relying on it daily.
