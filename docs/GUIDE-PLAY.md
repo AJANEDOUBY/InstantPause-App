@@ -83,15 +83,15 @@ Bloquez les appels impulsifs pendant vos plages : respirez, puis décidez.
 **Description complète** (4 000 caractères max) :
 
 ```
-Il est 23 h. Vous savez très bien que vous ne devriez pas appeler. Vous appelez quand même.
-
-Instant Pause existe pour cette minute-là.
+CE QUE FAIT L'APPLICATION
 
 Pendant les plages horaires que vous définissez, chaque appel sortant est intercepté et remplacé
 par un écran de pause : respirer, se calmer, puis décider. Pas un mur. Pas une punition. Un
 espace de quelques secondes entre l'impulsion et l'acte.
 
-CE QUE FAIT L'APPLICATION
+Il est 23 h. Vous savez très bien que vous ne devriez pas appeler. Vous appelez quand même.
+Instant Pause existe pour cette minute-là.
+
 • Vous choisissez des plages horaires (par exemple 22 h – 7 h, tous les jours).
 • Tout appel sortant pendant une plage ouvre l'écran de pause au lieu de composer.
 • Un mode Zen peut bloquer les appels à la demande, pour 2 heures.
@@ -99,6 +99,7 @@ CE QUE FAIT L'APPLICATION
   automatiquement à 3 minutes.
 
 CE QUI LA REND DIFFÉRENTE
+
 • Le code de protection est créé à froid, avant tout le reste, et il n'est jamais stocké en clair.
 • Couper une plage, supprimer un contact autorisé ou retirer l'anti-désinstallation exige ce code.
 • Aucun compte. Aucune publicité. Aucun analytics. Aucun serveur.
