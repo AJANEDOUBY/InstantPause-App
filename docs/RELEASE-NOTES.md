@@ -35,20 +35,6 @@ No account, no ads, no network connection: everything stays on your phone.
 </en-US>
 ```
 
-### Arabe — `ar`
-
-```
-<ar>
-أول إصدار على Google Play.
-
-يعترض Instant Pause مكالماتك الصادرة خلال الفترات التي تحددها: تظهر شاشة التوقف، تتنفس، ثم تقرر.
-
-يبقى ثلاثة أشخاص موثوقون قابلين للاتصال في أي وقت، بمدة أقصاها 3 دقائق. أرقام الطوارئ لا تُحجب أبدًا.
-
-لا حساب، لا إعلانات، ولا اتصال بالإنترنت: كل شيء يبقى على هاتفك.
-</ar>
-```
-
 ---
 
 ## Modèle pour la prochaine version
@@ -74,14 +60,4 @@ technique. Les notes de version ne sont **pas** un journal de commits.
 
 [Optional: fixes.]
 </en-US>
-```
-
-```
-<ar>
-[الجديد في جملة واحدة.]
-
-[ما يتغير بالنسبة للمستخدم.]
-
-[اختياري: إصلاحات.]
-</ar>
 ```
