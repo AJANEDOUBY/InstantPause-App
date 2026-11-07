@@ -457,4 +457,53 @@ Update: X/12 testers so far, still need Y. Thanks to everyone who joined — ple
 - Répondre à chaque commentaire dans l'heure : c'est ce qui maintient le post en tête.
 - Ne pas créer un second post pour « relancer » : éditer le premier.
 
+---
+
+## 11. « Sorry, this post was removed by Reddit's filters »
+
+Ce message vient du **filtre anti-spam de Reddit**, pas d'une règle du subreddit. Il ne signifie
+pas que le post est interdit : il est en attente dans la **file de modération** (modqueue), où un
+modérateur peut l'approuver en un clic.
+
+### Ce qui le déclenche
+
+| Facteur | Situation typique |
+|---|---|
+| Karma très faible | 1 karma, quelques contributions |
+| Plusieurs liens dans un premier post | 4 URL (groupe, Play, formulaire, confidentialité) |
+| Compte peu actif | aucune participation récente |
+| VPN / IP partagée | trafic considéré comme suspect |
+
+L'âge du compte (2 ans) n'est pas le problème : c'est le **karma** et le **nombre de liens**.
+
+### Ordre des actions
+
+1. **Ne supprimez pas le post et ne le repostez pas.** Un nouveau post repart dans le filtre et
+   augmente le score de spam du compte.
+2. **Écrivez aux modérateurs** via le bouton **Message the mods** du sub (pas en chat privé) :
+
+```
+Hi mods,
+
+My post was removed by Reddit's automatic filters (not by a visible rule):
+<coller le lien du post>
+
+It is a closed test for an Android app (Instant Pause, com.instantpause.app). I am looking for
+12 testers for 14 days, and I am happy to test other developers' apps in return.
+
+Could you approve it from the modqueue? I am also building karma so this does not happen again.
+
+Thanks!
+```
+
+3. **Gagnez du karma pendant l'attente** : commentez de façon utile dans `r/AndroidClosedTesting`
+   (les auteurs de tests s'entraident), `r/AndroidQuestions`, `r/androidapps`. Une dizaine de
+   commentaires sincères suffisent.
+4. **Après 48 h sans réponse** : repostez avec **moins de liens** — le groupe et le lien de test
+   uniquement. Le formulaire et la politique de confidentialité peuvent aller dans le premier
+   commentaire, ou être indiqués en texte.
+5. **Postez entre 14 h et 17 h UTC**, en semaine : le sub est surtout actif aux États-Unis et en
+   Inde. Un post à 8 h UTC passe inaperçu.
+
+
 
