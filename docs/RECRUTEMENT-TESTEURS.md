@@ -370,7 +370,8 @@ espaces réservés.
 [Closed Test] Instant Pause – block impulsive outgoing calls (12 testers, 14 days, worldwide)
 ```
 
-**Corps** :
+**Corps** (garder les **lignes vides** : Reddit ignore un simple retour à la ligne et collerait
+tout le texte en un seul paragraphe) :
 
 ```
 Hi everyone,
@@ -378,40 +379,51 @@ Hi everyone,
 I'm looking for 12 testers for Instant Pause, an Android app that helps you resist impulsive calls. Happy to test your app in return — just drop your link.
 
 WHAT IT DOES
+
 During the time windows you choose (e.g. 22:30–07:30), any outgoing call is intercepted and replaced by a pause screen: breathe, calm down, then decide. Three trusted contacts stay reachable, with calls capped at 3 minutes. Emergency numbers are never intercepted.
 
 WHAT IT IS NOT
+
 Not a spam blocker. It never touches incoming calls and never mutes anything. Not a parental control tool. It slows down one specific impulse: calling someone you may regret calling.
 
 PRIVACY
+
 No account, no ads, no analytics, no server. The app has no INTERNET permission at all, so everything stays in its private storage on the device.
+
 Privacy policy: https://ajanedouby.github.io/instant-pause-privacy/
 
 PERMISSIONS YOU WILL BE ASKED FOR (and why)
-• Call redirection role — Android's own API to intercept an outgoing call before it connects.
-• Device admin — only to make uninstalling take a few extra taps. No policy, no remote wipe.
-• Phone permission (ANSWER_PHONE_CALLS) — only to hang up at 3:00 on the three trusted contacts.
-• Full-screen intent — to show the pause screen over the dialer.
+
+- Call redirection role — Android's own API to intercept an outgoing call before it connects.
+- Device admin — only to make uninstalling take a few extra taps. No policy, no remote wipe.
+- Phone permission (ANSWER_PHONE_CALLS) — only to hang up at 3:00 on the three trusted contacts.
+- Full-screen intent — to show the pause screen over the dialer.
 
 SETUP (2 minutes)
+
 On first launch the app asks you to CREATE a protection code. There is no default PIN.
+
 Rules: at least 6 characters, with at least one letter and one digit — for example: Pause2026.
+
 You will only be asked for it again when weakening the protection.
 
 HOW TO JOIN
-1. Join the Google Group with the Google account signed in on your phone:
-   https://groups.google.com/g/instant-pause-testers
+
+1. Join the Google Group with the Google account signed in on your phone: https://groups.google.com/g/instant-pause-testers
 2. Then open: https://play.google.com/apps/testing/com.instantpause.app
 3. Tap "Accept", install, and keep the app installed for 14 days.
-4. Optional feedback (2-minute form):
-   https://docs.google.com/forms/d/e/1FAIpQLSc3fFeY1_BNaLdHvBmEXmYVzBwi8sRxuHi9osoyC4xuxxZS3g/viewform
+4. Optional feedback form: https://docs.google.com/forms/d/e/1FAIpQLSc3fFeY1_BNaLdHvBmEXmYVzBwi8sRxuHi9osoyC4xuxxZS3g/viewform
 
 IMPORTANT
+
 Join the group FIRST, then open the Play link. If you see "App not available", wait 5–10 minutes and reload — propagation is not instant.
+
 Please stay opted in for 14 consecutive days. If you leave the test, your counter resets. If you were already part of the internal test for this app, leave it first, otherwise the closed test will not count.
+
 Available worldwide (178 countries). Requires Android 10+.
 
 IN RETURN
+
 Reply with your testing link and I'll join your test and keep your app installed for 14 days. I won't ask for reviews — test builds can't receive public reviews anyway.
 
 Thanks!
