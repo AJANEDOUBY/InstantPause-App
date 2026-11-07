@@ -1,0 +1,59 @@
+INSTANT PAUSE - GOOGLE PLAY STORE LISTING
+Spanish (es-ES)
+==================================================
+
+SHORT DESCRIPTION (80 characters max)
+--------------------------------------------------
+Bloquea las llamadas impulsivas en tus franjas: respira y luego decide.
+
+
+FULL DESCRIPTION (4,000 characters max)
+--------------------------------------------------
+QUÉ HACE LA APLICACIÓN
+
+Durante las franjas horarias que definas, cada llamada saliente se intercepta y se
+sustituye por una pantalla de pausa: respirar, calmarse y luego decidir. No es un
+muro. No es un castigo. Unos segundos entre el impulso y el acto.
+
+Son las 23:00. Sabes perfectamente que no deberías llamar. Llamas igualmente.
+Instant Pause existe para ese minuto.
+
+• Eliges franjas horarias (por ejemplo, de 22:00 a 7:00, todos los días).
+• Cualquier llamada saliente durante una franja abre la pantalla de pausa en lugar
+  de marcar.
+• Un modo Zen puede bloquear llamadas a demanda, durante 2 horas.
+• Siempre se puede contactar con tres personas de confianza: su llamada se corta
+  automáticamente a los 3 minutos.
+
+QUÉ LA HACE DIFERENTE
+
+• El código de protección se crea en frío, antes que nada, y nunca se guarda en
+  claro.
+• Cortar una franja, eliminar un contacto autorizado o quitar la protección
+  anti-desinstalación exige ese código.
+• Sin cuenta. Sin publicidad. Sin analítica. Sin servidor.
+• La aplicación no pide permiso para leer tu agenda: eliges un contacto con el
+  selector de Android y solo se guarda esa ficha.
+
+LOS NÚMEROS DE EMERGENCIA NUNCA SE BLOQUEAN
+
+Si hay un error o una duda, la llamada pasa. Siempre. Mejor dejar pasar una llamada
+que bloquear una emergencia.
+
+TUS DATOS SE QUEDAN CONTIGO
+
+Sin conexión de red, sin copia de seguridad en la nube. Franjas, contactos y ajustes
+viven en el almacenamiento privado de la aplicación, en tu teléfono. La política
+completa está aquí:
+https://ajanedouby.github.io/instant-pause-privacy/
+
+CONFIGURACIÓN EN 6 PASOS
+
+1. Elige tu código.
+2. Activa la protección anti-desinstalación.
+3. Autoriza el colgado a los 3 minutos.
+4. Acepta el rol de redirección de llamadas.
+5. Autoriza el dibujo sobre las llamadas.
+6. Crea una franja horaria. Eso es todo.
+
+Una corrección de código, una duda, un fallo: escribe a janedouby@gmail.com.
