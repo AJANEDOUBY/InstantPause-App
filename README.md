@@ -266,12 +266,11 @@ app/src/main/java/com/instantpause/app/
 **Business decision** (`ShouldBlockCallUseCase`):
 
 ```
-Emergency?           → Allow(EMERGENCY_NUMBER)   // never blocked
-Zen mode active?     → Block(EMERGENCY_MODE)
-Window active?       → Block(SCHEDULE_WINDOW)
-Whitelist?           → Allow(WHITELISTED)
-Otherwise            → Allow(PROTECTION_INACTIVE)
-Error / timeout      → Allow(FAIL_OPEN)
+Emergency?              → Allow(EMERGENCY_NUMBER)   // never blocked
+No protection active?   → Allow(PROTECTION_INACTIVE)
+Whitelisted?            → Allow(WHITELISTED)        // wins over Zen and windows
+Otherwise               → Block(EMERGENCY_MODE | SCHEDULE_WINDOW)
+Error / timeout         → Allow(FAIL_OPEN)
 ```
 
 ---

@@ -4,7 +4,7 @@ English (en-US)
 
 SHORT DESCRIPTION (80 characters max)
 --------------------------------------------------
-Block impulsive calls during your windows: think, then decide.
+Pause before impulsive phone calls. SIM calls only, not WhatsApp.
 
 
 FULL DESCRIPTION (4,000 characters max)
@@ -38,6 +38,14 @@ EMERGENCY NUMBERS ARE NEVER BLOCKED
 
 On error or doubt, the call goes through. Always. Better to let a call through than
 block an emergency.
+
+PHONE CALLS ONLY
+
+Instant Pause intercepts the calls you make with your SIM card and your phone's
+dialler. Calls made inside WhatsApp, Telegram, Signal, Messenger or any other app
+are not affected: Android gives no third-party app a way to intercept them before
+they connect. If most of your impulsive calls go through those apps, this app will
+not help you.
 
 YOUR DATA STAYS WITH YOU
 

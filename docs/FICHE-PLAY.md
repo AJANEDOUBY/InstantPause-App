@@ -24,10 +24,10 @@ Instant Pause
 ## Description courte — 80 caractères max
 
 ```
-Bloquez les appels impulsifs pendant vos plages : respirez, puis décidez.
+Pause avant vos appels impulsifs. Appels SIM uniquement, pas WhatsApp.
 ```
 
-*73 caractères.*
+*70 caractères.*
 
 ---
 
@@ -62,6 +62,14 @@ LES NUMÉROS D'URGENCE NE SONT JAMAIS BLOQUÉS
 En cas d'erreur ou de doute, l'appel passe. Toujours. Mieux vaut laisser filer un appel que
 bloquer une urgence.
 
+APPELS TÉLÉPHONIQUES UNIQUEMENT
+
+Instant Pause intercepte les appels passés avec votre carte SIM et le composeur de votre
+téléphone. Les appels passés dans WhatsApp, Telegram, Signal, Messenger ou toute autre
+application ne sont pas concernés : Android ne permet à aucune application tierce de les
+intercepter avant qu'ils n'aboutissent. Si l'essentiel de vos appels impulsifs passe par ces
+applications, cette application ne vous aidera pas.
+
 VOS DONNÉES RESTENT CHEZ VOUS
 
 Pas de connexion réseau, pas de sauvegarde dans le cloud. Plages, contacts et réglages vivent
@@ -80,7 +88,7 @@ CONFIGURATION EN 6 ÉTAPES
 Une correction de code, un doute, un plantage : écrivez à janedouby@gmail.com.
 ```
 
-*1 997 caractères sur 4 000 — il reste de la place pour une section « Nouveautés » plus tard.*
+*2 441 caractères sur 4 000 — il reste de la place pour une section « Nouveautés » plus tard.*
 
 ---
 

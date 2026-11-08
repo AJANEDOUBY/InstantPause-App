@@ -267,12 +267,11 @@ app/src/main/java/com/instantpause/app/
 **Décision métier** (`ShouldBlockCallUseCase`) :
 
 ```
-Urgence ?            → Allow(EMERGENCY_NUMBER)   // jamais bloqué
-Mode Zen actif ?     → Block(EMERGENCY_MODE)
-Plage active ?       → Block(SCHEDULE_WINDOW)
-Whitelist ?          → Allow(WHITELISTED)
-Sinon                → Allow(PROTECTION_INACTIVE)
-Erreur / timeout     → Allow(FAIL_OPEN)
+Urgence ?                  → Allow(EMERGENCY_NUMBER)   // jamais bloqué
+Pas de protection active ? → Allow(PROTECTION_INACTIVE)
+Whitelist ?                → Allow(WHITELISTED)        // prioritaire sur Zen et plages
+Sinon                      → Block(EMERGENCY_MODE | SCHEDULE_WINDOW)
+Erreur / timeout           → Allow(FAIL_OPEN)
 ```
 
 ---

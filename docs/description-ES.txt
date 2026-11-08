@@ -4,7 +4,7 @@ Spanish (es-ES)
 
 SHORT DESCRIPTION (80 characters max)
 --------------------------------------------------
-Bloquea las llamadas impulsivas en tus franjas: respira y luego decide.
+Pausa antes de tus llamadas impulsivas. Solo llamadas SIM, no WhatsApp.
 
 
 FULL DESCRIPTION (4,000 characters max)
@@ -39,6 +39,14 @@ LOS NÚMEROS DE EMERGENCIA NUNCA SE BLOQUEAN
 
 Si hay un error o una duda, la llamada pasa. Siempre. Mejor dejar pasar una llamada
 que bloquear una emergencia.
+
+SOLO LLAMADAS TELEFÓNICAS
+
+Instant Pause intercepta las llamadas que haces con tu tarjeta SIM y el marcador de
+tu teléfono. Las llamadas hechas dentro de WhatsApp, Telegram, Signal, Messenger o
+cualquier otra aplicación no se ven afectadas: Android no permite que ninguna
+aplicación externa las intercepte antes de que se establezcan. Si la mayoría de tus
+llamadas impulsivas pasan por esas aplicaciones, esta aplicación no te ayudará.
 
 TUS DATOS SE QUEDAN CONTIGO
 
