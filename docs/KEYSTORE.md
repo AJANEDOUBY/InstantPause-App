@@ -174,9 +174,33 @@ GitHub conserve les anciens commits accessibles par leur SHA, et sert encore les
 Constaté après le push : `raw.githubusercontent.com/.../2fe34c4/app/build.gradle.kts` renvoie
 toujours `200` avec le mot de passe en clair.
 
-Pour les faire disparaître, il faut ouvrir un ticket chez **GitHub Support** :
-<https://support.github.com/contact>. Se connecter avec le compte `AJANEDOUBY`, puis choisir le
-sujet lié au dépôt et à la suppression de données sensibles. Joindre :
+Pour les faire disparaître, il faudrait ouvrir un ticket chez **GitHub Support**. Le ticket est
+**facultatif** : la rotation a déjà rendu le secret inutilisable, il ne reste qu'une valeur morte
+lisible dans d'anciens commits.
+
+### Portail (interface 2026)
+
+1. <https://support.github.com> → redirige vers `help.github.com/request/landing`
+2. **Sign in with GitHub** (compte `AJANEDOUBY`)
+3. Sur la page d'accueil de l'assistance, sous **« How can we help? »**, cliquer sur le petit lien
+   **« open a support ticket »**
+4. Remplir : **From**, **Subject**, **How can we help**, sans pièce jointe
+
+⚠️ **Piège à éviter :** dans la catégorie *Dépôts*, l'option **« Suppressions »** ouvre un parcours
+de **suppression de dépôt** (« Une fois le dépôt vidé, il ne peut plus être récupéré »). Ne jamais
+valider « Supprimer ». Le bon repli est **« Fonctionnalités du dépôt »**, qui donne un champ libre,
+avec cette phrase en tête de description :
+
+```
+I am NOT asking to delete the repository. I am asking for cached views and unreachable
+objects to be purged after a history rewrite of a rotated credential.
+```
+
+Les branches *Copilot* et *Privacy and data management* ne concernent pas l'historique Git : elles
+sont sans effet ici. Pour un compte gratuit, l'assistance ne traite de toute façon que les sujets
+**compte, sécurité et abus** — d'où l'intérêt de commencer l'objet par `Security:`.
+
+À joindre dans la description :
 
 - le nom du dépôt : `AJANEDOUBY/InstantPause-App` ;
 - le nombre de pull requests affectées : **0** (aucune PR, aucun fork) ;
