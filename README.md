@@ -447,11 +447,11 @@ Without these values (or without a keystore), the build **does not break**:
 `assembleRelease` produces an unsigned APK, and `release.ps1` signs it with
 `keystore/cooldown-release.jks`.
 
-> ⚠️ The password appeared in plain text in `app/build.gradle.kts` until commit
-> `2fe34c4`. Removing it from the file **does not erase it** from git history. If the
-> repository becomes public, rewrite the history (`git filter-repo`) or, simpler and
-> safer, change the keystore password and register the new key as an *upload key* in the
-> Play Console.
+> ✅ The password appeared in plain text in `app/build.gradle.kts` until commit
+> `2fe34c4`. It was **rotated** on 7 November 2026, and the public history was
+> **rewritten** with `git filter-repo` on 8 November 2026. The old value is dead: it no
+> longer opens the keystore, and Play App Signing was not affected. See
+> `docs/KEYSTORE.md` for the procedure and the remaining GitHub cache caveat.
 
 Requirements:
 

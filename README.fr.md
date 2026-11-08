@@ -447,10 +447,10 @@ Variables équivalentes : `SIGNING_STORE_FILE`, `SIGNING_STORE_PASSWORD`, `SIGNI
 Sans ces valeurs (ou sans keystore), le build **ne casse pas** : `assembleRelease` produit un
 APK non signé, et `release.ps1` le signe avec `keystore/cooldown-release.jks`.
 
-> ⚠️ Le mot de passe a figuré en clair dans `app/build.gradle.kts` jusqu'au commit `2fe34c4`.
-> Le retirer du fichier **ne l'efface pas** de l'historique git. Si le dépôt devient public,
-> réécrivez l'historique (`git filter-repo`) ou, plus simple et plus sûr, changez le mot de
-> passe du keystore et enregistrez la nouvelle clé comme *clé d'upload* dans la Play Console.
+> ✅ Le mot de passe a figuré en clair dans `app/build.gradle.kts` jusqu'au commit `2fe34c4`.
+> Il a été **changé** le 7 novembre 2026 et l'historique public a été **réécrit** avec
+> `git filter-repo` le 8 novembre 2026. L'ancienne valeur est morte : elle n'ouvre plus le
+> keystore, et Play App Signing n'a pas été affecté. Voir `docs/KEYSTORE.md`.
 
 Prérequis :
 
