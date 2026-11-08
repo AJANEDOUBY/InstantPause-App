@@ -130,7 +130,8 @@ Procédure appliquée le 7 novembre 2026, après la découverte du mot de passe 
 | 5 | Empreinte SHA-256 du certificat inchangée | Oui |
 | 6 | `bundleRelease` + `jarsigner -verify` | Oui |
 | 7 | Sauvegarde déplacée hors ligne puis supprimée du projet | À faire |
-| 8 | Décider du sort du dépôt public `InstantPause-App` | À faire |
+| 8 | Historique du dépôt public réécrit (`filter-repo` + force-push) | Oui |
+| 9 | Purge des vues en cache demandée à GitHub Support | À faire |
 
 Une rotation **ne nécessite aucune démarche Play Console** : Play App Signing conserve la clé de
 signature de l'application, on ne change que le mot de passe local de la clé de téléversement.
@@ -149,19 +150,54 @@ signature de l'application, on ne change que le mot de passe local de la clé de
 
 ## 7. Le dépôt public `InstantPause-App`
 
-Le mot de passe a été exposé publiquement au commit `2fe34c4` (`storePassword` en clair, 28
-caractères), dans l'historique complet du dépôt privé. Le fichier `.jks` et `local.properties`
-n'ont **jamais** été commités : le mot de passe seul ne permettait pas de signer.
+`AJANEDOUBY/CoolDown` et `AJANEDOUBY/InstantPause-App` sont **le même dépôt** : l'ancien nom
+redirige vers le nouveau. Il est **public**.
 
-La rotation du 7 novembre 2026 neutralise la fuite : l'ancien mot de passe ne correspond plus à
-rien. Reste à décider du dépôt lui-même :
+Le mot de passe y était exposé au commit `2fe34c4` (`storePassword` et `keyPassword` en clair, 28
+caractères), dans l'historique complet du projet. Le fichier `.jks` et `local.properties` n'ont
+**jamais** été commités : le mot de passe seul ne permettait pas de signer.
 
-- **le passer en privé** (*Settings → Danger Zone → Change visibility*) : le plus simple, mais
-  n'efface pas ce qui a déjà été copié ou indexé ;
-- **réécrire l'historique** (`git filter-repo --replace-text`) puis forcer le push : plus propre,
-  mais réécrit tous les commits et casse les clones existants.
+### Ce qui a été fait le 8 novembre 2026
 
-Dans les deux cas, vérifier qu'aucun autre secret ne figure dans l'historique avant de republier.
+| Étape | Résultat |
+|---|---|
+| Rotation du mot de passe (7 nov.) | ancien mot de passe refusé par keytool |
+| Réécriture (`git filter-repo --replace-text`) | les 2 valeurs remplacées par `REDACTED_KEYSTORE_PASSWORD` |
+| Vérification | 0 occurrence du secret dans les 64 commits et les 13 tags |
+| Intégrité | nombre de commits et de tags identiques, arbre de HEAD inchangé |
+| Force-push | `3b5e292...24b59b1`, tous les SHAs ont changé |
+| Visibilité du dépôt | inchangée : toujours public |
+
+### Limite à connaître
+
+GitHub conserve les anciens commits accessibles par leur SHA, et sert encore les vues en cache.
+Constaté après le push : `raw.githubusercontent.com/.../2fe34c4/app/build.gradle.kts` renvoie
+toujours `200` avec le mot de passe en clair.
+
+Pour les faire disparaître, il faut ouvrir un ticket chez **GitHub Support** en demandant la purge
+des vues en cache et des références. Message type :
+
+```
+Hello,
+
+I have rewritten the history of https://github.com/AJANEDOUBY/InstantPause-App to remove a
+keystore password that was committed by mistake in app/build.gradle.kts (commit 2fe34c4).
+
+The secret has since been rotated and is no longer valid, but the old commits are still
+reachable by SHA and cached raw views still serve the file.
+
+Could you please purge the cached views and unreachable objects for this repository?
+
+Thank you.
+```
+
+Tant que la purge n'est pas faite, considérer l'ancien mot de passe comme public (il l'est), et ne
+jamais le réutiliser.
+
+### Conséquence de la réécriture
+
+Tous les commits ont de nouveaux SHAs : les clones existants doivent être refaits, et les anciens
+liens vers des commits précis ne résolvent plus. Le contenu, lui, est identique.
 
 ---
 
