@@ -176,7 +176,7 @@ Menu **Politique → Contenu de l'application**. Chaque ligne doit finir en vert
 3. La Console affiche alors les **déclarations de permissions sensibles**. C'est le moment
    délicat de tout le processus.
 
-### Les quatre déclarations à préparer
+### Les cinq déclarations à préparer
 
 | Sujet | Ce que Google demande | Ce qu'on répond |
 |---|---|---|
@@ -184,6 +184,10 @@ Menu **Politique → Contenu de l'application**. Chaque ligne doit finir en vert
 | Administrateur d'appareil | justifier l'usage | « Empêcher une désinstallation impulsive. Aucune politique n'est imposée à l'appareil, aucun effacement à distance » |
 | Service de premier plan `specialUse` | décrire l'usage | « Maintien du minuteur d'appel et de la protection après redémarrage » |
 | `USE_FULL_SCREEN_INTENT` | catégorie d'app | « Application d'appels / de blocage d'appels : afficher l'écran de pause sur l'écran verrouillé » |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | prouver que Doze dégrade la fonction principale | « Processus gelé = appel non intercepté, sans message. Voir `PERMISSIONS-PLAY.md`, section 4 » |
+
+La dernière n'a pas de formulaire dédié : c'est une **permission à usage restreint**, que
+Google peut contester à l'examen. Le texte de défense est prêt dans `docs/PERMISSIONS-PLAY.md`.
 
 Google peut exiger une **vidéo de démonstration** (lien YouTube non répertorié, 1 à 2 minutes) :
 montrer un appel intercepté, l'écran de pause, le raccrochage à 3:00. À filmer sur la tablette,
