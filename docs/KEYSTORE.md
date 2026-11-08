@@ -174,22 +174,45 @@ GitHub conserve les anciens commits accessibles par leur SHA, et sert encore les
 Constaté après le push : `raw.githubusercontent.com/.../2fe34c4/app/build.gradle.kts` renvoie
 toujours `200` avec le mot de passe en clair.
 
-Pour les faire disparaître, il faut ouvrir un ticket chez **GitHub Support** en demandant la purge
-des vues en cache et des références. Message type :
+Pour les faire disparaître, il faut ouvrir un ticket chez **GitHub Support** :
+<https://support.github.com/contact>. Se connecter avec le compte `AJANEDOUBY`, puis choisir le
+sujet lié au dépôt et à la suppression de données sensibles. Joindre :
+
+- le nom du dépôt : `AJANEDOUBY/InstantPause-App` ;
+- le nombre de pull requests affectées : **0** (aucune PR, aucun fork) ;
+- le premier commit modifié : `7b505debbad1a4b379794936712d6ae0b5b324f7` (réécriture de `2fe34c4`) ;
+- l'absence d'objets LFS orphelins.
+
+Message type :
 
 ```
 Hello,
 
-I have rewritten the history of https://github.com/AJANEDOUBY/InstantPause-App to remove a
-keystore password that was committed by mistake in app/build.gradle.kts (commit 2fe34c4).
+I need the cached views and unreachable objects purged for AJANEDOUBY/InstantPause-App.
 
-The secret has since been rotated and is no longer valid, but the old commits are still
-reachable by SHA and cached raw views still serve the file.
+A keystore password was committed by mistake in app/build.gradle.kts (storePassword and
+keyPassword) and I rewrote the history with git filter-repo --replace-text, then force-pushed
+refs/heads/main and all tags.
 
-Could you please purge the cached views and unreachable objects for this repository?
+Details from your documentation:
+- Repository: AJANEDOUBY/InstantPause-App
+- Affected pull requests: 0 (no pull requests, no forks)
+- First changed commit: 7b505debbad1a4b379794936712d6ae0b5b324f7 (rewritten from 2fe34c4)
+- LFS objects orphaned: none
+
+The old commits are still reachable by SHA, and
+https://raw.githubusercontent.com/AJANEDOUBY/InstantPause-App/2fe34c4/app/build.gradle.kts still
+serves the file containing the password.
+
+I have already rotated the password, so it is no longer valid. I am asking for the cached views
+and old objects to be removed anyway.
 
 Thank you.
 ```
+
+⚠️ La documentation GitHub précise que le support n'intervient que si le risque **ne peut pas**
+être écarté par une rotation du secret. La rotation ayant déjà été faite, il est possible que la
+demande soit refusée. Dans ce cas, la protection repose entièrement sur le nouveau mot de passe.
 
 Tant que la purge n'est pas faite, considérer l'ancien mot de passe comme public (il l'est), et ne
 jamais le réutiliser.
@@ -220,6 +243,9 @@ liens vers des commits précis ne résolvent plus. Le contenu, lui, est identiqu
   part ailleurs.**
 - Ne jamais le coller dans un ticket, un chat, une capture d'écran ou un fichier de documentation.
   S'il a circulé, refaire une rotation.
+- Le fichier `keystore/KEYSTORE-INFO.txt` ne doit contenir **aucun** mot de passe : uniquement
+  l'alias, la date de création et la référence de la sauvegarde hors ligne (gestionnaire de mots de
+  passe).
 - Ne jamais versionner `keystore/` ni `local.properties` : vérifier avec `git status` avant chaque
   commit destiné à un dépôt public.
 - Un mot de passe par usage : celui du keystore ne doit être réutilisé nulle part (GitHub, e-mail,
