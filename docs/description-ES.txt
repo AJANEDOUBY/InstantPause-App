@@ -18,8 +18,11 @@ muro. No es un castigo. Unos segundos entre el impulso y el acto.
 Son las 23:00. Sabes perfectamente que no deberías llamar. Llamas igualmente.
 Instant Pause existe para ese minuto.
 
+<b>Solo llamadas telefónicas:</b> las llamadas de WhatsApp, Signal, Telegram y
+Messenger no se interceptan.
+
 • Eliges franjas horarias (por ejemplo, de 22:00 a 7:00, todos los días).
-• Cualquier llamada saliente durante una franja abre la pantalla de pausa en lugar
+• Cualquier llamada saliente por SIM durante una franja abre la pantalla de pausa en lugar
   de marcar.
 • Un modo Zen puede bloquear llamadas a demanda, durante 2 horas.
 • Siempre se puede contactar con tres personas de confianza: su llamada se corta

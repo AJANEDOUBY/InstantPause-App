@@ -43,8 +43,11 @@ espace de quelques secondes entre l'impulsion et l'acte.
 Il est 23 h. Vous savez très bien que vous ne devriez pas appeler. Vous appelez quand même.
 Instant Pause existe pour cette minute-là.
 
+<b>Appels téléphoniques uniquement :</b> les appels WhatsApp, Signal, Telegram et
+Messenger ne sont pas interceptés.
+
 • Vous choisissez des plages horaires (par exemple 22 h – 7 h, tous les jours).
-• Tout appel sortant pendant une plage ouvre l'écran de pause au lieu de composer.
+• Tout appel sortant par SIM pendant une plage ouvre l'écran de pause au lieu de composer.
 • Un mode Zen peut bloquer les appels à la demande, pour 2 heures.
 • Trois contacts de confiance peuvent toujours être joints : leur appel est coupé
   automatiquement à 3 minutes.
@@ -88,7 +91,7 @@ CONFIGURATION EN 6 ÉTAPES
 Une correction de code, un doute, un plantage : écrivez à janedouby@gmail.com.
 ```
 
-*2 441 caractères sur 4 000 — il reste de la place pour une section « Nouveautés » plus tard.*
+*2 567 caractères sur 4 000 — il reste de la place pour une section « Nouveautés » plus tard.*
 
 ---
 

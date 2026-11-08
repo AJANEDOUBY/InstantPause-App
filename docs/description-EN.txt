@@ -18,8 +18,11 @@ A few seconds between the impulse and the act.
 It's 11 p.m. You know perfectly well you shouldn't call. You call anyway.
 Instant Pause exists for that minute.
 
+<b>Phone calls only:</b> WhatsApp, Signal, Telegram and Messenger calls are not
+intercepted.
+
 • You choose time windows (for example 10 p.m. - 7 a.m., every day).
-• Any outgoing call during a window opens the pause screen instead of dialling.
+• Any outgoing SIM call during a window opens the pause screen instead of dialling.
 • A Zen mode can block calls on demand, for 2 hours.
 • Three trusted contacts can always be reached: their call is automatically cut
   at 3 minutes.
