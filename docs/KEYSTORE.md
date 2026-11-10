@@ -129,7 +129,8 @@ Procédure appliquée le 7 novembre 2026, après la découverte du mot de passe 
 | 4 | Ancien mot de passe vérifié comme **refusé** | Oui |
 | 5 | Empreinte SHA-256 du certificat inchangée | Oui |
 | 6 | `bundleRelease` + `jarsigner -verify` | Oui |
-| 7 | Sauvegarde déplacée hors ligne puis supprimée du projet | À faire |
+| 7 | Duplicata `keystore/cooldown-release.backup-*.jks` supprimé du projet | Oui (10 nov. 2026) |
+| 7b | Copie hors ligne conservée, en deux endroits distincts | À confirmer |
 | 8 | Historique du dépôt public réécrit (`filter-repo` + force-push) | Oui |
 | 9 | Purge des vues en cache demandée à GitHub Support | À faire |
 
