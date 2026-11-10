@@ -57,6 +57,24 @@ Puis déplacer la copie **hors du projet** (archive chiffrée, support hors lign
 perdu sans sauvegarde signifie : plus aucune mise à jour possible de l'application avec la même
 clé de téléversement.
 
+### 3.1 Sauvegarde cloud : acceptée, sous conditions
+
+Une copie Google Drive / OneDrive est une **redondance utile**, pas une sauvegarde hors ligne.
+Elle ne protège ni contre la suppression accidentelle synchronisée, ni contre la compromission
+du compte. Règles appliquées le 10 novembre 2026 :
+
+| Règle | Pourquoi |
+|---|---|
+| Le mot de passe ne part **jamais** dans le cloud | Un fichier `.jks` + son mot de passe au même endroit annule le chiffrement |
+| `KEYSTORE-INFO.txt` ne contient que l'alias, l'empreinte et un renvoi au gestionnaire | Il peut fuiter sans conséquence |
+| Partage limité au propriétaire, jamais « toute personne disposant du lien » | Vérifier les droits après chaque dépôt |
+| Double authentification sur le compte Google et le compte Microsoft | C'est elle qui protège réellement la copie |
+| Une copie reste **hors ligne** (disque externe, papier pour le mot de passe) | Le cloud est un service, pas un support |
+| Le fichier `.jks` est chiffré par PKCS12 (PBES2/HMAC-SHA256) | Une archive 7-Zip AES-256 en plus est un bonus, pas une nécessité |
+
+Vidéos, corbeilles et versions de fichiers : après avoir retiré une copie du cloud, **vider la
+corbeille** et l'historique de versions, sinon l'ancienne copie reste accessible des semaines.
+
 ---
 
 ## 4. Changer le mot de passe
