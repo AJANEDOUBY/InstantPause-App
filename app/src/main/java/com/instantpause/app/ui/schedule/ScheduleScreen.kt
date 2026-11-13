@@ -199,7 +199,7 @@ private fun StatusBanner(isProtected: Boolean, zenActive: Boolean = false) {
             text = text,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = bgColor
+            color = Color.White
         )
     }
 }
