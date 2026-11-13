@@ -61,6 +61,41 @@ class ScheduleViewModelTest {
     }
 
     @Test
+    fun `une duree personnalisee est respectee`() = runTest {
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs)
+        val before = System.currentTimeMillis()
+
+        viewModel.activateZenMode(4 * 60 * 60 * 1000L)
+
+        val until = prefs.getEmergencyUntil()
+        assertTrue(until >= before + 4 * 60 * 60 * 1000L)
+        assertTrue(until <= System.currentTimeMillis() + 4 * 60 * 60 * 1000L)
+    }
+
+    @Test
+    fun `une duree hors bornes est ramenee dans l'intervalle autorise`() = runTest {
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs)
+        val before = System.currentTimeMillis()
+
+        viewModel.activateZenMode(48 * 60 * 60 * 1000L)
+
+        val until = prefs.getEmergencyUntil()
+        assertTrue(until <= System.currentTimeMillis() + ScheduleViewModel.MAX_ZEN_MS)
+        assertTrue(until >= before + ScheduleViewModel.MAX_ZEN_MS - 1_000L)
+    }
+
+    @Test
+    fun `annuler le mode Zen remet l'echeance a zero`() = runTest {
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs)
+        viewModel.activateZenMode()
+        assertTrue(prefs.getEmergencyUntil() > 0L)
+
+        viewModel.cancelZenMode()
+
+        assertEquals(0L, prefs.getEmergencyUntil())
+    }
+
+    @Test
     fun `une plage ajoutee passe bien par le depot`() = runTest {
         val repository = RecordingScheduleRepository()
         val viewModel = ScheduleViewModel(repository, prefs)

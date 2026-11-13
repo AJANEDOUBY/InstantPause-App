@@ -52,16 +52,21 @@ class ScheduleViewModel @Inject constructor(
     }
 
     /**
-     * Active le mode Zen pendant [ZEN_DURATION_MS].
+     * Active le mode Zen pour [durationMs].
      *
      * Auparavant une plage récurrente « tous les jours » était créée : la protection
      * se réactivait chaque nuit à la même heure, et il fallait le code pour s'en
      * débarrasser. On utilise désormais l'échéance ponctuelle `emergencyUntil`, qui
      * expire d'elle-même sans laisser de trace dans la liste des plages.
      */
-    fun activateZenMode() {
-        val end = System.currentTimeMillis() + ZEN_DURATION_MS
+    fun activateZenMode(durationMs: Long = ZEN_DURATION_MS) {
+        val end = System.currentTimeMillis() + durationMs.coerceIn(MIN_ZEN_MS, MAX_ZEN_MS)
         viewModelScope.launch { prefs.setEmergencyUntil(end) }
+    }
+
+    /** Coupe le mode Zen avant son échéance (action qui affaiblit la protection). */
+    fun cancelZenMode() {
+        viewModelScope.launch { prefs.clearEmergency() }
     }
 
     fun toggleActive(schedule: Schedule) {
@@ -78,5 +83,16 @@ class ScheduleViewModel @Inject constructor(
 
     companion object {
         const val ZEN_DURATION_MS = 2 * 60 * 60 * 1000L
+        const val MIN_ZEN_MS = 5 * 60 * 1000L
+        const val MAX_ZEN_MS = 24 * 60 * 60 * 1000L
+
+        /** Durées proposées d'un seul appui, de la plus courte à la plus longue. */
+        val ZEN_PRESETS: List<Pair<String, Long>> = listOf(
+            "30 min" to 30 * 60 * 1000L,
+            "1 h" to 60 * 60 * 1000L,
+            "2 h" to 2 * 60 * 60 * 1000L,
+            "4 h" to 4 * 60 * 60 * 1000L,
+            "8 h" to 8 * 60 * 60 * 1000L
+        )
     }
 }

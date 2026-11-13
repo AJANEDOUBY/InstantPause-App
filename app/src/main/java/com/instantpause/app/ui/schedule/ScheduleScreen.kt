@@ -1,6 +1,7 @@
 package com.instantpause.app.ui.schedule
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,7 +30,9 @@ import com.instantpause.app.ui.security.SecurityViewModel
 import com.instantpause.app.ui.security.UnlockDialog
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import java.time.Instant
 import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -118,11 +121,24 @@ fun ScheduleScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                StatusBanner(isProtected = isCurrentlyProtected, zenActive = zenActive)
+                StatusBanner(
+                    isProtected = isCurrentlyProtected,
+                    zenActive = zenActive,
+                    zenUntil = emergencyUntil
+                )
             }
 
             item {
-                ZenModeCard(onClick = { viewModel.activateZenMode() })
+                ZenModeCard(
+                    zenUntil = if (zenActive) emergencyUntil else 0L,
+                    onActivate = { durationMs -> viewModel.activateZenMode(durationMs) },
+                    onCancel = {
+                        guard(
+                            "Arrêter le mode Zen maintenant ? Les appels ne seront " +
+                                    "plus bloqués jusqu'à la prochaine plage."
+                        ) { viewModel.cancelZenMode() }
+                    }
+                )
             }
 
             if (schedules.isEmpty()) {
@@ -176,9 +192,14 @@ fun ScheduleScreen(
 }
 
 @Composable
-private fun StatusBanner(isProtected: Boolean, zenActive: Boolean = false) {
+private fun StatusBanner(
+    isProtected: Boolean,
+    zenActive: Boolean = false,
+    zenUntil: Long = 0L
+) {
     val bgColor = if (isProtected) Color(0xFF10B981) else Color(0xFFF59E0B)
     val text = when {
+        zenActive && zenUntil > 0L -> "Mode Zen actif jusqu'à ${formatClock(zenUntil)}"
         zenActive -> "Mode Zen actif"
         isProtected -> "Protection Active"
         else -> "Protection Inactive"
@@ -205,37 +226,75 @@ private fun StatusBanner(isProtected: Boolean, zenActive: Boolean = false) {
 }
 
 @Composable
-private fun ZenModeCard(onClick: () -> Unit) {
+private fun ZenModeCard(
+    zenUntil: Long,
+    onActivate: (Long) -> Unit,
+    onCancel: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        onClick = onClick
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.SelfImprovement,
-                contentDescription = "Mode Zen",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(32.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = "Besoin d'une pause maintenant ?",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.SelfImprovement,
+                    contentDescription = "Mode Zen",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
                 )
-                Text(
-                    text = "Active le mode Zen pendant 2 heures.",
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Besoin d'une pause maintenant ?",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = if (zenUntil > 0L) {
+                            "Actif jusqu'à ${formatClock(zenUntil)}."
+                        } else {
+                            "Choisissez la durée : un seul appui suffit."
+                        },
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ScheduleViewModel.ZEN_PRESETS.forEach { (label, durationMs) ->
+                    FilterChip(
+                        selected = false,
+                        onClick = { onActivate(durationMs) },
+                        label = { Text(label) }
+                    )
+                }
+            }
+
+            if (zenUntil > 0L) {
+                Spacer(Modifier.height(8.dp))
+                TextButton(
+                    onClick = onCancel,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Arrêter le mode Zen")
+                }
             }
         }
     }
 }
+
+private fun formatClock(epochMs: Long): String =
+    Instant.ofEpochMilli(epochMs)
+        .atZone(ZoneId.systemDefault())
+        .toLocalTime()
+        .format(DateTimeFormatter.ofPattern("HH:mm"))
 
 @Composable
 private fun EmptyState(modifier: Modifier = Modifier) {
