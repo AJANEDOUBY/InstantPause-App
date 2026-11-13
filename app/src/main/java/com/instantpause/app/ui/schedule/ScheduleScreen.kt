@@ -252,9 +252,11 @@ private fun ZenModeCard(
                     )
                     Text(
                         text = if (zenUntil > 0L) {
-                            "Actif jusqu'à ${formatClock(zenUntil)}."
+                            "Période Zen en cours, jusqu'à ${formatClock(zenUntil)}. " +
+                                    "Appuyez sur une autre durée pour la remplacer."
                         } else {
-                            "Choisissez la durée : un seul appui suffit."
+                            "Choisissez votre période Zen : appuyez sur le nombre " +
+                                    "d'heures souhaité. La protection démarre aussitôt."
                         },
                         style = MaterialTheme.typography.bodySmall
                     )
