@@ -38,6 +38,38 @@ class ProtectionAlertNotifier @Inject constructor(
                 .setDescription("Notification discrete pendant l'ouverture de l'ecran de pause")
                 .build()
         )
+        // Même notification, mais sans tête haute ni vibration : utilisée dès que
+        // l'écran de pause est visible, pour ne pas recouvrir son titre.
+        manager.createNotificationChannel(
+            NotificationChannelCompat.Builder(QUIET_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
+                .setName("Pause ouverte")
+                .setDescription("Rappel discret pendant que l'écran de pause est affiché")
+                .setVibrationEnabled(false)
+                .build()
+        )
+    }
+
+    /** Vrai tant que l'écran de pause est au premier plan. */
+    @Volatile
+    private var pauseVisible = false
+
+    fun setPauseVisible(visible: Boolean) {
+        pauseVisible = visible
+    }
+
+    /**
+     * Remplace l'alerte sonore par un rappel discret, sans tête haute.
+     *
+     * Appelée quand l'écran de pause s'ouvre de lui-même : la notification reste
+     * disponible dans le volet, mais ne vient plus masquer « Prenez un instant ».
+     */
+    @SuppressLint("MissingPermission")
+    fun softenBlockedCall(number: String) {
+        if (!manager.areNotificationsEnabled()) return
+        runCatching {
+            manager.cancel(ID_BLOCKED_CALL)
+            manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number, quiet = true))
+        }.onFailure { Log.e(TAG, "Soften failed", it) }
     }
 
     @SuppressLint("MissingPermission")
@@ -51,9 +83,11 @@ class ProtectionAlertNotifier @Inject constructor(
         // Une seule alerte, au moment du blocage. Aucune répétition : l'appel est
         // déjà refusé, re-sonner toutes les 30 s n'apporte rien et finit par
         // pousser l'utilisateur à couper les notifications de l'app.
-        runCatching { manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number)) }
-            .onFailure { Log.e(TAG, "Notify failed", it) }
-        vibrate()
+        val quiet = pauseVisible
+        runCatching {
+            manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number, quiet = quiet))
+        }.onFailure { Log.e(TAG, "Notify failed", it) }
+        if (!quiet) vibrate()
 
         Log.d(TAG, "showBlockedCall done")
     }
@@ -61,10 +95,11 @@ class ProtectionAlertNotifier @Inject constructor(
     @SuppressLint("MissingPermission")
     fun dismissBlockedCall() {
         Log.d(TAG, "dismissBlockedCall")
+        pauseVisible = false
         runCatching { manager.cancel(ID_BLOCKED_CALL) }
     }
 
-    private fun buildBlockedNotification(number: String): Notification {
+    private fun buildBlockedNotification(number: String, quiet: Boolean = false): Notification {
         val pauseIntent = PauseActivity.intent(context, number, fromUser = true)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
@@ -75,7 +110,10 @@ class ProtectionAlertNotifier @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        return NotificationCompat.Builder(context, CHANNEL_ID)
+        return NotificationCompat.Builder(
+            context,
+            if (quiet) QUIET_CHANNEL_ID else CHANNEL_ID
+        )
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
             .setContentTitle("Appel bloqué")
             .setContentText("Touchez ici pour reprendre votre souffle.")
@@ -83,12 +121,19 @@ class ProtectionAlertNotifier @Inject constructor(
                 NotificationCompat.BigTextStyle()
                     .bigText("Touchez pour ouvrir l'écran de pause et respirer un instant.")
             )
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(
+                if (quiet) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MAX
+            )
+            .setSilent(quiet)
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setAutoCancel(true)
             .setContentIntent(pending)
-            .setFullScreenIntent(pending, true)
-            .setVibrate(longArrayOf(0, 300, 150, 300, 150, 300))
+            .apply {
+                if (!quiet) {
+                    setFullScreenIntent(pending, true)
+                    setVibrate(longArrayOf(0, 300, 150, 300, 150, 300))
+                }
+            }
             .build()
     }
 
@@ -109,6 +154,7 @@ class ProtectionAlertNotifier @Inject constructor(
     companion object {
         private const val TAG = "CoolDownNotifier"
         private const val CHANNEL_ID = "cooldown_protection"
+        private const val QUIET_CHANNEL_ID = "cooldown_protection_quiet"
         private const val SERVICE_CHANNEL_ID = "cooldown_service"
         private const val ID_BLOCKED_CALL = 4203
 

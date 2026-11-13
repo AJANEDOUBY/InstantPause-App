@@ -94,7 +94,25 @@ class PauseActivity : ComponentActivity() {
         setIntent(intent)
         if (intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
             notifier.dismissBlockedCall()
+        } else {
+            notifier.setPauseVisible(true)
+            intent.getStringExtra(EXTRA_NUMBER)?.let { notifier.softenBlockedCall(it) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notifier.setPauseVisible(true)
+        // L'écran s'est ouvert tout seul : la notification ne doit pas recouvrir
+        // le titre. Elle reste dans le volet, simplement sans tête haute.
+        if (!intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
+            intent.getStringExtra(EXTRA_NUMBER)?.let { notifier.softenBlockedCall(it) }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        notifier.setPauseVisible(false)
     }
 
     companion object {
