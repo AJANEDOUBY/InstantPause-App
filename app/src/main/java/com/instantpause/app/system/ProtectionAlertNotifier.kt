@@ -81,7 +81,7 @@ class ProtectionAlertNotifier @Inject constructor(
             .setContentText("Touchez ici pour reprendre votre souffle.")
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("Cet appel peut attendre demain. Touchez pour ouvrir l'ecran de pause.")
+                    .bigText("Touchez pour ouvrir l'écran de pause et respirer un instant.")
             )
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
