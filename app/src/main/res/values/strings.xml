@@ -30,4 +30,43 @@
 
     <!-- Explication système de l'administrateur (protection contre la désinstallation) -->
     <string name="admin_explanation">Instant Pause will prevent its own accidental or impulsive uninstallation. No other rights are requested.</string>
+
+    <!-- Code de protection : règles et messages -->
+    <string name="violation_too_short">at least %1$d characters</string>
+    <string name="violation_missing_letter">at least one letter</string>
+    <string name="violation_missing_digit">at least one digit</string>
+    <string name="list_separator">", "</string>
+    <string name="error_requirements">Requires %1$s.</string>
+    <string name="error_mismatch">The two entries differ.</string>
+    <string name="error_no_code">No code is set.</string>
+    <string name="error_code_exists">A code is already set.</string>
+    <string name="error_too_many_attempts">Too many attempts. Try again in %1$s.</string>
+    <string name="error_wrong_code">Incorrect code (case matters). Attempts left before a timeout: %1$d.</string>
+    <string name="error_storage">Could not save the code. Check the storage space and try again.</string>
+    <string name="error_retry_in">Try again in %1$s.</string>
+
+    <!-- Champs et actions -->
+    <string name="field_code">Alphanumeric code</string>
+    <string name="field_current_code">Current code</string>
+    <string name="field_new_code">New code</string>
+    <string name="field_confirm_code">Confirm the code</string>
+    <string name="action_show">Show</string>
+    <string name="action_hide">Hide</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_change">Change</string>
+    <string name="action_unlock">Unlock</string>
+
+    <!-- Dialogues du code -->
+    <string name="dialog_code_required">Code required</string>
+    <string name="dialog_set_code">Set a code</string>
+    <string name="dialog_change_code">Change the code</string>
+    <string name="dialog_set_code_help">Choose an alphanumeric code (letters + digits). It will be required to disable or delete a window, or to return to these settings.</string>
+    <string name="dialog_change_code_help">Enter the current code, then the new one.</string>
+
+    <!-- Premier lancement -->
+    <string name="setup_title">Welcome to Instant Pause</string>
+    <string name="setup_subtitle">Last step before protection: choose your code.</string>
+    <string name="setup_explanation">It will be required to cut a window, delete it, or remove the anti-uninstall protection. Choose it now, while you are calm: it is what will hold up that evening.</string>
+    <string name="setup_rules">At least 6 characters, with at least one letter and one digit. The code is never stored in plain text and cannot be recovered: if you forget it, you will have to clear the app data.</string>
 </resources>
