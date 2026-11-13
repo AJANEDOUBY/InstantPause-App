@@ -88,11 +88,31 @@ class ScheduleViewModel @Inject constructor(
 
         /** Durées proposées d'un seul appui, de la plus courte à la plus longue. */
         val ZEN_PRESETS: List<Pair<String, Long>> = listOf(
-            "3 h" to 3 * 60 * 60 * 1000L,
             "4 h" to 4 * 60 * 60 * 1000L,
             "6 h" to 6 * 60 * 60 * 1000L,
             "8 h" to 8 * 60 * 60 * 1000L,
+            "10 h" to 10 * 60 * 60 * 1000L,
             "12 h" to 12 * 60 * 60 * 1000L
         )
+
+        private const val SAME_END_TOLERANCE_MS = 60_000L
+
+        /**
+         * Vrai si [durationMs] terminerait le Zen **avant** l'échéance en cours.
+         *
+         * Réduire une protection est une action qui affaiblit : elle exige le code.
+         * Prolonger, en revanche, renforce la protection et reste libre.
+         * La tolérance d'une minute évite de redemander le code quand on réappuie
+         * sur la même durée quelques secondes plus tard.
+         */
+        fun shortensCurrentZen(
+            nowMs: Long,
+            currentUntilMs: Long,
+            durationMs: Long
+        ): Boolean {
+            if (currentUntilMs <= nowMs) return false
+            val newEnd = nowMs + durationMs.coerceIn(MIN_ZEN_MS, MAX_ZEN_MS)
+            return newEnd < currentUntilMs - SAME_END_TOLERANCE_MS
+        }
     }
 }

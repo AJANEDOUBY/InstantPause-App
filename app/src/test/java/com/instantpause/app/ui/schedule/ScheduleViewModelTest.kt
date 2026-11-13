@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -93,6 +94,35 @@ class ScheduleViewModelTest {
         viewModel.cancelZenMode()
 
         assertEquals(0L, prefs.getEmergencyUntil())
+    }
+
+    @Test
+    fun `reduire une periode Zen est identifie comme un affaiblissement`() {
+        val now = 1_000_000_000L
+        val tenHours = 10 * 60 * 60 * 1000L
+
+        assertTrue(
+            ScheduleViewModel.shortensCurrentZen(now, now + tenHours, 4 * 60 * 60 * 1000L)
+        )
+        assertTrue(
+            ScheduleViewModel.shortensCurrentZen(now, now + tenHours, 6 * 60 * 60 * 1000L)
+        )
+    }
+
+    @Test
+    fun `prolonger ou rechoisir la meme duree reste libre`() {
+        val now = 1_000_000_000L
+        val fourHours = 4 * 60 * 60 * 1000L
+
+        assertFalse(
+            ScheduleViewModel.shortensCurrentZen(now, now + fourHours, 10 * 60 * 60 * 1000L)
+        )
+        assertFalse(
+            ScheduleViewModel.shortensCurrentZen(now, now + fourHours, fourHours)
+        )
+        assertFalse(
+            ScheduleViewModel.shortensCurrentZen(now, now - 1_000L, 4 * 60 * 60 * 1000L)
+        )
     }
 
     @Test

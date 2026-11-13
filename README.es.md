@@ -49,7 +49,7 @@ Tres mecanismos, todos bajo tu control:
 | Mecanismo | Efecto |
 |---|---|
 | **Franjas horarias** | Recurrentes, por día de la semana (p. ej. 22:00 → 07:00) |
-| **Modo Zen** | Bloqueo puntual de 3 a 12 horas, activado con un toque |
+| **Modo Zen** | Bloqueo puntual de 4 a 12 horas, activado con un toque |
 | **Lista blanca** | Contactos siempre accesibles, incluso durante una franja activa |
 
 Los **números de emergencia** (112, 15, 17, 18, 19…) **nunca** se bloquean.
@@ -66,7 +66,7 @@ Los **números de emergencia** (112, 15, 17, 18, 19…) **nunca** se bloquean.
 - Activación / desactivación instantánea con un interruptor.
 
 ### 🧘 Modo Zen
-Un botón «¿Necesitas una pausa ahora?» activa una protección inmediata de **3, 4, 6, 8 o
+Un botón «¿Necesitas una pausa ahora?» activa una protección inmediata de **4, 6, 8, 10 o
 12 horas**, sin crear una franja permanente.
 
 ### 📇 Círculo de confianza (lista blanca)

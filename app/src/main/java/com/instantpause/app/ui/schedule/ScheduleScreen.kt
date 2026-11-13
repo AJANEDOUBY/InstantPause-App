@@ -131,7 +131,19 @@ fun ScheduleScreen(
             item {
                 ZenModeCard(
                     zenUntil = if (zenActive) emergencyUntil else 0L,
-                    onActivate = { durationMs -> viewModel.activateZenMode(durationMs) },
+                    onActivate = { durationMs ->
+                        val now = System.currentTimeMillis()
+                        if (ScheduleViewModel.shortensCurrentZen(now, emergencyUntil, durationMs)) {
+                            guard(
+                                "Réduire la période Zen ? Les appels seraient de nouveau " +
+                                        "bloqués vers ${formatClock(now + durationMs)} au lieu " +
+                                        "de ${formatClock(emergencyUntil)}. Saisissez votre " +
+                                        "code pour confirmer."
+                            ) { viewModel.activateZenMode(durationMs) }
+                        } else {
+                            viewModel.activateZenMode(durationMs)
+                        }
+                    },
                     onCancel = {
                         guard(
                             "Arrêter le mode Zen maintenant ? Les appels ne seront " +
@@ -253,7 +265,7 @@ private fun ZenModeCard(
                     Text(
                         text = if (zenUntil > 0L) {
                             "Période Zen en cours, jusqu'à ${formatClock(zenUntil)}. " +
-                                    "Appuyez sur une autre durée pour la remplacer."
+                                    "Une durée plus courte demandera votre code."
                         } else {
                             "Choisissez votre période Zen : appuyez sur le nombre " +
                                     "d'heures souhaité. La protection démarre aussitôt."
