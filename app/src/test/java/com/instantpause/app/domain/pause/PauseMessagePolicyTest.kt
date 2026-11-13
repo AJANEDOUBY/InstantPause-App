@@ -6,10 +6,10 @@ import org.junit.Test
 class PauseMessagePolicyTest {
 
     @Test
-    fun `une saisie vide retombe sur le message par defaut`() {
-        assertEquals(PauseMessagePolicy.DEFAULT, PauseMessagePolicy.normalize(""))
-        assertEquals(PauseMessagePolicy.DEFAULT, PauseMessagePolicy.normalize("   "))
-        assertEquals(PauseMessagePolicy.DEFAULT, PauseMessagePolicy.normalize("\n\t "))
+    fun `une saisie vide reste vide et laisse l affichage choisir la langue`() {
+        assertEquals("", PauseMessagePolicy.normalize(""))
+        assertEquals("", PauseMessagePolicy.normalize("   "))
+        assertEquals("", PauseMessagePolicy.normalize("\n\t "))
     }
 
     @Test

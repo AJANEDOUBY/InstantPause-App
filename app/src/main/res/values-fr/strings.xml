@@ -66,4 +66,51 @@
     <string name="setup_subtitle">Dernière étape avant la protection : choisissez votre code.</string>
     <string name="setup_explanation">Il sera demandé pour couper une plage, la supprimer, ou retirer la protection anti-désinstallation. Choisissez-le maintenant, à froid : c\'est lui qui tiendra ce soir-là.</string>
     <string name="setup_rules">6 caractères minimum, avec au moins une lettre et un chiffre. Le code n\'est jamais stocké en clair et ne peut pas être récupéré : si vous l\'oubliez, il faudra effacer les données de l\'app.</string>
+
+    <!-- Onglet Sécurité -->
+    <string name="security_title">Sécurité</string>
+    <string name="security_subtitle">Empêcher la protection d\'être coupée sur un coup de tête.</string>
+    <string name="security_admin_explanation">Instant Pause empêchera sa désinstallation accidentelle ou impulsive.</string>
+    <string name="version_label">Instant Pause %1$s</string>
+    <string name="action_remove_protection">Retirer la protection</string>
+    <string name="dialog_remove_protection_message">Sans administrateur, Instant Pause pourra être désinstallé sans aucune résistance. Saisissez votre code pour confirmer.</string>
+
+    <!-- Message de l'écran de pause -->
+    <string name="pause_message_title">Message de l\'écran de pause</string>
+    <string name="pause_message_subtitle">Écrivez-le maintenant, à froid. Il s\'affichera au moment de l\'impulsion.</string>
+    <string name="pause_message_label">Votre phrase</string>
+    <string name="pause_message_default">Cet appel peut attendre demain.</string>
+    <string name="pause_message_hint">Laissez vide pour revenir à la phrase par défaut.</string>
+
+    <!-- Carte du code -->
+    <string name="lock_configured">Code de protection activé</string>
+    <string name="lock_none">Aucun code défini</string>
+    <string name="lock_none_help">Un code est requis avant d\'utiliser l\'app.</string>
+    <string name="lock_locked">Verrouillé — le code sera demandé.</string>
+    <string name="lock_unlocked">Déverrouillé pour cette session.</string>
+    <string name="lock_set_help">À faire maintenant, à froid : c\'est ce code qui vous empêchera de tout couper ce soir.</string>
+    <string name="lock_change_help">Le code est défini à l\'installation et ne peut pas être supprimé depuis l\'app. Seul un changement (avec l\'ancien code) est possible.</string>
+    <string name="action_lock_now">Verrouiller maintenant</string>
+
+    <!-- Carte de désinstallation -->
+    <string name="uninstall_title">Désinstallation</string>
+    <string name="uninstall_protected">Protégée — désactivation de l\'administrateur requise.</string>
+    <string name="uninstall_unprotected">Non protégée — l\'app peut être désinstallée en 3 taps.</string>
+    <string name="action_protect_uninstall">Protéger la désinstallation</string>
+    <string name="uninstall_help">Honnêtement : aucune application ne peut empêcher une désinstallation. Android demandera seulement de désactiver cet administrateur d\'abord — deux taps de plus, mais deux taps qui laissent le temps de réfléchir.</string>
+
+    <!-- Carte explicative -->
+    <string name="how_title">Ce que le code protège (et ne protège pas)</string>
+    <string name="how_bullet_1">Le code est créé à la première ouverture de l\'app : impossible de l\'ignorer ou de le supprimer ensuite.</string>
+    <string name="how_bullet_2">Demandé pour : couper une plage, la supprimer (y compris une plage Zen en cours), changer le code, retirer la protection anti-désinstallation.</string>
+    <string name="how_bullet_3">Jamais demandé pour : bloquer un appel, ajouter une plage, activer le Zen, consulter l\'historique.</string>
+    <string name="how_bullet_4">Le déverrouillage ne dure que le temps de la session : 60 s en arrière-plan et il faut retaper le code.</string>
+    <string name="how_bullet_5">Trois essais, puis 30 s, 1 min, 2 min… jusqu\'à 15 min d\'attente entre deux tentatives.</string>
+    <string name="how_footer">Le code n\'est jamais stocké en clair : seule une empreinte PBKDF2 (120 000 itérations) est conservée sur l\'appareil.</string>
+
+    <!-- Écran de pause -->
+    <string name="pause_title">Prenez un instant.</string>
+    <string name="pause_inhale">Inspirer doucement…</string>
+    <string name="pause_exhale">Expirer lentement…</string>
+    <string name="action_close">Fermer</string>
 </resources>

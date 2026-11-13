@@ -24,7 +24,7 @@ class SecurityViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = PauseMessagePolicy.DEFAULT
+            initialValue = ""
         )
 
     init {
@@ -49,8 +49,9 @@ class SecurityViewModel @Inject constructor(
     /**
      * Enregistre la phrase de l'écran de pause.
      *
-     * Le nettoyage est fait par [PauseMessagePolicy] : jamais de message vide,
-     * jamais plus de [PauseMessagePolicy.MAX_LENGTH] caractères.
+     * Le nettoyage est fait par [PauseMessagePolicy] : jamais plus de
+     * [PauseMessagePolicy.MAX_LENGTH] caractères. Une valeur vide est conservée
+     * et l'affichage retombe sur la phrase par défaut de la langue courante.
      */
     fun savePauseMessage(raw: String) {
         viewModelScope.launch { prefs.setPauseMessage(raw) }

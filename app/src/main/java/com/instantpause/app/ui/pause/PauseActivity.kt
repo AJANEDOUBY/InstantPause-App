@@ -37,13 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
 import com.instantpause.app.data.datastore.ProtectionPrefs
-import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.system.ProtectionAlertNotifier
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -74,12 +75,13 @@ class PauseActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 // Phrase écrite à froid par l'utilisateur (onglet Sécurité).
-                // La valeur par défaut s'affiche tant que DataStore n'a pas répondu.
+                // Tant que DataStore n'a pas répondu, ou si rien n'a été saisi,
+                // c'est la phrase par défaut de la langue courante qui s'affiche.
                 val message by prefs.pauseMessage.collectAsStateWithLifecycle(
-                    initialValue = PauseMessagePolicy.DEFAULT
+                    initialValue = ""
                 )
                 SensoryPauseScreen(
-                    message = message,
+                    message = message.ifBlank { getString(R.string.pause_message_default) },
                     onClose = {
                         notifier.dismissBlockedCall()
                         finish()
@@ -197,7 +199,11 @@ fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
     }
 
     val scale = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * phase.value
-    val cue = if (phase.value < 0.5f) "Inspirer doucement…" else "Expirer lentement…"
+    val cue = if (phase.value < 0.5f) {
+        stringResource(R.string.pause_inhale)
+    } else {
+        stringResource(R.string.pause_exhale)
+    }
 
     Box(
         modifier = Modifier
@@ -211,7 +217,7 @@ fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
             modifier = Modifier.padding(24.dp)
         ) {
             Text(
-                text = "Prenez un instant.",
+                text = stringResource(R.string.pause_title),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Light,
                 color = Color.White
@@ -252,7 +258,7 @@ fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
             if (canClose) {
                 TextButton(onClick = onClose) {
                     Text(
-                        text = "Fermer",
+                        text = stringResource(R.string.action_close),
                         color = Color(0xFF94A3B8),
                         fontSize = 14.sp
                     )

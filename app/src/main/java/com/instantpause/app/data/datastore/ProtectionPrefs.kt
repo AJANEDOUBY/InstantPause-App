@@ -56,15 +56,16 @@ class ProtectionPrefs @Inject constructor(
 
     // === Message personnalisé de l'écran de pause ===
     //
-    // Écrit à froid depuis l'onglet Sécurité. Un champ absent ou vide retombe
-    // toujours sur la phrase par défaut : l'écran de pause ne peut pas être blanc.
+    // Écrit à froid depuis l'onglet Sécurité. Un champ absent ou vide est stocké
+    // tel quel : l'affichage retombe sur la phrase par défaut de la langue
+    // courante (`pause_message_default`), donc l'écran de pause n'est jamais blanc.
     val pauseMessage: Flow<String> = data
-        .map { it[PAUSE_MESSAGE] ?: PauseMessagePolicy.DEFAULT }
+        .map { it[PAUSE_MESSAGE] ?: "" }
         .map { PauseMessagePolicy.normalize(it) }
         .distinctUntilChanged()
 
     suspend fun getPauseMessage(): String =
-        PauseMessagePolicy.normalize(data.first()[PAUSE_MESSAGE] ?: PauseMessagePolicy.DEFAULT)
+        PauseMessagePolicy.normalize(data.first()[PAUSE_MESSAGE] ?: "")
 
     suspend fun setPauseMessage(value: String) {
         dataStore.edit { it[PAUSE_MESSAGE] = PauseMessagePolicy.normalize(value) }

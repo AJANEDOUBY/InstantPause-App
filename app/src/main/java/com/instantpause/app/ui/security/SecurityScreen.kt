@@ -42,11 +42,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
 import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.system.CoolDownDeviceAdminReceiver
@@ -86,12 +88,12 @@ fun SecurityScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Sécurité",
+            text = stringResource(R.string.security_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Empêcher la protection d'être coupée sur un coup de tête.",
+            text = stringResource(R.string.security_subtitle),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -118,7 +120,7 @@ fun SecurityScreen(
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component)
                     putExtra(
                         DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                        "Instant Pause empêchera sa désinstallation accidentelle ou impulsive."
+                        context.getString(R.string.security_admin_explanation)
                     )
                 }
                 runCatching { adminLauncher.launch(intent) }
@@ -138,7 +140,7 @@ fun SecurityScreen(
             }.getOrNull()
         }
         Text(
-            text = "Instant Pause $version",
+            text = stringResource(R.string.version_label, version.orEmpty()),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -165,9 +167,8 @@ fun SecurityScreen(
 
         Dialog.UNINSTALL_GUARD -> UnlockDialog(
             vm = vm,
-            title = "Retirer la protection",
-            message = "Sans administrateur, Instant Pause pourra être désinstallé " +
-                    "sans aucune résistance. Saisissez votre code pour confirmer.",
+            title = stringResource(R.string.action_remove_protection),
+            message = stringResource(R.string.dialog_remove_protection_message),
             onDismiss = { dialog = null },
             onSuccess = {
                 deactivateAdmin()
@@ -209,12 +210,12 @@ private fun PauseMessageCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Message de l'écran de pause",
+                        text = stringResource(R.string.pause_message_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Écrivez-le maintenant, à froid. Il s'affichera au moment de l'impulsion.",
+                        text = stringResource(R.string.pause_message_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -226,8 +227,8 @@ private fun PauseMessageCard(
                 value = draft,
                 onValueChange = { draft = it.take(PauseMessagePolicy.MAX_LENGTH) },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Votre phrase") },
-                placeholder = { Text(PauseMessagePolicy.DEFAULT) },
+                label = { Text(stringResource(R.string.pause_message_label)) },
+                placeholder = { Text(stringResource(R.string.pause_message_default)) },
                 minLines = 2,
                 supportingText = {
                     Text("${draft.length} / ${PauseMessagePolicy.MAX_LENGTH}")
@@ -239,7 +240,7 @@ private fun PauseMessageCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Laissez vide pour revenir à la phrase par défaut.",
+                    text = stringResource(R.string.pause_message_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
@@ -249,7 +250,7 @@ private fun PauseMessageCard(
                     onClick = { onSave(draft) },
                     enabled = draft != current
                 ) {
-                    Text("Enregistrer")
+                    Text(stringResource(R.string.action_save))
                 }
             }
         }
@@ -281,15 +282,19 @@ private fun LockCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (enabled) "Code de protection activé" else "Aucun code défini",
+                        text = if (enabled) {
+                            stringResource(R.string.lock_configured)
+                        } else {
+                            stringResource(R.string.lock_none)
+                        },
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            !enabled -> "Un code est requis avant d'utiliser l'app."
-                            state.isLocked -> "Verrouillé — le code sera demandé."
-                            else -> "Déverrouillé pour cette session."
+                            !enabled -> stringResource(R.string.lock_none_help)
+                            state.isLocked -> stringResource(R.string.lock_locked)
+                            else -> stringResource(R.string.lock_unlocked)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -306,30 +311,28 @@ private fun LockCard(
 
             if (!enabled) {
                 Button(onClick = onSet, modifier = Modifier.fillMaxWidth()) {
-                    Text("Définir un code")
+                    Text(stringResource(R.string.dialog_set_code))
                 }
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "À faire maintenant, à froid : c'est ce code qui vous " +
-                            "empêchera de tout couper ce soir.",
+                    text = stringResource(R.string.lock_set_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
                 OutlinedButton(onClick = onChange, modifier = Modifier.fillMaxWidth()) {
-                    Text("Changer le code")
+                    Text(stringResource(R.string.dialog_change_code))
                 }
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "Le code est défini à l'installation et ne peut pas être " +
-                            "supprimé depuis l'app. Seul un changement (avec l'ancien code) est possible.",
+                    text = stringResource(R.string.lock_change_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (!state.isLocked) {
                     Spacer(Modifier.height(4.dp))
                     TextButton(onClick = onLockNow, modifier = Modifier.fillMaxWidth()) {
-                        Text("Verrouiller maintenant")
+                        Text(stringResource(R.string.action_lock_now))
                     }
                 }
             }
@@ -358,15 +361,15 @@ private fun UninstallCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Désinstallation",
+                        text = stringResource(R.string.uninstall_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = if (adminActive) {
-                            "Protégée — désactivation de l'administrateur requise."
+                            stringResource(R.string.uninstall_protected)
                         } else {
-                            "Non protégée — l'app peut être désinstallée en 3 taps."
+                            stringResource(R.string.uninstall_unprotected)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -378,20 +381,17 @@ private fun UninstallCard(
 
             if (adminActive) {
                 OutlinedButton(onClick = onDeactivate, modifier = Modifier.fillMaxWidth()) {
-                    Text("Retirer la protection")
+                    Text(stringResource(R.string.action_remove_protection))
                 }
             } else {
                 Button(onClick = onActivate, modifier = Modifier.fillMaxWidth()) {
-                    Text("Protéger la désinstallation")
+                    Text(stringResource(R.string.action_protect_uninstall))
                 }
             }
 
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Honnêtement : aucune application ne peut empêcher une " +
-                        "désinstallation. Android demandera seulement de désactiver cet " +
-                        "administrateur d'abord — deux taps de plus, mais deux taps qui " +
-                        "laissent le temps de réfléchir.",
+                text = stringResource(R.string.uninstall_help),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -407,20 +407,19 @@ private fun HowItWorksCard() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Ce que le code protège (et ne protège pas)",
+                text = stringResource(R.string.how_title),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
-            Bullet("Le code est créé à la première ouverture de l'app : impossible de l'ignorer ou de le supprimer ensuite.")
-            Bullet("Demandé pour : couper une plage, la supprimer (y compris une plage Zen en cours), changer le code, retirer la protection anti-désinstallation.")
-            Bullet("Jamais demandé pour : bloquer un appel, ajouter une plage, activer le Zen, consulter l'historique.")
-            Bullet("Le déverrouillage ne dure que le temps de la session : 60 s en arrière-plan et il faut retaper le code.")
-            Bullet("Trois essais, puis 30 s, 1 min, 2 min… jusqu'à 15 min d'attente entre deux tentatives.")
+            Bullet(stringResource(R.string.how_bullet_1))
+            Bullet(stringResource(R.string.how_bullet_2))
+            Bullet(stringResource(R.string.how_bullet_3))
+            Bullet(stringResource(R.string.how_bullet_4))
+            Bullet(stringResource(R.string.how_bullet_5))
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
-                text = "Le code n'est jamais stocké en clair : seule une empreinte PBKDF2 " +
-                        "(120 000 itérations) est conservée sur l'appareil.",
+                text = stringResource(R.string.how_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -17,8 +17,8 @@ class ProtectionPrefsTest {
         ProtectionPrefs(FakeDataStore(emptyPreferences()))
 
     @Test
-    fun `le message de pause par defaut n'est jamais vide`() = runTest {
-        assertEquals(PauseMessagePolicy.DEFAULT, prefs().getPauseMessage())
+    fun `le message de pause est vide tant que rien n est saisi`() = runTest {
+        assertEquals("", prefs().getPauseMessage())
     }
 
     @Test
@@ -32,13 +32,13 @@ class ProtectionPrefsTest {
     }
 
     @Test
-    fun `effacer le message restaure la phrase par defaut`() = runTest {
+    fun `effacer le message revient a la phrase par defaut de la langue`() = runTest {
         val p = prefs()
         p.setPauseMessage("Une phrase")
 
         p.setPauseMessage("")
 
-        assertEquals(PauseMessagePolicy.DEFAULT, p.getPauseMessage())
+        assertEquals("", p.getPauseMessage())
     }
 }
 

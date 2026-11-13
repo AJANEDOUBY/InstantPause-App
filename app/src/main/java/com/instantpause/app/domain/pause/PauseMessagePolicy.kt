@@ -5,25 +5,24 @@ package com.instantpause.app.domain.pause
  *
  * Volontairement sans dépendance Android : la phrase est écrite par l'utilisateur
  * **à froid**, depuis l'onglet Sécurité, puis relue au moment de l'impulsion.
- * Une phrase vide ou composée uniquement d'espaces ne doit jamais effacer l'écran :
- * on retombe alors sur [DEFAULT].
+ *
+ * La phrase par défaut vit dans `strings.xml` (`pause_message_default`) et non
+ * ici : elle doit suivre la langue de l'appareil. Une saisie vide est donc
+ * conservée telle quelle, et remplacée au moment de l'affichage.
  */
 object PauseMessagePolicy {
-
-    /** Message proposé tant que l'utilisateur n'a rien personnalisé. */
-    const val DEFAULT = "Cet appel peut attendre demain."
 
     /** Deux lignes suffisent ; au-delà, l'écran de pause devient illisible. */
     const val MAX_LENGTH = 120
 
     /**
      * Nettoie une saisie : espaces multiples réduits, bords rognés, longueur bornée.
-     * Une saisie vide renvoie [DEFAULT] plutôt qu'une chaîne vide.
+     * Une saisie vide renvoie une chaîne vide : l'appelant affiche alors la
+     * phrase par défaut de sa langue.
      */
     fun normalize(raw: String): String =
         raw.trim()
             .replace(Regex("\\s+"), " ")
             .take(MAX_LENGTH)
             .trim()
-            .ifBlank { DEFAULT }
 }
