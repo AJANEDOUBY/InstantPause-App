@@ -1,0 +1,91 @@
+# Traduction de l'interface — plan 1.6.0
+
+État au 13 novembre 2026 (branche `release/1.5.0`, commit `9ab0449`).
+
+## Constat
+
+| Élément | Valeur |
+|---|---|
+| Chaînes réellement externalisées | 2 (`app_name`, `app_tagline`) |
+| Chaînes françaises avec accents, codées en dur | **161** |
+| Littéraux de 4 caractères et plus dans `ui/` | 231 (dont clés, actions, logs) |
+| Fichiers concernés | 17 |
+| Langues disponibles dans l'app | `values` (fr) + `values-en` (2 chaînes) |
+
+Fichiers les plus chargés :
+
+| Fichier | Chaînes |
+|---|---|
+| `ui/security/SecurityScreen.kt` | 32 |
+| `ui/schedule/ScheduleScreen.kt` | 17 |
+| `ui/security/PassphraseDialogs.kt` | 14 |
+| `ui/security/HangupPermissionScreen.kt` | 13 |
+| `system/CallTimerService.kt` | 11 |
+| `ui/security/UninstallGuardScreen.kt` | 10 |
+| `system/CoolDownCallRedirectionService.kt` | 10 |
+| `ui/security/SetupScreen.kt` | 9 |
+
+## Décision de structure
+
+Le français est aujourd'hui la langue par défaut (`values/`). Pour une
+publication mondiale, la langue par défaut doit être **l'anglais** :
+
+```
+res/values/strings.xml        <- anglais (fallback universel)
+res/values-fr/strings.xml     <- français
+res/values-es/strings.xml     <- espagnol (phase 2)
+```
+
+Raison : tout appareil dont la langue n'est pas couverte bascule sur `values/`.
+Si `values/` reste en français, un utilisateur japonais verra du français.
+Si `values/` est en anglais, il verra de l'anglais.
+
+Conséquence : chaque chaîne doit être extraite avant que `values/` ne change de
+langue, sinon l'app devient anglaise à moitié.
+
+## Méthode
+
+1. **Inventaire verrouillé** : liste `file:ligne` des 161 chaînes, convertie en
+   clés (`security_title`, `zen_shorten_confirm`, …). Aucune chaîne oubliée.
+2. **Extraction mécanique** dans les écrans Compose : `stringResource(R.string.x)`,
+   ou `context.getString(R.string.x)` hors composition (services, notifications).
+3. **Chaînes paramétrées** : `%1$s`, `%1$d`, avec `<plurals>` pour les heures
+   (« 1 heure » / « 4 heures »).
+4. **Bascule des dossiers** : `values/` ← anglais, nouveau `values-fr/`.
+5. **Contrôle écran par écran** en anglais puis en français, sur la tablette,
+   avec `adb shell cmd locale` ou le sélecteur de langue d'Android.
+6. **Espagnol** dans un second temps, une fois l'anglais figé.
+
+## Pièges identifiés
+
+- Le message de pause personnalisable (`pause_message`) est une **donnée
+  utilisateur**, pas une ressource : le défaut doit venir de `strings.xml`,
+  mais une valeur déjà enregistrée ne doit pas être traduite rétroactivement.
+- La notification de blocage et le service d'appel sont hors Compose :
+  il faut y passer un `Context` et non un `stringResource`.
+- Les textes longs (120 caractères, 14 sp) débordent sur petit écran : la
+  traduction anglaise est généralement plus courte, l'espagnole plus longue.
+  À revérifier après traduction.
+- Les libellés courts de la barre d'onglets (`Plages`, `Sécurité`, `Journal`)
+  doivent rester courts en anglais (`Windows`, `Security`, `Log`).
+- Les commentaires de code restent en français : ils ne sont pas traduits.
+
+## Découpage proposé
+
+| Lot | Contenu | Vérification |
+|---|---|---|
+| 1 | Infrastructure : `values/` anglais, `values-fr/`, outillage | build + 101 tests |
+| 2 | Onboarding et rôles (`MainActivity`, `RoleActivationScreen`, `HelpBanner`, `SetupScreen`) | parcours complet |
+| 3 | Sécurité (`SecurityScreen`, `PassphraseDialogs`, `HangupPermissionScreen`, `UninstallGuardScreen`, `FullScreenIntentScreen`) | chaque dialogue |
+| 4 | Plages et Zen (`ScheduleScreen`) | carte Zen, garde par code |
+| 5 | Liste blanche et journal | ajout/suppression |
+| 6 | Pause, services et notifications | appel bloqué réel |
+| 7 | Espagnol | relecture native |
+
+## Critères d'acceptation
+
+- Aucun littéral français visible dans `ui/` et `system/` (contrôle par grep).
+- `values/` entièrement anglais, `values-fr/` complet, même nombre de clés.
+- Aucun `stringResource` manquant (build sans `MissingTranslation` en mode strict).
+- Les 101 tests passent.
+- Un appel bloqué réel s'affiche correctement dans les deux langues.
