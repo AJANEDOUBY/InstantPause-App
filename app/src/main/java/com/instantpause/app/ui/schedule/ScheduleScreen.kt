@@ -28,6 +28,7 @@ import com.instantpause.app.domain.model.Schedule
 import com.instantpause.app.ui.security.SecurityViewModel
 import com.instantpause.app.ui.security.UnlockDialog
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -39,7 +40,17 @@ fun ScheduleScreen(
     securityViewModel: SecurityViewModel = hiltViewModel()
 ) {
     val schedules by viewModel.schedules.collectAsStateWithLifecycle()
+    val emergencyUntil by viewModel.emergencyUntil.collectAsStateWithLifecycle()
+    var nowMs by remember { mutableLongStateOf(System.currentTimeMillis()) }
     var showAddDialog by remember { mutableStateOf(false) }
+
+    // Le mode Zen expire tout seul : on rafraîchit l'état sans attendre une action.
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(15_000)
+            nowMs = System.currentTimeMillis()
+        }
+    }
 
     // Action retenue tant que le code n'est pas saisi.
     var gatedAction by remember { mutableStateOf<(() -> Unit)?>(null) }
@@ -62,8 +73,9 @@ fun ScheduleScreen(
         }
     }
 
-    // Vérifie si au moins une plage est active MAINTENANT
-    val isCurrentlyProtected = schedules.any {
+    // Vérifie si au moins une plage est active MAINTENANT, ou si le Zen court encore
+    val zenActive = emergencyUntil > nowMs
+    val isCurrentlyProtected = zenActive || schedules.any {
         it.isActive && it.isActiveAt(ZonedDateTime.now())
     }
 
@@ -106,7 +118,7 @@ fun ScheduleScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                StatusBanner(isProtected = isCurrentlyProtected)
+                StatusBanner(isProtected = isCurrentlyProtected, zenActive = zenActive)
             }
 
             item {
@@ -164,9 +176,13 @@ fun ScheduleScreen(
 }
 
 @Composable
-private fun StatusBanner(isProtected: Boolean) {
+private fun StatusBanner(isProtected: Boolean, zenActive: Boolean = false) {
     val bgColor = if (isProtected) Color(0xFF10B981) else Color(0xFFF59E0B)
-    val text = if (isProtected) "Protection Active" else "Protection Inactive"
+    val text = when {
+        zenActive -> "Mode Zen actif"
+        isProtected -> "Protection Active"
+        else -> "Protection Inactive"
+    }
     val icon = if (isProtected) Icons.Default.CheckCircle else Icons.Default.Warning
 
     Row(

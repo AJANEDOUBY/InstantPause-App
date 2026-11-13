@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,14 +33,12 @@ import androidx.compose.ui.unit.dp
  * `ACTION_ADD_DEVICE_ADMIN` ouvre toujours une confirmation système. On ne peut donc
  * pas l'activer « tout seul » — mais on peut refuser d'aller plus loin sans elle.
  *
- * Le dialogue système est lancé **dès l'affichage** de l'écran (une seule fois) : pour
- * l'utilisateur, l'étape fait partie de l'installation. S'il refuse, l'app reste ici.
+ * Le dialogue système n'est **plus ouvert automatiquement** : il apparaissait avant même
+ * que l'utilisateur ait lu pourquoi. Le bouton « Protéger la désinstallation » le lance
+ * désormais après explication. Un refus laisse simplement l'app sur cet écran.
  */
 @Composable
 fun UninstallGuardScreen(onActivate: () -> Unit) {
-    // Une seule tentative automatique : sinon un refus relancerait le dialogue en boucle.
-    LaunchedEffect(Unit) { onActivate() }
-
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier

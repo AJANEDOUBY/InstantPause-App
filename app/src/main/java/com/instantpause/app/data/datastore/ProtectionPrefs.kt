@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.instantpause.app.domain.security.LockoutState
+import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.PassphraseStore
 import com.instantpause.app.domain.security.StoredPassphrase
 import dagger.Module
@@ -52,6 +53,22 @@ class ProtectionPrefs @Inject constructor(
     suspend fun getEmergencyUntil(): Long = data.first()[EMERGENCY_UNTIL] ?: 0L
     suspend fun setEmergencyUntil(v: Long) { dataStore.edit { it[EMERGENCY_UNTIL] = v } }
     suspend fun clearEmergency() { dataStore.edit { it.remove(EMERGENCY_UNTIL) } }
+
+    // === Message personnalisé de l'écran de pause ===
+    //
+    // Écrit à froid depuis l'onglet Sécurité. Un champ absent ou vide retombe
+    // toujours sur la phrase par défaut : l'écran de pause ne peut pas être blanc.
+    val pauseMessage: Flow<String> = data
+        .map { it[PAUSE_MESSAGE] ?: PauseMessagePolicy.DEFAULT }
+        .map { PauseMessagePolicy.normalize(it) }
+        .distinctUntilChanged()
+
+    suspend fun getPauseMessage(): String =
+        PauseMessagePolicy.normalize(data.first()[PAUSE_MESSAGE] ?: PauseMessagePolicy.DEFAULT)
+
+    suspend fun setPauseMessage(value: String) {
+        dataStore.edit { it[PAUSE_MESSAGE] = PauseMessagePolicy.normalize(value) }
+    }
 
     // === État du rôle Call Redirection ===
     val roleRevoked: Flow<Boolean> = data.map { it[ROLE_REVOKED] ?: false }.distinctUntilChanged()
@@ -146,6 +163,7 @@ class ProtectionPrefs @Inject constructor(
 
     private companion object {
         val EMERGENCY_UNTIL = longPreferencesKey("emergency_until_wall_ms")
+        val PAUSE_MESSAGE = stringPreferencesKey("pause_message")
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
         val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
         val UNINSTALL_GUARD_DONE = booleanPreferencesKey("uninstall_guard_done")

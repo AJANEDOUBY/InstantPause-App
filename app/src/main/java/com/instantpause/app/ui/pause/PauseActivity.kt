@@ -41,6 +41,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.data.datastore.ProtectionPrefs
+import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.system.ProtectionAlertNotifier
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -50,6 +53,7 @@ import javax.inject.Inject
 class PauseActivity : ComponentActivity() {
 
     @Inject lateinit var notifier: ProtectionAlertNotifier
+    @Inject lateinit var prefs: ProtectionPrefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +73,13 @@ class PauseActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
+                // Phrase écrite à froid par l'utilisateur (onglet Sécurité).
+                // La valeur par défaut s'affiche tant que DataStore n'a pas répondu.
+                val message by prefs.pauseMessage.collectAsStateWithLifecycle(
+                    initialValue = PauseMessagePolicy.DEFAULT
+                )
                 SensoryPauseScreen(
+                    message = message,
                     onClose = {
                         notifier.dismissBlockedCall()
                         finish()
@@ -123,7 +133,7 @@ private const val MAX_SCALE = 1.2f
 private const val MIN_DWELL_MS = 4_000L
 
 @Composable
-fun SensoryPauseScreen(onClose: () -> Unit) {
+fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
     val context = LocalContext.current
 
     val vibrator = remember {
@@ -190,7 +200,7 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Cet appel peut attendre demain.",
+                text = message,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 color = Color(0xFFCBD5E1)

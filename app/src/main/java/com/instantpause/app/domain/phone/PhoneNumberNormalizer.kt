@@ -7,7 +7,6 @@ import android.telephony.TelephonyManager
 import com.google.i18n.phonenumbers.NumberParseException
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat
-import com.google.i18n.phonenumbers.ShortNumberInfo
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
 import javax.inject.Inject
@@ -18,7 +17,6 @@ class PhoneNumberNormalizer @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : PhoneNumberAnalyzer {
     private val phoneUtil: PhoneNumberUtil = PhoneNumberUtil.getInstance()
-    private val shortNumberInfo: ShortNumberInfo = ShortNumberInfo.getInstance()
 
     override fun resolveRegions(handle: PhoneAccountHandle?): List<String> {
         val baseTm = context.getSystemService(TelephonyManager::class.java)
@@ -61,12 +59,8 @@ class PhoneNumberNormalizer @Inject constructor(
         return SUPPORTED_REGIONS.mapNotNull { toE164(cleaned, it) }.distinct()
     }
 
-    override fun isEmergency(raw: String, regions: List<String>): Boolean {
-        val cleaned = clean(raw) ?: return false
-        if (cleaned in HARDCODED_EMERGENCY_NUMBERS) return true
-        return (regions + SUPPORTED_REGIONS).distinct()
-            .any { shortNumberInfo.isEmergencyNumber(cleaned, it) }
-    }
+    override fun isEmergency(raw: String, regions: List<String>): Boolean =
+        EmergencyNumberMatcher.isEmergency(raw, regions, SUPPORTED_REGIONS)
 
     private fun clean(raw: String): String? =
         PhoneNumberUtils.stripSeparators(raw)?.takeIf { it.isNotEmpty() }
@@ -74,6 +68,5 @@ class PhoneNumberNormalizer @Inject constructor(
     companion object {
         const val DEFAULT_REGION = "MA"
         val SUPPORTED_REGIONS: List<String> = listOf("MA", "FR")
-        private val HARDCODED_EMERGENCY_NUMBERS = setOf("112", "15", "17", "18", "19", "177")
     }
 }

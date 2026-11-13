@@ -77,7 +77,7 @@ class ProtectionAlertNotifier @Inject constructor(
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle("Appel bloque")
+            .setContentTitle("Appel bloqué")
             .setContentText("Touchez ici pour reprendre votre souffle.")
             .setStyle(
                 NotificationCompat.BigTextStyle()
@@ -120,7 +120,7 @@ class ProtectionAlertNotifier @Inject constructor(
             return NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .setContentTitle("Instant Pause")
-                .setContentText("Preparation de la pause...")
+                .setContentText("Préparation de la pause...")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setOngoing(true)

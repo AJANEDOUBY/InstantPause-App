@@ -27,10 +27,11 @@ import androidx.core.app.ServiceCompat
  * Compte à rebours de [LIMIT_SECONDS] secondes pour un appel passé vers un contact
  * du cercle de confiance.
  *
- * ⚠️ Limite assumée : Android interdit à une application tierce de raccrocher un
- * appel qu'elle n'a pas établi. Ce service ne coupe donc **pas** la ligne : il
- * affiche le temps restant (pastille + notification) et prévient par vibration à
- * [WARN_SECONDS], puis à 0:00. Raccrocher reste un geste de l'utilisateur.
+ * À l'échéance, le service **raccroche** via `TelecomManager.endCall()`, autorisé par
+ * la permission `ANSWER_PHONE_CALLS`. Si le constructeur refuse (ou si la permission
+ * a été retirée), [hangUp] échoue sans crash : la pastille et la notification
+ * continuent d'afficher 0:00 et l'utilisateur doit raccrocher lui-même. C'est le
+ * seul cas où la limite redevient un simple rappel visuel.
  */
 class CallTimerService : Service() {
 

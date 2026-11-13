@@ -37,6 +37,46 @@ No account, no ads, no network connection: everything stays on your phone.
 
 ---
 
+## 1.5.0 - mode Zen et message personnel
+
+### Français - `fr-FR`
+
+```
+<fr-FR>
+Le mode Zen ne crée plus de plage permanente : il s'arrête tout seul après 2 heures.
+
+Vous pouvez maintenant écrire votre propre phrase sur l'écran de pause, depuis l'onglet Sécurité.
+
+Correctifs : notifications accentuées, explication affichée avant le dialogue anti-désinstallation.
+</fr-FR>
+```
+
+### Anglais - `en-US`
+
+```
+<en-US>
+Zen mode no longer creates a permanent schedule: it ends by itself after 2 hours.
+
+You can now write your own sentence on the pause screen, from the Security tab.
+
+Fixes: accented notifications, explanation shown before the uninstall-protection dialog.
+</en-US>
+```
+
+### Espagnol - `es-ES`
+
+```
+<es-ES>
+El modo Zen ya no crea una franja permanente: termina solo después de 2 horas.
+
+Ahora puedes escribir tu propia frase en la pantalla de pausa, desde la pestaña Seguridad.
+
+Correcciones: notificaciones con acentos, explicación antes del diálogo de anti-desinstalación.
+</es-ES>
+```
+
+---
+
 ## Modèle pour la prochaine version
 
 Garde la même structure : trois phrases maximum, ce qui change pour l'utilisateur, aucun détail

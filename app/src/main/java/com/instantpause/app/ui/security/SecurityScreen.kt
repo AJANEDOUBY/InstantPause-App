@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Warning
@@ -29,6 +30,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.system.CoolDownDeviceAdminReceiver
 
@@ -56,6 +59,7 @@ fun SecurityScreen(
     vm: SecurityViewModel = hiltViewModel()
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
+    val pauseMessage by vm.pauseMessage.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val component = remember { ComponentName(context, CoolDownDeviceAdminReceiver::class.java) }
@@ -98,6 +102,12 @@ fun SecurityScreen(
             onSet = { dialog = Dialog.SET },
             onChange = { dialog = Dialog.CHANGE },
             onLockNow = { vm.lockNow() }
+        )
+
+        Spacer(Modifier.height(12.dp))
+        PauseMessageCard(
+            current = pauseMessage,
+            onSave = { vm.savePauseMessage(it) }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -170,6 +180,81 @@ fun SecurityScreen(
 }
 
 private enum class Dialog { SET, CHANGE, UNINSTALL_GUARD }
+
+/**
+ * Phrase affichée sur l'écran de pause, au moment où l'appel est intercepté.
+ *
+ * Elle est saisie ici, à froid, puis relue pendant l'impulsion : c'est la voix
+ * de l'utilisateur lui-même, pas celle du développeur.
+ */
+@Composable
+private fun PauseMessageCard(
+    current: String,
+    onSave: (String) -> Unit
+) {
+    var draft by remember(current) { mutableStateOf(current) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Message de l'écran de pause",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Écrivez-le maintenant, à froid. Il s'affichera au moment de l'impulsion.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            OutlinedTextField(
+                value = draft,
+                onValueChange = { draft = it.take(PauseMessagePolicy.MAX_LENGTH) },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Votre phrase") },
+                placeholder = { Text(PauseMessagePolicy.DEFAULT) },
+                minLines = 2,
+                supportingText = {
+                    Text("${draft.length} / ${PauseMessagePolicy.MAX_LENGTH}")
+                }
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Laissez vide pour revenir à la phrase par défaut.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(8.dp))
+                Button(
+                    onClick = { onSave(draft) },
+                    enabled = draft != current
+                ) {
+                    Text("Enregistrer")
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun LockCard(
