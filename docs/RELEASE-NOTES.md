@@ -43,7 +43,7 @@ No account, no ads, no network connection: everything stays on your phone.
 
 ```
 <fr-FR>
-Le mode Zen ne crée plus de plage permanente : il s'arrête tout seul, et vous choisissez sa durée d'un seul appui (30 min à 8 h).
+Le mode Zen ne crée plus de plage permanente : il s'arrête tout seul, et vous choisissez sa durée d'un seul appui (3 h à 12 h).
 
 Vous pouvez maintenant écrire votre propre phrase sur l'écran de pause, depuis l'onglet Sécurité.
 
@@ -55,7 +55,7 @@ Correctifs : notifications accentuées, explication affichée avant le dialogue 
 
 ```
 <en-US>
-Zen mode no longer creates a permanent schedule: it ends by itself, and you pick its duration in one tap (30 min to 8 h).
+Zen mode no longer creates a permanent schedule: it ends by itself, and you pick its duration in one tap (3 h to 12 h).
 
 You can now write your own sentence on the pause screen, from the Security tab.
 
@@ -67,7 +67,7 @@ Fixes: accented notifications, explanation shown before the uninstall-protection
 
 ```
 <es-ES>
-El modo Zen ya no crea una franja permanente: termina solo, y eliges su duración con un solo toque (de 30 min a 8 h).
+El modo Zen ya no crea una franja permanente: termina solo, y eliges su duración con un solo toque (de 3 h a 12 h).
 
 Ahora puedes escribir tu propia frase en la pantalla de pausa, desde la pestaña Seguridad.
 

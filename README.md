@@ -47,7 +47,7 @@ Three mechanisms, all controlled by you:
 | Mechanism | Effect |
 |---|---|
 | **Time windows** | Recurring, per day of the week (e.g. 22:00 → 07:00) |
-| **Zen mode** | One-off 2-hour block, triggered with a single tap |
+| **Zen mode** | One-off block from 3 to 12 hours, triggered with a single tap |
 | **Whitelist** | Contacts always reachable, even during an active window |
 
 **Emergency numbers** (112, 15, 17, 18, 19…) are **never** blocked.
@@ -64,8 +64,8 @@ Three mechanisms, all controlled by you:
 - Instant on/off with a switch.
 
 ### 🧘 Zen mode
-A "Need a pause now?" button enables an immediate **2-hour** protection, without creating
-a permanent window.
+A "Need a pause now?" button enables an immediate protection of **3, 4, 6, 8 or 12
+hours**, without creating a permanent window.
 
 ### 📇 Trusted circle (whitelist)
 A **Contacts** tab lets you designate up to **3 people** whose calls always go through,

@@ -94,7 +94,7 @@ Instant Pause existe pour cette minute-là.
 
 • Vous choisissez des plages horaires (par exemple 22 h – 7 h, tous les jours).
 • Tout appel sortant pendant une plage ouvre l'écran de pause au lieu de composer.
-• Un mode Zen peut bloquer les appels à la demande, pour 2 heures.
+• Un mode Zen peut bloquer les appels à la demande, pour 3 à 12 heures.
 • Trois contacts de confiance peuvent toujours être joints : leur appel est coupé
   automatiquement à 3 minutes.
 

@@ -88,11 +88,11 @@ class ScheduleViewModel @Inject constructor(
 
         /** Durées proposées d'un seul appui, de la plus courte à la plus longue. */
         val ZEN_PRESETS: List<Pair<String, Long>> = listOf(
-            "30 min" to 30 * 60 * 1000L,
-            "1 h" to 60 * 60 * 1000L,
-            "2 h" to 2 * 60 * 60 * 1000L,
+            "3 h" to 3 * 60 * 60 * 1000L,
             "4 h" to 4 * 60 * 60 * 1000L,
-            "8 h" to 8 * 60 * 60 * 1000L
+            "6 h" to 6 * 60 * 60 * 1000L,
+            "8 h" to 8 * 60 * 60 * 1000L,
+            "12 h" to 12 * 60 * 60 * 1000L
         )
     }
 }

@@ -48,7 +48,7 @@ Trois mécanismes, tous contrôlés par vous :
 | Mécanisme | Effet |
 |---|---|
 | **Plages horaires** | Récurrentes, par jour de la semaine (ex. 22:00 → 07:00) |
-| **Mode Zen** | Blocage ponctuel de 2 heures, déclenché en un tap |
+| **Mode Zen** | Blocage ponctuel de 3 à 12 heures, déclenché en un tap |
 | **Whitelist** | Contacts toujours joignables, même pendant une plage active |
 
 Les **numéros d'urgence** (112, 15, 17, 18, 19…) ne sont **jamais** bloqués.
@@ -65,8 +65,8 @@ Les **numéros d'urgence** (112, 15, 17, 18, 19…) ne sont **jamais** bloqués.
 - Activation / désactivation instantanée par un interrupteur.
 
 ### 🧘 Mode Zen
-Un bouton « Besoin d'une pause maintenant ? » active une protection immédiate de **2 heures**,
-sans créer de plage permanente.
+Un bouton « Besoin d'une pause maintenant ? » active une protection immédiate de **3, 4, 6,
+8 ou 12 heures**, sans créer de plage permanente.
 
 ### 📇 Cercle de confiance (whitelist)
 Un onglet **Contacts** permet de désigner jusqu'à **3 personnes** dont les appels passent

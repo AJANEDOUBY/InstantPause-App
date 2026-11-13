@@ -24,7 +24,7 @@ Messenger no se interceptan.
 • Eliges franjas horarias (por ejemplo, de 22:00 a 7:00, todos los días).
 • Cualquier llamada saliente por SIM durante una franja abre la pantalla de pausa en lugar
   de marcar.
-• Un modo Zen puede bloquear llamadas a demanda, durante 2 horas.
+• Un modo Zen puede bloquear llamadas a demanda, durante 3 a 12 horas.
 • Siempre se puede contactar con tres personas de confianza: su llamada se corta
   automáticamente a los 3 minutos.
 
