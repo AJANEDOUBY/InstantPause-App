@@ -18,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 
 @Composable
 fun RoleActivationScreen(
@@ -43,7 +45,7 @@ fun RoleActivationScreen(
         Spacer(Modifier.height(24.dp))
 
         Text(
-            text = "Protection non activée",
+            text = stringResource(R.string.role_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -52,8 +54,7 @@ fun RoleActivationScreen(
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "Pour qu'Instant Pause puisse mettre vos appels en pause, " +
-                    "Android doit vous demander une autorisation spéciale.",
+            text = stringResource(R.string.role_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -62,7 +63,7 @@ fun RoleActivationScreen(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "C'est rapide et vous pouvez la retirer à tout moment.",
+            text = stringResource(R.string.role_reassurance),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -78,7 +79,7 @@ fun RoleActivationScreen(
             )
         ) {
             Text(
-                text = "Activer la protection",
+                text = stringResource(R.string.role_activate),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )

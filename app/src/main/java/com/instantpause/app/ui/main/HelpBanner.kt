@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 
 /**
  * Bandeaux d'aide volontairement **compacts** : une icône, deux lignes et un bouton
@@ -78,9 +80,9 @@ fun HelpBanner(
     onRequestPermission: () -> Unit
 ) {
     CompactBanner(
-        title = "Affichage par-dessus les appels",
-        message = "Requis pour montrer l'écran de pause pendant un appel.",
-        actionLabel = "Autoriser",
+        title = stringResource(R.string.banner_overlay_title),
+        message = stringResource(R.string.banner_overlay_message),
+        actionLabel = stringResource(R.string.banner_allow),
         containerColor = Color(0xFF059669),
         icon = Icons.Default.Security,
         onClick = onRequestPermission,
@@ -101,9 +103,9 @@ fun BatteryBanner(
     onRequestExemption: () -> Unit
 ) {
     CompactBanner(
-        title = "Protection après redémarrage",
-        message = "Autorisez le démarrage auto et l'énergie sans restriction.",
-        actionLabel = "Autoriser",
+        title = stringResource(R.string.banner_battery_title),
+        message = stringResource(R.string.banner_battery_message),
+        actionLabel = stringResource(R.string.banner_allow),
         containerColor = Color(0xFFB45309),
         icon = Icons.Default.BatteryAlert,
         onClick = onRequestExemption,

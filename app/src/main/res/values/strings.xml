@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Langue par défaut : anglais.
+    Toute langue non couverte par un dossier values-xx bascule ici.
+    Le français vit dans res/values-fr/strings.xml : les deux fichiers doivent
+    toujours contenir exactement les mêmes clés.
+-->
 <resources>
     <string name="app_name">Instant Pause</string>
-    <string name="app_tagline">Attendez demain avant d\'appeler</string>
+    <string name="app_tagline">Wait until tomorrow before calling</string>
+
+    <!-- Barre de navigation -->
+    <string name="tab_schedules">Windows</string>
+    <string name="tab_contacts">Contacts</string>
+    <string name="tab_history">History</string>
+    <string name="tab_security">Security</string>
+
+    <!-- Bandeaux d'aide -->
+    <string name="banner_overlay_title">Show above calls</string>
+    <string name="banner_overlay_message">Required to display the pause screen during a call.</string>
+    <string name="banner_battery_title">Protection after reboot</string>
+    <string name="banner_battery_message">Allow auto-start and unrestricted battery use.</string>
+    <string name="banner_allow">Allow</string>
+
+    <!-- Écran d'activation du rôle -->
+    <string name="role_title">Protection not enabled</string>
+    <string name="role_message">For Instant Pause to put your calls on hold, Android must ask you for a special permission.</string>
+    <string name="role_reassurance">It is quick, and you can remove it at any time.</string>
+    <string name="role_activate">Enable protection</string>
+
+    <!-- Explication système de l'administrateur (protection contre la désinstallation) -->
+    <string name="admin_explanation">Instant Pause will prevent its own accidental or impulsive uninstallation. No other rights are requested.</string>
 </resources>

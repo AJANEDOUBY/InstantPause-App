@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Traduction française. Doit rester alignée clé pour clé avec res/values/strings.xml.
+-->
+<resources>
+    <string name="app_name">Instant Pause</string>
+    <string name="app_tagline">Attendez demain avant d\'appeler</string>
+
+    <!-- Barre de navigation -->
+    <string name="tab_schedules">Plages</string>
+    <string name="tab_contacts">Contacts</string>
+    <string name="tab_history">Historique</string>
+    <string name="tab_security">Sécurité</string>
+
+    <!-- Bandeaux d'aide -->
+    <string name="banner_overlay_title">Affichage par-dessus les appels</string>
+    <string name="banner_overlay_message">Requis pour montrer l\'écran de pause pendant un appel.</string>
+    <string name="banner_battery_title">Protection après redémarrage</string>
+    <string name="banner_battery_message">Autorisez le démarrage auto et l\'énergie sans restriction.</string>
+    <string name="banner_allow">Autoriser</string>
+
+    <!-- Écran d'activation du rôle -->
+    <string name="role_title">Protection non activée</string>
+    <string name="role_message">Pour qu\'Instant Pause puisse mettre vos appels en pause, Android doit vous demander une autorisation spéciale.</string>
+    <string name="role_reassurance">C\'est rapide et vous pouvez la retirer à tout moment.</string>
+    <string name="role_activate">Activer la protection</string>
+
+    <!-- Explication système de l'administrateur (protection contre la désinstallation) -->
+    <string name="admin_explanation">Instant Pause empêchera sa désinstallation accidentelle ou impulsive. Aucun autre droit n\'est demandé.</string>
+</resources>
