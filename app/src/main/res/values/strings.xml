@@ -5,7 +5,7 @@
     Le français vit dans res/values-fr/strings.xml : les deux fichiers doivent
     toujours contenir exactement les mêmes clés.
 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="app_name">Instant Pause</string>
     <string name="app_tagline">Wait until tomorrow before calling</string>
 

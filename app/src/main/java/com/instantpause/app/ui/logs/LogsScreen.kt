@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +56,6 @@ fun LogsScreen(
 
 @Composable
 private fun LogItem(log: BlockedLog) {
-    val context = LocalContext.current
     val isBlocked = log.status == BlockStatus.BLOCKED
     val icon = if (isBlocked) Icons.Default.PhoneDisabled else Icons.AutoMirrored.Filled.PhoneForwarded
     val iconColor = if (isBlocked) Color(0xFFEF4444) else Color(0xFF10B981) // Rouge ou Vert
@@ -68,9 +66,10 @@ private fun LogItem(log: BlockedLog) {
     }
 
     // Formatage de la date (une seule instance par item, réutilisée aux recompositions)
+    val pattern = stringResource(R.string.log_date_pattern)
     val locale = LocalConfiguration.current.locales[0]
-    val dateFormatter = remember(locale) {
-        SimpleDateFormat(context.getString(R.string.log_date_pattern), locale)
+    val dateFormatter = remember(locale, pattern) {
+        SimpleDateFormat(pattern, locale)
     }
     val dateString = remember(log.timestamp, dateFormatter) {
         dateFormatter.format(Date(log.timestamp))

@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +60,7 @@ fun ScheduleScreen(
     var gatedAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     var gatedReason by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     /**
      * N'exige le code que pour les actions qui **affaiblissent** la protection :
@@ -137,7 +137,7 @@ fun ScheduleScreen(
                         val now = System.currentTimeMillis()
                         if (ScheduleViewModel.shortensCurrentZen(now, emergencyUntil, durationMs)) {
                             guard(
-                                context.getString(
+                                resources.getString(
                                     R.string.zen_shorten_reason,
                                     formatClock(now + durationMs),
                                     formatClock(emergencyUntil)
@@ -148,7 +148,7 @@ fun ScheduleScreen(
                         }
                     },
                     onCancel = {
-                        guard(context.getString(R.string.zen_cancel_reason)) {
+                        guard(resources.getString(R.string.zen_cancel_reason)) {
                             viewModel.cancelZenMode()
                         }
                     }
@@ -166,7 +166,7 @@ fun ScheduleScreen(
                         onToggle = {
                             if (schedule.isActive) {
                                 guard(
-                                    context.getString(
+                                    resources.getString(
                                         R.string.schedule_disable_reason,
                                         schedule.start.toString(),
                                         schedule.end.toString()
@@ -179,7 +179,7 @@ fun ScheduleScreen(
                         },
                         onDelete = {
                             guard(
-                                context.getString(
+                                resources.getString(
                                     R.string.schedule_delete_reason,
                                     schedule.start.toString(),
                                     schedule.end.toString()
