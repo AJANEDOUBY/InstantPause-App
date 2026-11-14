@@ -17,6 +17,9 @@ luego decidir.
 
 Sin bloqueo de emergencia, sin vigilancia, sin servidor: todo se queda en tu teléfono.
 
+La interfaz está disponible en **inglés y francés**, según el idioma del teléfono
+(Ajustes › Aplicaciones › Instant Pause › Idioma). El español está previsto.
+
 ---
 
 ## Contenido

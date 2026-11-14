@@ -77,6 +77,46 @@ Correcciones: notificaciones con acentos, explicación antes del diálogo de ant
 
 ---
 
+## 1.6.0 - application en anglais
+
+### Français - `fr-FR`
+
+```
+<fr-FR>
+L'application est maintenant disponible en anglais et en français : elle suit la langue de votre téléphone, et vous pouvez la changer dans Réglages > Applications > Instant Pause > Langue.
+
+Le message de l'écran de pause revient à la phrase par défaut de la langue choisie quand le champ est laissé vide.
+
+Correctifs : dates de l'historique et noms des canaux de notification traduits.
+</fr-FR>
+```
+
+### Anglais - `en-US`
+
+```
+<en-US>
+The app is now available in English and French: it follows your phone language, and you can change it in Settings > Apps > Instant Pause > Language.
+
+The pause screen message falls back to the default sentence of the chosen language when the field is left empty.
+
+Fixes: translated history dates and notification channel names.
+</en-US>
+```
+
+### Espagnol - `es-ES`
+
+```
+<es-ES>
+La aplicación ya está disponible en inglés y francés: sigue el idioma de tu teléfono y puedes cambiarlo en Ajustes > Aplicaciones > Instant Pause > Idioma.
+
+El mensaje de la pantalla de pausa vuelve a la frase por defecto del idioma elegido cuando el campo se deja vacío.
+
+Correcciones: fechas del historial y nombres de los canales de notificación traducidos.
+</es-ES>
+```
+
+---
+
 ## Modèle pour la prochaine version
 
 Garde la même structure : trois phrases maximum, ce qui change pour l'utilisateur, aucun détail

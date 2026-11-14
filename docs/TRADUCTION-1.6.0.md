@@ -89,3 +89,44 @@ langue, sinon l'app devient anglaise à moitié.
 - Aucun `stringResource` manquant (build sans `MissingTranslation` en mode strict).
 - Les 101 tests passent.
 - Un appel bloqué réel s'affiche correctement dans les deux langues.
+
+## État d'avancement — 14 novembre 2026
+
+Réalisé sur la branche `release/1.6.0` (versionCode 16, versionName 1.6.0) :
+
+| Lot | État |
+|---|---|
+| 1. Infrastructure : `values/` anglais, `values-fr/`, `locales_config.xml` | fait |
+| 2. Onboarding, rôles, bandeaux d'aide | fait |
+| 3. Sécurité : code, dialogues, raccrochage, plein écran, anti-désinstallation | fait |
+| 4. Plages et mode Zen (dont noms des jours) | fait |
+| 5. Cercle de confiance et historique | fait |
+| 6. Écran de pause, services, canaux et notifications | fait |
+| 7. Espagnol | à faire |
+
+Résultat : **173 clés**, strictement identiques dans `values/` et `values-fr/`,
+**100 tests, 0 échec**, vérifié sur la tablette dans les deux langues.
+
+### Points traités pendant l'extraction
+
+- Le message de pause n'est plus stocké avec la phrase française par défaut :
+  une valeur vide est conservée et la phrase par défaut vient de
+  `pause_message_default`, donc de la langue courante. Un message déjà écrit par
+  l'utilisateur n'est jamais traduit.
+- Le séparateur du minuteur d'appel (`« Temps restant : 2:59 / 3:00 »` contre
+  `« Time left: 2:59 / 3:00 »`) vient d'une ressource, plus d'une concaténation.
+- Les canaux de notification sont recréés à chaque démarrage pour que leur nom
+  suive un changement de langue.
+- `android:localeConfig` ajouté : l'app apparaît dans Réglages › Applications ›
+  Instant Pause › Langue, et `adb shell cmd locale set-app-locales` peut la
+  basculer sans changer la langue du téléphone.
+- Les journaux (`Log.d`, `Log.i`…) restent en français : ils ne sont pas affichés
+  à l'utilisateur.
+
+### Reste à faire
+
+- `values-es/` : traduction espagnole complète, puis ajout de `es` dans
+  `locales_config.xml`.
+- Relire les textes longs en allemand ou en espagnol si une troisième langue est
+  ajoutée : ce sont les plus exposés au débordement à 14 sp.
+
