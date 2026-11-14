@@ -141,4 +141,49 @@
     <string name="install_guard_info_does">Ce qu\'elle fait : bloquer une désinstallation impulsive. Aucun droit sur vos données, vos appels ou votre écran.</string>
     <string name="install_guard_info_prevents">Ce qu\'elle empêche : désinstaller l\'app sans d\'abord la désactiver depuis les réglages Android.</string>
     <string name="install_guard_footer">L\'app reste bloquée sur cet écran tant que la protection n\'est pas active. Vous pourrez la retirer plus tard, avec votre code, depuis l\'onglet Sécurité.</string>
+
+    <!-- Onglet Plages : état et notifications -->
+    <string name="status_zen_until">Mode Zen actif jusqu\'à %1$s</string>
+    <string name="status_zen">Mode Zen actif</string>
+    <string name="status_active">Protection active</string>
+    <string name="status_inactive">Protection inactive</string>
+    <string name="action_add_schedule">Ajouter une plage</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_add">Ajouter</string>
+
+    <!-- Mode Zen -->
+    <string name="zen_card_desc">Mode Zen</string>
+    <string name="zen_title">Besoin d\'une pause maintenant ?</string>
+    <string name="zen_running_help">Période Zen en cours, jusqu\'à %1$s. Une durée plus courte demandera votre code.</string>
+    <string name="zen_help">Choisissez votre période Zen : appuyez sur le nombre d\'heures souhaité. La protection démarre aussitôt.</string>
+    <string name="action_stop_zen">Arrêter le mode Zen</string>
+    <string name="zen_shorten_reason">Réduire la période Zen ? Les appels seraient de nouveau bloqués vers %1$s au lieu de %2$s. Saisissez votre code pour confirmer.</string>
+    <string name="zen_cancel_reason">Arrêter le mode Zen maintenant ? Les appels ne seront plus bloqués jusqu\'à la prochaine plage.</string>
+
+    <!-- Plages -->
+    <string name="empty_title">Aucune plage configurée</string>
+    <string name="empty_body">Ajoutez une plage pour activer la protection automatique (ex : 22 h – 7 h).</string>
+    <string name="schedule_disable_reason">Désactiver la plage %1$s – %2$s ? Sans elle, plus rien ne bloquera vos appels sur ce créneau.</string>
+    <string name="schedule_delete_reason">Supprimer définitivement la plage %1$s – %2$s ?</string>
+    <string name="dialog_new_schedule">Nouvelle plage</string>
+    <string name="label_start">Début</string>
+    <string name="label_end">Fin</string>
+    <string name="label_days">Jours</string>
+    <string name="schedule_same_day">Plage dans la même journée.</string>
+    <string name="schedule_crosses_midnight">Franchit minuit : la plage commence le jour sélectionné.</string>
+
+    <!-- Jours -->
+    <string name="days_none">Aucun jour</string>
+    <string name="days_every">Tous les jours</string>
+    <string name="days_weekdays">Lun – Ven</string>
+    <string name="days_weekend">Week-end</string>
+    <string-array name="days_short">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Jeu</item>
+        <item>Ven</item>
+        <item>Sam</item>
+        <item>Dim</item>
+    </string-array>
 </resources>

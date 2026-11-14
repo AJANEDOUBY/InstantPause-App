@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +60,7 @@ fun ScheduleScreen(
     var gatedAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     var gatedReason by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     /**
      * N'exige le code que pour les actions qui **affaiblissent** la protection :
@@ -105,7 +107,7 @@ fun ScheduleScreen(
                 onClick = { showAddDialog = true },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Ajouter une plage")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.action_add_schedule))
             }
         }
     ) { padding ->
@@ -135,20 +137,20 @@ fun ScheduleScreen(
                         val now = System.currentTimeMillis()
                         if (ScheduleViewModel.shortensCurrentZen(now, emergencyUntil, durationMs)) {
                             guard(
-                                "Réduire la période Zen ? Les appels seraient de nouveau " +
-                                        "bloqués vers ${formatClock(now + durationMs)} au lieu " +
-                                        "de ${formatClock(emergencyUntil)}. Saisissez votre " +
-                                        "code pour confirmer."
+                                context.getString(
+                                    R.string.zen_shorten_reason,
+                                    formatClock(now + durationMs),
+                                    formatClock(emergencyUntil)
+                                )
                             ) { viewModel.activateZenMode(durationMs) }
                         } else {
                             viewModel.activateZenMode(durationMs)
                         }
                     },
                     onCancel = {
-                        guard(
-                            "Arrêter le mode Zen maintenant ? Les appels ne seront " +
-                                    "plus bloqués jusqu'à la prochaine plage."
-                        ) { viewModel.cancelZenMode() }
+                        guard(context.getString(R.string.zen_cancel_reason)) {
+                            viewModel.cancelZenMode()
+                        }
                     }
                 )
             }
@@ -164,8 +166,11 @@ fun ScheduleScreen(
                         onToggle = {
                             if (schedule.isActive) {
                                 guard(
-                                    "Désactiver la plage ${schedule.start} – ${schedule.end} ? " +
-                                            "Sans elle, plus rien ne bloquera vos appels sur ce créneau."
+                                    context.getString(
+                                        R.string.schedule_disable_reason,
+                                        schedule.start.toString(),
+                                        schedule.end.toString()
+                                    )
                                 ) { viewModel.toggleActive(schedule) }
                             } else {
                                 // Réactiver renforce la protection : jamais gated.
@@ -174,7 +179,11 @@ fun ScheduleScreen(
                         },
                         onDelete = {
                             guard(
-                                "Supprimer définitivement la plage ${schedule.start} – ${schedule.end} ?"
+                                context.getString(
+                                    R.string.schedule_delete_reason,
+                                    schedule.start.toString(),
+                                    schedule.end.toString()
+                                )
                             ) { viewModel.delete(schedule) }
                         }
                     )
@@ -211,10 +220,11 @@ private fun StatusBanner(
 ) {
     val bgColor = if (isProtected) Color(0xFF10B981) else Color(0xFFF59E0B)
     val text = when {
-        zenActive && zenUntil > 0L -> "Mode Zen actif jusqu'à ${formatClock(zenUntil)}"
-        zenActive -> "Mode Zen actif"
-        isProtected -> "Protection Active"
-        else -> "Protection Inactive"
+        zenActive && zenUntil > 0L ->
+            stringResource(R.string.status_zen_until, formatClock(zenUntil))
+        zenActive -> stringResource(R.string.status_zen)
+        isProtected -> stringResource(R.string.status_active)
+        else -> stringResource(R.string.status_inactive)
     }
     val icon = if (isProtected) Icons.Default.CheckCircle else Icons.Default.Warning
 
@@ -251,24 +261,22 @@ private fun ZenModeCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.SelfImprovement,
-                    contentDescription = "Mode Zen",
+                    contentDescription = stringResource(R.string.zen_card_desc),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Besoin d'une pause maintenant ?",
+                        text = stringResource(R.string.zen_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = if (zenUntil > 0L) {
-                            "Période Zen en cours, jusqu'à ${formatClock(zenUntil)}. " +
-                                    "Une durée plus courte demandera votre code."
+                            stringResource(R.string.zen_running_help, formatClock(zenUntil))
                         } else {
-                            "Choisissez votre période Zen : appuyez sur le nombre " +
-                                    "d'heures souhaité. La protection démarre aussitôt."
+                            stringResource(R.string.zen_help)
                         },
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -297,7 +305,7 @@ private fun ZenModeCard(
                     onClick = onCancel,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Arrêter le mode Zen")
+                    Text(stringResource(R.string.action_stop_zen))
                 }
             }
         }
@@ -327,13 +335,13 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Aucune plage configurée",
+            text = stringResource(R.string.empty_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Ajoutez une plage pour activer la protection automatique (ex: 22h – 7h).",
+            text = stringResource(R.string.empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -351,7 +359,7 @@ private fun ScheduleCard(
     val timeRange = remember(schedule.start, schedule.end) {
         "${schedule.start.format(timeFormatter)} – ${schedule.end.format(timeFormatter)}"
     }
-    val daysText = remember(schedule.daysMask) { formatDays(schedule.daysMask) }
+    val daysText = formatDays(schedule.daysMask)
 
     // Choisir l'icône selon l'heure
     val isNight = schedule.start.hour >= 20 || schedule.start.hour < 6
@@ -394,7 +402,11 @@ private fun ScheduleCard(
                 onCheckedChange = { onToggle() }
             )
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Supprimer", tint = Color.Gray)
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.action_delete),
+                    tint = Color.Gray
+                )
             }
         }
     }
@@ -416,25 +428,29 @@ private fun AddScheduleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Nouvelle plage") },
+        title = { Text(stringResource(R.string.dialog_new_schedule)) },
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Début", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.label_start), style = MaterialTheme.typography.labelLarge)
                 TimeInput(state = startState)
                 Spacer(Modifier.height(16.dp))
-                Text("Fin", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.label_end), style = MaterialTheme.typography.labelLarge)
                 TimeInput(state = endState)
                 Spacer(Modifier.height(16.dp))
-                Text("Jours", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.label_days), style = MaterialTheme.typography.labelLarge)
                 Spacer(Modifier.height(8.dp))
                 DayChips(mask = daysMask, onMaskChange = { daysMask = it })
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = if (crossesMidnight) "Franchit minuit : la plage commence le jour sélectionné." else "Plage dans la même journée.",
+                    text = if (crossesMidnight) {
+                        stringResource(R.string.schedule_crosses_midnight)
+                    } else {
+                        stringResource(R.string.schedule_same_day)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -444,10 +460,10 @@ private fun AddScheduleDialog(
             TextButton(
                 onClick = { onConfirm(startTime, endTime, daysMask) },
                 enabled = daysMask != 0 && startTime != endTime
-            ) { Text("Ajouter") }
+            ) { Text(stringResource(R.string.action_add)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annuler") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }
@@ -455,7 +471,7 @@ private fun AddScheduleDialog(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DayChips(mask: Int, onMaskChange: (Int) -> Unit) {
-    val days = listOf("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim")
+    val days = stringArrayResource(R.array.days_short)
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -475,11 +491,12 @@ private fun DayChips(mask: Int, onMaskChange: (Int) -> Unit) {
     }
 }
 
+@Composable
 private fun formatDays(mask: Int): String {
-    if (mask == 0) return "Aucun jour"
-    if (mask == Schedule.ALL_DAYS) return "Tous les jours"
-    if (mask == 0b0011111) return "Lun – Ven"
-    if (mask == 0b1100000) return "Week-end"
-    val days = listOf("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim")
+    val days = stringArrayResource(R.array.days_short)
+    if (mask == 0) return stringResource(R.string.days_none)
+    if (mask == Schedule.ALL_DAYS) return stringResource(R.string.days_every)
+    if (mask == 0b0011111) return stringResource(R.string.days_weekdays)
+    if (mask == 0b1100000) return stringResource(R.string.days_weekend)
     return days.filterIndexed { i, _ -> (mask and (1 shl i)) != 0 }.joinToString(", ")
 }

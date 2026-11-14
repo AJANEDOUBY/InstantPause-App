@@ -144,4 +144,49 @@
     <string name="install_guard_info_does">What it does: block an impulsive uninstallation. No rights over your data, your calls or your screen.</string>
     <string name="install_guard_info_prevents">What it prevents: uninstalling the app without first deactivating it from the Android settings.</string>
     <string name="install_guard_footer">The app stays on this screen until the protection is active. You can remove it later, with your code, from the Security tab.</string>
+
+    <!-- Onglet Plages : état et notifications -->
+    <string name="status_zen_until">Zen mode on until %1$s</string>
+    <string name="status_zen">Zen mode on</string>
+    <string name="status_active">Protection active</string>
+    <string name="status_inactive">Protection inactive</string>
+    <string name="action_add_schedule">Add a window</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_add">Add</string>
+
+    <!-- Mode Zen -->
+    <string name="zen_card_desc">Zen mode</string>
+    <string name="zen_title">Need a pause right now?</string>
+    <string name="zen_running_help">Zen period running, until %1$s. A shorter duration will ask for your code.</string>
+    <string name="zen_help">Choose your Zen period: tap the number of hours you want. Protection starts immediately.</string>
+    <string name="action_stop_zen">Stop Zen mode</string>
+    <string name="zen_shorten_reason">Shorten the Zen period? Calls would be blocked again at %1$s instead of %2$s. Enter your code to confirm.</string>
+    <string name="zen_cancel_reason">Stop Zen mode now? Calls will no longer be blocked until the next window.</string>
+
+    <!-- Plages -->
+    <string name="empty_title">No window configured</string>
+    <string name="empty_body">Add a window to enable automatic protection (e.g. 10 pm – 7 am).</string>
+    <string name="schedule_disable_reason">Disable the %1$s – %2$s window? Without it, nothing will block your calls during that slot.</string>
+    <string name="schedule_delete_reason">Permanently delete the %1$s – %2$s window?</string>
+    <string name="dialog_new_schedule">New window</string>
+    <string name="label_start">Start</string>
+    <string name="label_end">End</string>
+    <string name="label_days">Days</string>
+    <string name="schedule_same_day">Window within the same day.</string>
+    <string name="schedule_crosses_midnight">Crosses midnight: the window starts on the selected day.</string>
+
+    <!-- Jours -->
+    <string name="days_none">No day</string>
+    <string name="days_every">Every day</string>
+    <string name="days_weekdays">Mon – Fri</string>
+    <string name="days_weekend">Weekend</string>
+    <string-array name="days_short">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
 </resources>
