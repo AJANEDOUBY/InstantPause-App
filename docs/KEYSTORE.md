@@ -155,6 +155,11 @@ Procédure appliquée le 7 novembre 2026, après la découverte du mot de passe 
 Une rotation **ne nécessite aucune démarche Play Console** : Play App Signing conserve la clé de
 signature de l'application, on ne change que le mot de passe local de la clé de téléversement.
 
+Vérification du 14 novembre 2026 : `keytool -list -v` sur `keystore/cooldown-release.jks`
+(alias `cooldown`, 4 396 octets) renvoie toujours l'empreinte
+`4F:14:D6:…:F0:F5` et une validité jusqu'au 17 mars 2054. Les copies hors ligne, elles, ne
+peuvent être contrôlées que sur leur support : à refaire lors de la prochaine rotation.
+
 ---
 
 ## 6. Ce qui ne change pas lors d'une rotation
