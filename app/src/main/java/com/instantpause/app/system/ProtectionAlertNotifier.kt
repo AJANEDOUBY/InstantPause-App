@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.instantpause.app.R
 import com.instantpause.app.ui.pause.PauseActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -27,23 +28,23 @@ class ProtectionAlertNotifier @Inject constructor(
     init {
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_HIGH)
-                .setName("Protection Instant Pause")
-                .setDescription("Alertes de blocage d'appel")
+                .setName(context.getString(R.string.channel_protection_name))
+                .setDescription(context.getString(R.string.channel_protection_desc))
                 .setVibrationEnabled(true)
                 .build()
         )
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(SERVICE_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-                .setName("Service Instant Pause")
-                .setDescription("Notification discrete pendant l'ouverture de l'ecran de pause")
+                .setName(context.getString(R.string.channel_service_name))
+                .setDescription(context.getString(R.string.channel_service_desc))
                 .build()
         )
         // Même notification, mais sans tête haute ni vibration : utilisée dès que
         // l'écran de pause est visible, pour ne pas recouvrir son titre.
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(QUIET_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW)
-                .setName("Pause ouverte")
-                .setDescription("Rappel discret pendant que l'écran de pause est affiché")
+                .setName(context.getString(R.string.channel_quiet_name))
+                .setDescription(context.getString(R.string.channel_quiet_desc))
                 .setVibrationEnabled(false)
                 .build()
         )
@@ -115,11 +116,11 @@ class ProtectionAlertNotifier @Inject constructor(
             if (quiet) QUIET_CHANNEL_ID else CHANNEL_ID
         )
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
-            .setContentTitle("Appel bloqué")
-            .setContentText("Touchez ici pour reprendre votre souffle.")
+            .setContentTitle(context.getString(R.string.notif_blocked_title))
+            .setContentText(context.getString(R.string.notif_blocked_text))
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("Touchez pour ouvrir l'écran de pause et respirer un instant.")
+                    .bigText(context.getString(R.string.notif_blocked_big_text))
             )
             .setPriority(
                 if (quiet) NotificationCompat.PRIORITY_LOW else NotificationCompat.PRIORITY_MAX
@@ -166,7 +167,7 @@ class ProtectionAlertNotifier @Inject constructor(
             return NotificationCompat.Builder(context, SERVICE_CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .setContentTitle("Instant Pause")
-                .setContentText("Préparation de la pause...")
+                .setContentText(context.getString(R.string.notif_pause_preparing))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setOngoing(true)

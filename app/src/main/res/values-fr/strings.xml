@@ -211,4 +211,27 @@
     <string name="log_date_pattern">dd MMM \'à\' HH:mm</string>
     <string name="logs_empty_title">Aucun appel pour le moment</string>
     <string name="logs_empty_body">Les appels bloqués et ceux autorisés par votre cercle de confiance apparaîtront ici.</string>
+
+    <!-- Notifications et canaux -->
+    <string name="channel_protection_name">Protection Instant Pause</string>
+    <string name="channel_protection_desc">Alertes de blocage d\'appel</string>
+    <string name="channel_service_name">Service Instant Pause</string>
+    <string name="channel_service_desc">Notification discrète pendant l\'ouverture de l\'écran de pause</string>
+    <string name="channel_quiet_name">Pause ouverte</string>
+    <string name="channel_quiet_desc">Rappel discret pendant que l\'écran de pause est affiché</string>
+    <string name="channel_call_timer_name">Minuteur d\'appel autorisé</string>
+    <string name="channel_call_timer_desc">Compte à rebours des appels vers le cercle de confiance</string>
+    <string name="channel_watchdog_name">Instant Pause veille</string>
+    <string name="channel_watchdog_desc">Maintient la protection active en arrière-plan</string>
+    <string name="notif_blocked_title">Appel bloqué</string>
+    <string name="notif_blocked_text">Touchez ici pour reprendre votre souffle.</string>
+    <string name="notif_blocked_big_text">Touchez pour ouvrir l\'écran de pause et respirer un instant.</string>
+    <string name="notif_pause_preparing">Préparation de la pause…</string>
+    <string name="notif_allowed_call_title">Appel autorisé</string>
+    <string name="notif_watchdog_title">Instant Pause veille</string>
+    <string name="notif_watchdog_text">Votre protection est active.</string>
+    <string name="call_timer_prefix">Temps restant</string>
+    <string name="call_timer_line">%1$s : %2$s</string>
+    <string name="call_time_up_cut">Temps écoulé — appel coupé</string>
+    <string name="call_time_up_hang_up">Temps écoulé — raccrochez</string>
 </resources>

@@ -214,4 +214,27 @@
     <string name="log_date_pattern">d MMM \'at\' HH:mm</string>
     <string name="logs_empty_title">No call yet</string>
     <string name="logs_empty_body">Blocked calls and calls allowed by your trust circle will appear here.</string>
+
+    <!-- Notifications et canaux -->
+    <string name="channel_protection_name">Instant Pause protection</string>
+    <string name="channel_protection_desc">Call blocking alerts</string>
+    <string name="channel_service_name">Instant Pause service</string>
+    <string name="channel_service_desc">Discreet notification while the pause screen opens</string>
+    <string name="channel_quiet_name">Pause open</string>
+    <string name="channel_quiet_desc">Discreet reminder while the pause screen is displayed</string>
+    <string name="channel_call_timer_name">Allowed call timer</string>
+    <string name="channel_call_timer_desc">Countdown for calls to the trust circle</string>
+    <string name="channel_watchdog_name">Instant Pause watchdog</string>
+    <string name="channel_watchdog_desc">Keeps protection active in the background</string>
+    <string name="notif_blocked_title">Call blocked</string>
+    <string name="notif_blocked_text">Tap here to catch your breath.</string>
+    <string name="notif_blocked_big_text">Tap to open the pause screen and breathe for a moment.</string>
+    <string name="notif_pause_preparing">Preparing the pause…</string>
+    <string name="notif_allowed_call_title">Allowed call</string>
+    <string name="notif_watchdog_title">Instant Pause watchdog</string>
+    <string name="notif_watchdog_text">Your protection is active.</string>
+    <string name="call_timer_prefix">Time left</string>
+    <string name="call_timer_line">%1$s: %2$s</string>
+    <string name="call_time_up_cut">Time is up — call ended</string>
+    <string name="call_time_up_hang_up">Time is up — hang up</string>
 </resources>

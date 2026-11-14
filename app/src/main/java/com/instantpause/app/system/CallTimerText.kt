@@ -11,16 +11,9 @@ import java.util.Locale
  */
 internal object CallTimerText {
 
-    /** Étiquette affichée au-dessus du décompte, dans la pastille. */
-    const val PREFIX = "Temps restant"
-
     /** Ex. « 2:59 / 3:00 ». */
     fun countdown(leftSeconds: Int, limitSeconds: Int): String =
         "${format(leftSeconds)} / ${format(limitSeconds)}"
-
-    /** Ex. « Temps restant : 2:59 / 3:00 », pour la notification. */
-    fun notificationLine(leftSeconds: Int, limitSeconds: Int): String =
-        "$PREFIX : ${countdown(leftSeconds, limitSeconds)}"
 
     /** Ex. 179 -> « 2:59 ». Les secondes sont bornées à zéro côté appelant. */
     fun format(totalSeconds: Int): String =
