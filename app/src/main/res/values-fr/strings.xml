@@ -113,4 +113,32 @@
     <string name="pause_inhale">Inspirer doucement…</string>
     <string name="pause_exhale">Expirer lentement…</string>
     <string name="action_close">Fermer</string>
+
+    <!-- Étape : raccrochage à 3 minutes -->
+    <string name="hangup_title">Couper les appels à 3 minutes</string>
+    <string name="hangup_body">Un contact autorisé peut toujours vous joindre — mais pas pendant une heure. Android n\'autorise une application à raccrocher qu\'avec cette permission : sans elle, vous pourriez parler indéfiniment.</string>
+    <string name="hangup_info_timer">Le décompte part du décroché : 3 minutes de parole, pas 3 minutes incluant la sonnerie.</string>
+    <string name="hangup_info_end">À 0:00, la ligne est coupée. Vous repartez de zéro pour le prochain appel, autant de fois que nécessaire.</string>
+    <string name="hangup_denied">L\'autorisation a été refusée définitivement : Android ne réaffichera plus la demande. Ouvrez les réglages de l\'app pour l\'accorder.</string>
+    <string name="hangup_footer">L\'app reste bloquée sur cet écran tant que l\'autorisation n\'est pas accordée.</string>
+    <string name="action_allow">Autoriser</string>
+    <string name="action_open_settings">Ouvrir les réglages</string>
+    <string name="action_app_settings">Réglages de l\'app</string>
+
+    <!-- Étape : plein écran -->
+    <string name="fullscreen_title">La pause par-dessus le verrouillage</string>
+    <string name="fullscreen_body">Android 14+ n\'accorde plus d\'office l\'affichage en plein écran : l\'écran de pause risque de n\'apparaître que comme une notification. L\'appel est bloqué dans tous les cas - seule la façon de vous montrer la pause change.</string>
+    <string name="fullscreen_info_blocking">Le blocage de l\'appel ne dépend pas de cette autorisation.</string>
+    <string name="fullscreen_info_notification">Sans elle, touchez la notification pour ouvrir la pause.</string>
+    <string name="action_allow_fullscreen">Autoriser l\'affichage</string>
+    <string name="action_continue_without">Continuer sans</string>
+    <string name="fullscreen_footer">Cette étape ne reviendra plus. Vous pourrez changer d\'avis dans les réglages Android de l\'app.</string>
+
+    <!-- Étape : protection contre la désinstallation -->
+    <string name="install_guard_title">Dernière étape : protégez l\'app</string>
+    <string name="install_guard_body">Sans cette protection, Instant Pause se désinstalle en trois taps - et vos plages disparaissent avec elle.</string>
+    <string name="install_guard_explain">Android va ouvrir un écran de confirmation. C\'est normal : aucune application ne peut devenir administrateur sans votre accord. Appuyez sur « Activer ».</string>
+    <string name="install_guard_info_does">Ce qu\'elle fait : bloquer une désinstallation impulsive. Aucun droit sur vos données, vos appels ou votre écran.</string>
+    <string name="install_guard_info_prevents">Ce qu\'elle empêche : désinstaller l\'app sans d\'abord la désactiver depuis les réglages Android.</string>
+    <string name="install_guard_footer">L\'app reste bloquée sur cet écran tant que la protection n\'est pas active. Vous pourrez la retirer plus tard, avec votre code, depuis l\'onglet Sécurité.</string>
 </resources>
