@@ -18,16 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
 import com.instantpause.app.domain.model.BlockStatus
 import com.instantpause.app.domain.model.BlockedLog
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,13 +57,21 @@ fun LogsScreen(
 
 @Composable
 private fun LogItem(log: BlockedLog) {
+    val context = LocalContext.current
     val isBlocked = log.status == BlockStatus.BLOCKED
     val icon = if (isBlocked) Icons.Default.PhoneDisabled else Icons.AutoMirrored.Filled.PhoneForwarded
     val iconColor = if (isBlocked) Color(0xFFEF4444) else Color(0xFF10B981) // Rouge ou Vert
-    val statusText = if (isBlocked) "Bloqué" else "Autorisé (Whitelist)"
+    val statusText = if (isBlocked) {
+        stringResource(R.string.log_blocked)
+    } else {
+        stringResource(R.string.log_allowed)
+    }
 
     // Formatage de la date (une seule instance par item, réutilisée aux recompositions)
-    val dateFormatter = remember { SimpleDateFormat("dd MMM à HH:mm", Locale.FRENCH) }
+    val locale = LocalConfiguration.current.locales[0]
+    val dateFormatter = remember(locale) {
+        SimpleDateFormat(context.getString(R.string.log_date_pattern), locale)
+    }
     val dateString = remember(log.timestamp, dateFormatter) {
         dateFormatter.format(Date(log.timestamp))
     }
@@ -127,13 +138,13 @@ private fun EmptyLogsState() {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Aucun appel pour le moment",
+            text = stringResource(R.string.logs_empty_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Les appels bloqués et ceux autorisés par votre whitelist apparaîtront ici.",
+            text = stringResource(R.string.logs_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

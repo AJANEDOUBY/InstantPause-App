@@ -189,4 +189,29 @@
         <item>Sat</item>
         <item>Sun</item>
     </string-array>
+
+    <!-- Onglet Contacts -->
+    <string name="whitelist_picker_failure">No Contacts app on this device.</string>
+    <string name="whitelist_read_error">Could not read this contact.</string>
+    <string name="whitelist_added">%1$s added to the trust circle.</string>
+    <string name="whitelist_duplicate">This number is already allowed.</string>
+    <string name="whitelist_limit_short">Limit of %1$d contacts reached.</string>
+    <string name="whitelist_invalid">Unreadable number: it cannot be allowed.</string>
+    <string name="whitelist_add_reason">Add an allowed contact? Their calls will go through even during a window.</string>
+    <string name="whitelist_remove_reason">Remove %1$s from the trust circle? Their calls will be blocked again during windows.</string>
+    <string name="action_add_contact">Add a contact</string>
+    <string name="action_remove">Remove</string>
+    <string name="whitelist_limit_note">Limit of %1$d contacts reached. Remove a contact to add another.</string>
+    <string name="trust_circle_title">Trust circle</string>
+    <string name="trust_circle_body">These contacts are never blocked, even during an active window. %1$d contacts maximum, and an allowed call lasts 3 minutes: it is cut automatically afterwards.</string>
+    <string name="whitelist_counter">Allowed contacts</string>
+    <string name="whitelist_empty_title">No allowed contact</string>
+    <string name="whitelist_empty_body">Without an allowed contact, all calls are blocked during windows (except emergencies: 112 and local emergency numbers).</string>
+
+    <!-- Onglet Historique -->
+    <string name="log_blocked">Blocked</string>
+    <string name="log_allowed">Allowed (trust circle)</string>
+    <string name="log_date_pattern">d MMM \'at\' HH:mm</string>
+    <string name="logs_empty_title">No call yet</string>
+    <string name="logs_empty_body">Blocked calls and calls allowed by your trust circle will appear here.</string>
 </resources>

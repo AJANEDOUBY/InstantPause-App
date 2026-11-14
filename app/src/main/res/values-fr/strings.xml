@@ -186,4 +186,29 @@
         <item>Sam</item>
         <item>Dim</item>
     </string-array>
+
+    <!-- Onglet Contacts -->
+    <string name="whitelist_picker_failure">Aucune application Contacts sur cet appareil.</string>
+    <string name="whitelist_read_error">Impossible de lire ce contact.</string>
+    <string name="whitelist_added">%1$s ajouté au cercle de confiance.</string>
+    <string name="whitelist_duplicate">Ce numéro est déjà autorisé.</string>
+    <string name="whitelist_limit_short">Limite de %1$d contacts atteinte.</string>
+    <string name="whitelist_invalid">Numéro illisible : impossible de l\'autoriser.</string>
+    <string name="whitelist_add_reason">Ajouter un contact autorisé ? Ses appels passeront même pendant une plage.</string>
+    <string name="whitelist_remove_reason">Retirer %1$s du cercle de confiance ? Ses appels seront de nouveau bloqués pendant les plages.</string>
+    <string name="action_add_contact">Ajouter un contact</string>
+    <string name="action_remove">Retirer</string>
+    <string name="whitelist_limit_note">Limite de %1$d contacts atteinte. Retirez un contact pour en ajouter un autre.</string>
+    <string name="trust_circle_title">Cercle de confiance</string>
+    <string name="trust_circle_body">Ces contacts ne sont jamais bloqués, même pendant une plage active. %1$d contacts maximum, et un appel autorisé dure 3 minutes : il est coupé automatiquement ensuite.</string>
+    <string name="whitelist_counter">Contacts autorisés</string>
+    <string name="whitelist_empty_title">Aucun contact autorisé</string>
+    <string name="whitelist_empty_body">Sans contact autorisé, tous les appels sont bloqués pendant les plages (sauf urgences : 15, 17, 18, 19, 112).</string>
+
+    <!-- Onglet Historique -->
+    <string name="log_blocked">Bloqué</string>
+    <string name="log_allowed">Autorisé (cercle de confiance)</string>
+    <string name="log_date_pattern">dd MMM \'à\' HH:mm</string>
+    <string name="logs_empty_title">Aucun appel pour le moment</string>
+    <string name="logs_empty_body">Les appels bloqués et ceux autorisés par votre cercle de confiance apparaîtront ici.</string>
 </resources>
