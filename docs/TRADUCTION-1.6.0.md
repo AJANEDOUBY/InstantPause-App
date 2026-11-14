@@ -102,10 +102,12 @@ Réalisé sur la branche `release/1.6.0` (versionCode 16, versionName 1.6.0) :
 | 4. Plages et mode Zen (dont noms des jours) | fait |
 | 5. Cercle de confiance et historique | fait |
 | 6. Écran de pause, services, canaux et notifications | fait |
-| 7. Espagnol | à faire |
+| 7. Espagnol (`values-es/`) | fait |
 
-Résultat : **173 clés**, strictement identiques dans `values/` et `values-fr/`,
-**100 tests, 0 échec**, vérifié sur la tablette dans les deux langues.
+Résultat : **175 clés**, strictement identiques dans `values/`, `values-fr/` et
+`values-es/` ; mêmes marqueurs de format dans les trois langues ;
+**100 tests, 0 échec** ; `lintDebug` vert (0 erreur) ; vérifié sur la tablette
+en anglais, français et espagnol.
 
 ### Points traités pendant l'extraction
 
@@ -125,8 +127,6 @@ Résultat : **173 clés**, strictement identiques dans `values/` et `values-fr/`
 
 ### Reste à faire
 
-- `values-es/` : traduction espagnole complète, puis ajout de `es` dans
-  `locales_config.xml`.
-- Relire les textes longs en allemand ou en espagnol si une troisième langue est
-  ajoutée : ce sont les plus exposés au débordement à 14 sp.
+- Relire les textes longs en allemand si une quatrième langue est ajoutée : ce sont
+  les plus exposés au débordement à 14 sp.
 

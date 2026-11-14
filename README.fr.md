@@ -16,8 +16,8 @@ un **écran de pause sensoriel** : respirer, se calmer, puis décider.
 
 Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur votre téléphone.
 
-L'interface est disponible en **anglais et en français**, selon la langue du téléphone
-(Réglages › Applications › Instant Pause › Langue). L'espagnol est prévu.
+L'interface est disponible en **anglais, français et espagnol**, selon la langue du téléphone
+(Réglages › Applications › Instant Pause › Langue).
 
 ---
 

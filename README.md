@@ -15,8 +15,8 @@ During the time windows you set, every outgoing call is intercepted and replaced
 
 No emergency blocking, no surveillance, no server: everything stays on your phone.
 
-The interface is available in **English and French**, following the phone language
-(Settings › Apps › Instant Pause › Language). Spanish is planned.
+The interface is available in **English, French and Spanish**, following the phone language
+(Settings › Apps › Instant Pause › Language).
 
 ---
 
