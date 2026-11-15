@@ -204,6 +204,7 @@ class MainActivity : ComponentActivity() {
                 PackageManager.PERMISSION_GRANTED
         refreshAdmin()
         refreshFullScreenIntent()
+        viewModel.syncDnd()
     }
 
     /**

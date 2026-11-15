@@ -10,6 +10,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.instantpause.app.domain.dnd.DndPreferences
+import com.instantpause.app.domain.dnd.DndState
 import com.instantpause.app.domain.security.LockoutState
 import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.PassphraseStore
@@ -42,7 +44,7 @@ object DataStoreModule {
 @Singleton
 class ProtectionPrefs @Inject constructor(
     private val dataStore: DataStore<Preferences>
-) : PassphraseStore {
+) : PassphraseStore, DndPreferences {
     private val data: Flow<Preferences> = dataStore.data.catch { e ->
         if (e is IOException) emit(emptyPreferences()) else throw e
     }
@@ -119,6 +121,40 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit { it[FULL_SCREEN_INTENT_DONE] = value }
     }
 
+    // === Ne pas déranger pendant les plages ===
+    //
+    // `dnd_active` et `dnd_previous_filter` sont écrits par le contrôleur : ils
+    // permettent de restaurer exactement le filtre d'origine, même après un
+    // redémarrage ou une mort brutale du processus.
+    val dndEnabled: Flow<Boolean> =
+        data.map { it[DND_ENABLED] ?: false }.distinctUntilChanged()
+
+    val dndActive: Flow<Boolean> =
+        data.map { it[DND_ACTIVE] ?: false }.distinctUntilChanged()
+
+    /** Vrai quand l'utilisateur a coupé le silence pour la plage en cours. */
+    val dndOverridden: Flow<Boolean> =
+        data.map { it[DND_OVERRIDDEN] ?: false }.distinctUntilChanged()
+
+    override suspend fun readDnd(): DndState {
+        val prefs = data.first()
+        return DndState(
+            enabled = prefs[DND_ENABLED] ?: false,
+            active = prefs[DND_ACTIVE] ?: false,
+            previousFilter = prefs[DND_PREVIOUS_FILTER] ?: 0,
+            overridden = prefs[DND_OVERRIDDEN] ?: false
+        )
+    }
+
+    override suspend fun writeDnd(state: DndState) {
+        dataStore.edit {
+            it[DND_ENABLED] = state.enabled
+            it[DND_ACTIVE] = state.active
+            it[DND_PREVIOUS_FILTER] = state.previousFilter
+            it[DND_OVERRIDDEN] = state.overridden
+        }
+    }
+
     // === Verrou de configuration (code alphanumérique) ===
     //
     // Seul le couple sel + empreinte PBKDF2 est stocké : le code lui-même
@@ -174,5 +210,14 @@ class ProtectionPrefs @Inject constructor(
         val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")
         val PASSPHRASE_FAILED_ATTEMPTS = intPreferencesKey("passphrase_failed_attempts")
         val PASSPHRASE_LOCKED_UNTIL = longPreferencesKey("passphrase_locked_until")
+        val DND_ENABLED = booleanPreferencesKey("dnd_enabled")
+        val DND_ACTIVE = booleanPreferencesKey("dnd_active")
+        val DND_PREVIOUS_FILTER = intPreferencesKey("dnd_previous_filter")
+
+        /**
+         * L'utilisateur a coupé le silence lui-même pendant la plage en cours :
+         * on ne le rétablit pas avant la fin de cette plage.
+         */
+        val DND_OVERRIDDEN = booleanPreferencesKey("dnd_overridden")
     }
 }

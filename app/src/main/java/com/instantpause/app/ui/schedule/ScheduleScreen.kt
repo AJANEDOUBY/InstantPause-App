@@ -50,9 +50,11 @@ fun ScheduleScreen(
 
     // Le mode Zen expire tout seul : on rafraîchit l'état sans attendre une action.
     LaunchedEffect(Unit) {
+        viewModel.requestDndSync()
         while (true) {
             delay(15_000)
             nowMs = System.currentTimeMillis()
+            viewModel.requestDndSync()
         }
     }
 

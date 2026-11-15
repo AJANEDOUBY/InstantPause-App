@@ -234,4 +234,15 @@
     <string name="call_timer_line">%1$s : %2$s</string>
     <string name="call_time_up_cut">Temps écoulé — appel coupé</string>
     <string name="call_time_up_hang_up">Temps écoulé — raccrochez</string>
+
+    <!-- Silence pendant les plages (Ne pas déranger) -->
+    <string name="dnd_title">Silence pendant la pause</string>
+    <string name="dnd_subtitle">Coupe les sonneries WhatsApp, Signal et Telegram pendant vos plages. Les appels d\'urgence et les alarmes restent possibles.</string>
+    <string name="dnd_allow">Autoriser l\'accès « Ne pas déranger »</string>
+    <string name="dnd_access_needed">Accès non accordé : Android exige une autorisation explicite (Réglages › Accès spéciaux des applications).</string>
+    <string name="dnd_access_lost">Accès retiré : le son reste coupé jusqu\'à ce que vous désactiviez « Ne pas déranger » à la main.</string>
+    <string name="dnd_access_granted">Accès accordé.</string>
+    <string name="dnd_active_now">« Ne pas déranger » est actif pendant la protection.</string>
+    <string name="dnd_suspended">Coupé pour cette plage. Le prochain silence reviendra automatiquement.</string>
+    <string name="dnd_priority_link">Configurer mes contacts prioritaires</string>
 </resources>

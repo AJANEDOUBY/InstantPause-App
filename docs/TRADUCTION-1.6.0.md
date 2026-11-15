@@ -104,9 +104,9 @@ Réalisé sur la branche `release/1.6.0` (versionCode 16, versionName 1.6.0) :
 | 6. Écran de pause, services, canaux et notifications | fait |
 | 7. Espagnol (`values-es/`) | fait |
 
-Résultat : **175 clés**, strictement identiques dans `values/`, `values-fr/` et
+Résultat : **183 clés**, strictement identiques dans `values/`, `values-fr/` et
 `values-es/` ; mêmes marqueurs de format dans les trois langues ;
-**100 tests, 0 échec** ; `lintDebug` vert (0 erreur) ; vérifié sur la tablette
+**112 tests, 0 échec** ; `lintDebug` vert (0 erreur) ; vérifié sur la tablette
 en anglais, français et espagnol.
 
 ### Points traités pendant l'extraction

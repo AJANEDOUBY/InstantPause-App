@@ -85,7 +85,7 @@ Correcciones: notificaciones con acentos, explicación antes del diálogo de ant
 <fr-FR>
 L'application est maintenant disponible en anglais, en français et en espagnol : elle suit la langue de votre téléphone, et vous pouvez la changer dans Réglages > Applications > Instant Pause > Langue.
 
-Le message de l'écran de pause revient à la phrase par défaut de la langue choisie quand le champ est laissé vide.
+Pendant vos plages, vous pouvez aussi couper les sonneries WhatsApp, Signal et Telegram. Vos appels d'urgence et vos alarmes passent toujours. L'option est désactivée par défaut, dans l'onglet Sécurité.
 
 Correctifs : dates de l'historique et noms des canaux de notification traduits.
 </fr-FR>
@@ -97,7 +97,7 @@ Correctifs : dates de l'historique et noms des canaux de notification traduits.
 <en-US>
 The app is now available in English, French and Spanish: it follows your phone language, and you can change it in Settings > Apps > Instant Pause > Language.
 
-The pause screen message falls back to the default sentence of the chosen language when the field is left empty.
+During your windows, you can also mute WhatsApp, Signal and Telegram ringtones. Emergency calls and alarms still get through. The option is off by default, in the Security tab.
 
 Fixes: translated history dates and notification channel names.
 </en-US>
@@ -109,7 +109,7 @@ Fixes: translated history dates and notification channel names.
 <es-ES>
 La aplicación ya está disponible en inglés, francés y español: sigue el idioma de tu teléfono y puedes cambiarlo en Ajustes > Aplicaciones > Instant Pause > Idioma.
 
-El mensaje de la pantalla de pausa vuelve a la frase por defecto del idioma elegido cuando el campo se deja vacío.
+Durante tus franjas, también puedes silenciar los tonos de WhatsApp, Signal y Telegram. Las llamadas de emergencia y las alarmas siguen pasando. La opción está desactivada por defecto, en la pestaña Seguridad.
 
 Correcciones: fechas del historial y nombres de los canales de notificación traducidos.
 </es-ES>

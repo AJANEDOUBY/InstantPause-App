@@ -7,6 +7,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.model.Schedule
 import com.instantpause.app.domain.phone.PhoneNumberAnalyzer
+import com.instantpause.app.domain.protection.ProtectionReason
+import com.instantpause.app.domain.protection.ProtectionState
 import com.instantpause.app.domain.repository.AddWhitelistResult
 import com.instantpause.app.domain.repository.ScheduleRepository
 import com.instantpause.app.domain.repository.WhitelistRepository
@@ -47,9 +49,8 @@ class ShouldBlockCallUseCaseTest {
             runBlocking { prefs.setEmergencyUntil(emergencyUntil) }
         }
         return ShouldBlockCallUseCase(
-            schedules = FakeScheduleRepository(schedules),
+            protection = ProtectionState(FakeScheduleRepository(schedules), prefs),
             whitelist = FakeWhitelistRepository(whitelisted),
-            prefs = prefs,
             normalizer = FakeAnalyzer(emergencyNumbers, normalized)
         )
     }

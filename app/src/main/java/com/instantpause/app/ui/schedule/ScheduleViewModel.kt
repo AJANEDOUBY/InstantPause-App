@@ -3,6 +3,7 @@ package com.instantpause.app.ui.schedule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.instantpause.app.data.datastore.ProtectionPrefs
+import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.model.Schedule
 import com.instantpause.app.domain.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository,
-    private val prefs: ProtectionPrefs
+    private val prefs: ProtectionPrefs,
+    private val dnd: DndController
 ) : ViewModel() {
 
     val schedules: StateFlow<List<Schedule>> = repository.observeAll()
@@ -48,6 +50,7 @@ class ScheduleViewModel @Inject constructor(
                     isActive = true
                 )
             )
+            syncDnd()
         }
     }
 
@@ -61,24 +64,46 @@ class ScheduleViewModel @Inject constructor(
      */
     fun activateZenMode(durationMs: Long = ZEN_DURATION_MS) {
         val end = System.currentTimeMillis() + durationMs.coerceIn(MIN_ZEN_MS, MAX_ZEN_MS)
-        viewModelScope.launch { prefs.setEmergencyUntil(end) }
+        viewModelScope.launch {
+            prefs.setEmergencyUntil(end)
+            syncDnd()
+        }
     }
 
     /** Coupe le mode Zen avant son échéance (action qui affaiblit la protection). */
     fun cancelZenMode() {
-        viewModelScope.launch { prefs.clearEmergency() }
+        viewModelScope.launch {
+            prefs.clearEmergency()
+            syncDnd()
+        }
     }
 
     fun toggleActive(schedule: Schedule) {
         viewModelScope.launch {
             repository.setActive(schedule.id, !schedule.isActive)
+            syncDnd()
         }
     }
 
     fun delete(schedule: Schedule) {
         viewModelScope.launch {
             repository.delete(schedule.id)
+            syncDnd()
         }
+    }
+
+    /**
+     * Recale le filtre « Ne pas déranger » (plage qui se termine, Zen expiré,
+     * retour des réglages système). Appelé aussi par la boucle d'horloge de
+     * l'écran Plages, qui tourne toutes les 15 s.
+     */
+    suspend fun syncDnd() {
+        runCatching { dnd.sync() }
+    }
+
+    /** Version non suspendue, pour les écrans qui n'ont pas de coroutine sous la main. */
+    fun requestDndSync() {
+        viewModelScope.launch { syncDnd() }
     }
 
     companion object {

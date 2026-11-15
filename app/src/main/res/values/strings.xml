@@ -237,4 +237,15 @@
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">Time is up — call ended</string>
     <string name="call_time_up_hang_up">Time is up — hang up</string>
+
+    <!-- Silence pendant les plages (Ne pas deranger) -->
+    <string name="dnd_title">Silence during the pause</string>
+    <string name="dnd_subtitle">Mutes WhatsApp, Signal and Telegram ringtones during your windows. Emergency calls and alarms remain possible.</string>
+    <string name="dnd_allow">Allow Do Not Disturb access</string>
+    <string name="dnd_access_needed">Access not granted: Android requires an explicit authorization (Settings › Special app access).</string>
+    <string name="dnd_access_lost">Access removed: sound stays muted until you turn Do Not Disturb off manually.</string>
+    <string name="dnd_access_granted">Access granted.</string>
+    <string name="dnd_active_now">Do Not Disturb is on while the protection is active.</string>
+    <string name="dnd_suspended">You turned it off for this window. It will silence the next one again.</string>
+    <string name="dnd_priority_link">Set my priority contacts</string>
 </resources>

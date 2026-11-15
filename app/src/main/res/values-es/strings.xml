@@ -239,4 +239,15 @@
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">Tiempo agotado: llamada cortada</string>
     <string name="call_time_up_hang_up">Tiempo agotado: cuelga</string>
+
+    <!-- Silencio durante las franjas (No molestar) -->
+    <string name="dnd_title">Silencio durante la pausa</string>
+    <string name="dnd_subtitle">Silencia los tonos de WhatsApp, Signal y Telegram durante tus franjas. Las llamadas de emergencia y las alarmas siguen siendo posibles.</string>
+    <string name="dnd_allow">Permitir el acceso a «No molestar»</string>
+    <string name="dnd_access_needed">Acceso no concedido: Android exige una autorización explícita (Ajustes › Acceso especial de apps).</string>
+    <string name="dnd_access_lost">Acceso retirado: el sonido sigue silenciado hasta que desactives «No molestar» manualmente.</string>
+    <string name="dnd_access_granted">Acceso concedido.</string>
+    <string name="dnd_active_now">«No molestar» está activo mientras la protección lo está.</string>
+    <string name="dnd_suspended">Desactivado para esta franja. Volverá a silenciar la próxima.</string>
+    <string name="dnd_priority_link">Configurar mis contactos prioritarios</string>
 </resources>

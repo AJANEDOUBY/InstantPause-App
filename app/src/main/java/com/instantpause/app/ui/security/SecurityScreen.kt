@@ -3,6 +3,7 @@ package com.instantpause.app.ui.security
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Intent
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.NotificationsPaused
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -31,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -48,6 +51,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.instantpause.app.R
 import com.instantpause.app.domain.pause.PauseMessagePolicy
@@ -63,9 +68,18 @@ fun SecurityScreen(
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val pauseMessage by vm.pauseMessage.collectAsStateWithLifecycle()
+    val dndEnabled by vm.dndEnabled.collectAsStateWithLifecycle()
+    val dndActive by vm.dndActive.collectAsStateWithLifecycle()
+    val dndSuspended by vm.dndSuspended.collectAsStateWithLifecycle()
+    val dndAccessGranted by vm.dndAccessGranted.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val resources = LocalResources.current
+
+    // L'accès « Ne pas déranger » se donne dans les réglages système : on relit
+    // l'état à chaque retour dans l'écran.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refreshDndAccess() }
+
     val component = remember { ComponentName(context, CoolDownDeviceAdminReceiver::class.java) }
     val dpm = remember { context.getSystemService(DevicePolicyManager::class.java) }
     var adminActive by remember { mutableStateOf(dpm?.isAdminActive(component) == true) }
@@ -112,6 +126,34 @@ fun SecurityScreen(
         PauseMessageCard(
             current = pauseMessage,
             onSave = { vm.savePauseMessage(it) }
+        )
+
+        Spacer(Modifier.height(12.dp))
+        DndCard(
+            enabled = dndEnabled,
+            active = dndActive,
+            suspended = dndSuspended,
+            accessGranted = dndAccessGranted,
+            onToggle = { vm.setDndEnabled(it) },
+            onAllow = {
+                runCatching {
+                    context.startActivity(
+                        Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                    )
+                }
+            },
+            onPrioritySettings = {
+                val opened = runCatching {
+                    context.startActivity(Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS))
+                }.isSuccess
+                if (!opened) {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        )
+                    }
+                }
+            }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -253,6 +295,86 @@ private fun PauseMessageCard(
                     enabled = draft != current
                 ) {
                     Text(stringResource(R.string.action_save))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DndCard(
+    enabled: Boolean,
+    active: Boolean,
+    suspended: Boolean,
+    accessGranted: Boolean,
+    onToggle: (Boolean) -> Unit,
+    onAllow: () -> Unit,
+    onPrioritySettings: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.NotificationsPaused,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.dnd_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.dnd_subtitle),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Switch(checked = enabled, onCheckedChange = onToggle)
+            }
+
+            if (enabled) {
+                Spacer(Modifier.height(12.dp))
+                if (!accessGranted) {
+                    Text(
+                        text = if (active) {
+                            stringResource(R.string.dnd_access_lost)
+                        } else {
+                            stringResource(R.string.dnd_access_needed)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(AMBER)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(onClick = onAllow) {
+                        Text(stringResource(R.string.dnd_allow))
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.dnd_access_granted),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(GREEN)
+                    )
+                    if (active) {
+                        Text(
+                            text = stringResource(R.string.dnd_active_now),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    } else if (suspended) {
+                        Text(
+                            text = stringResource(R.string.dnd_suspended),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(AMBER)
+                        )
+                    }
+                    TextButton(onClick = onPrioritySettings) {
+                        Text(stringResource(R.string.dnd_priority_link))
+                    }
                 }
             }
         }
