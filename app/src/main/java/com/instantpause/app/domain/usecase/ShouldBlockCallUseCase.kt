@@ -1,13 +1,12 @@
 package com.instantpause.app.domain.usecase
 
-import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.phone.PhoneNumberAnalyzer
-import com.instantpause.app.domain.repository.ScheduleRepository
+import com.instantpause.app.domain.protection.ProtectionReason
+import com.instantpause.app.domain.protection.ProtectionWindow
 import com.instantpause.app.domain.repository.WhitelistRepository
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-enum class ProtectionReason { NONE, EMERGENCY_MODE, SCHEDULE_WINDOW }
 enum class AllowReason { PROTECTION_INACTIVE, EMERGENCY_NUMBER, WHITELISTED, FAIL_OPEN }
 
 sealed interface CallDecision {
@@ -25,9 +24,8 @@ sealed interface CallDecision {
 }
 
 class ShouldBlockCallUseCase @Inject constructor(
-    private val schedules: ScheduleRepository,
+    private val protection: ProtectionWindow,
     private val whitelist: WhitelistRepository,
-    private val prefs: ProtectionPrefs,
     private val normalizer: PhoneNumberAnalyzer
 ) {
     suspend operator fun invoke(
@@ -42,7 +40,7 @@ class ShouldBlockCallUseCase @Inject constructor(
             return CallDecision.Allow(AllowReason.EMERGENCY_NUMBER, null)
         }
 
-        val reason = activeReason(now)
+        val reason = protection.activeReason(now)
         if (reason == ProtectionReason.NONE) {
             return CallDecision.Allow(AllowReason.PROTECTION_INACTIVE, null)
         }
@@ -55,15 +53,5 @@ class ShouldBlockCallUseCase @Inject constructor(
 
         // 4. Sinon : bloqué
         return CallDecision.Block(reason, candidates.firstOrNull())
-    }
-
-    private suspend fun activeReason(now: ZonedDateTime): ProtectionReason {
-        if (prefs.getEmergencyUntil() > now.toInstant().toEpochMilli()) {
-            return ProtectionReason.EMERGENCY_MODE
-        }
-        if (schedules.activeSchedules().any { it.isActiveAt(now) }) {
-            return ProtectionReason.SCHEDULE_WINDOW
-        }
-        return ProtectionReason.NONE
     }
 }

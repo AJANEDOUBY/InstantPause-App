@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Traduction espagnole (Espagne, tutoiement).
+    Doit contenir exactement les mêmes clés que values/strings.xml et
+    values-fr/strings.xml.
+
+    Langue de l'appareil : es-ES. La date de l'historique suit
+    log_date_pattern (« 13 nov. a las 09:53 »).
+-->
+<resources>
+    <string name="app_name">Instant Pause</string>
+    <string name="app_tagline">Espera a mañana antes de llamar</string>
+
+    <!-- Barra de navegación -->
+    <string name="tab_schedules">Franjas</string>
+    <string name="tab_contacts">Contactos</string>
+    <string name="tab_history">Historial</string>
+    <string name="tab_security">Seguridad</string>
+
+    <!-- Avisos de ayuda -->
+    <string name="banner_overlay_title">Mostrar sobre las llamadas</string>
+    <string name="banner_overlay_message">Necesario para mostrar la pantalla de pausa durante una llamada.</string>
+    <string name="banner_battery_title">Protección tras reiniciar</string>
+    <string name="banner_battery_message">Permite el inicio automático y el uso de batería sin restricciones.</string>
+    <string name="banner_allow">Permitir</string>
+
+    <!-- Pantalla de activación del rol -->
+    <string name="role_title">Protección no activada</string>
+    <string name="role_message">Para que Instant Pause retenga tus llamadas, Android debe pedirte un permiso especial.</string>
+    <string name="role_reassurance">Es rápido y puedes quitarlo cuando quieras.</string>
+    <string name="role_activate">Activar la protección</string>
+
+    <!-- Explicación del administrador (protección antidesinstalación) -->
+    <string name="admin_explanation">Instant Pause impedirá su propia desinstalación accidental o impulsiva. No se solicitan otros permisos.</string>
+
+    <!-- Código de protección: reglas y mensajes -->
+    <string name="violation_too_short">al menos %1$d caracteres</string>
+    <string name="violation_missing_letter">al menos una letra</string>
+    <string name="violation_missing_digit">al menos un dígito</string>
+    <string name="list_separator">", "</string>
+    <string name="error_requirements">Requiere %1$s.</string>
+    <string name="error_mismatch">Las dos entradas no coinciden.</string>
+    <string name="error_no_code">No hay ningún código definido.</string>
+    <string name="error_code_exists">Ya hay un código definido.</string>
+    <string name="error_too_many_attempts">Demasiados intentos. Vuelve a intentarlo en %1$s.</string>
+    <string name="error_wrong_code">Código incorrecto (distingue mayúsculas). Intentos antes de un bloqueo: %1$d.</string>
+    <string name="error_storage">No se pudo guardar el código. Comprueba el espacio de almacenamiento e inténtalo de nuevo.</string>
+    <string name="error_retry_in">Vuelve a intentarlo en %1$s.</string>
+
+    <!-- Campos y acciones -->
+    <string name="field_code">Código alfanumérico</string>
+    <string name="field_current_code">Código actual</string>
+    <string name="field_new_code">Código nuevo</string>
+    <string name="field_confirm_code">Confirma el código</string>
+    <string name="action_show">Mostrar</string>
+    <string name="action_hide">Ocultar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_save">Guardar</string>
+    <string name="action_change">Cambiar</string>
+    <string name="action_unlock">Desbloquear</string>
+
+    <!-- Diálogos del código -->
+    <string name="dialog_code_required">Código requerido</string>
+    <string name="dialog_set_code">Define un código</string>
+    <string name="dialog_change_code">Cambiar el código</string>
+    <string name="dialog_set_code_help">Elige un código alfanumérico (letras + dígitos). Se pedirá para desactivar o eliminar una franja, o para volver a estos ajustes.</string>
+    <string name="dialog_change_code_help">Introduce el código actual y luego el nuevo.</string>
+
+    <!-- Primer inicio -->
+    <string name="setup_title">Bienvenido a Instant Pause</string>
+    <string name="setup_subtitle">Último paso antes de la protección: elige tu código.</string>
+    <string name="setup_explanation">Se pedirá para cortar una franja, eliminarla o quitar la protección antidesinstalación. Elígelo ahora, con la cabeza fría: es lo que te sostendrá esa noche.</string>
+    <string name="setup_rules">Al menos 6 caracteres, con al menos una letra y un dígito. El código nunca se guarda en texto plano y no se puede recuperar: si lo olvidas, tendrás que borrar los datos de la app.</string>
+
+    <!-- Pestaña Seguridad -->
+    <string name="security_title">Seguridad</string>
+    <string name="security_subtitle">Evita que la protección se desactive por impulso.</string>
+    <string name="security_admin_explanation">Instant Pause impedirá su propia desinstalación accidental o impulsiva.</string>
+    <string name="version_label">Instant Pause %1$s</string>
+    <string name="action_remove_protection">Quitar la protección</string>
+    <string name="dialog_remove_protection_message">Sin el administrador, Instant Pause se puede desinstalar sin resistencia. Introduce tu código para confirmar.</string>
+
+    <!-- Mensaje de la pantalla de pausa -->
+    <string name="pause_message_title">Mensaje de la pantalla de pausa</string>
+    <string name="pause_message_subtitle">Escríbelo ahora, con la cabeza fría. Aparecerá en el momento del impulso.</string>
+    <string name="pause_message_label">Tu frase</string>
+    <string name="pause_message_default">Esta llamada puede esperar a mañana.</string>
+    <string name="pause_message_hint">Déjalo vacío para recuperar la frase por defecto.</string>
+
+    <!-- Tarjeta del código -->
+    <string name="lock_configured">Código de protección activado</string>
+    <string name="lock_none">Sin código definido</string>
+    <string name="lock_none_help">Hay que definir un código antes de usar la app.</string>
+    <string name="lock_locked">Bloqueado: se pedirá el código.</string>
+    <string name="lock_unlocked">Desbloqueado para esta sesión.</string>
+    <string name="lock_set_help">Hazlo ahora, con la cabeza fría: este código es lo que evitará que lo cortes todo esta noche.</string>
+    <string name="lock_change_help">El código se crea en la configuración inicial y no se puede quitar desde la app. Solo se puede cambiar (con el antiguo).</string>
+    <string name="action_lock_now">Bloquear ahora</string>
+
+    <!-- Tarjeta de desinstalación -->
+    <string name="uninstall_title">Desinstalación</string>
+    <string name="uninstall_protected">Protegida: hace falta desactivar el administrador.</string>
+    <string name="uninstall_unprotected">Sin proteger: la app se desinstala en 3 toques.</string>
+    <string name="action_protect_uninstall">Proteger la desinstalación</string>
+    <string name="uninstall_help">Con sinceridad: ninguna app puede impedir una desinstalación. Android simplemente pedirá desactivar antes este administrador: dos toques más, pero dos toques que dejan tiempo para pensar.</string>
+
+    <!-- Tarjeta explicativa -->
+    <string name="how_title">Qué protege el código (y qué no)</string>
+    <string name="how_bullet_1">El código se crea la primera vez que abres la app: no se puede omitir ni quitar después.</string>
+    <string name="how_bullet_2">Se pide para: cortar una franja, eliminarla (incluido un periodo Zen en curso), cambiar el código y quitar la protección antidesinstalación.</string>
+    <string name="how_bullet_3">Nunca se pide para: bloquear una llamada, añadir una franja, iniciar el modo Zen o leer el historial.</string>
+    <string name="how_bullet_4">El desbloqueo solo dura la sesión: 60 s en segundo plano y el código vuelve a ser necesario.</string>
+    <string name="how_bullet_5">Tres intentos, luego 30 s, 1 min, 2 min… hasta 15 min de espera entre intentos.</string>
+    <string name="how_footer">El código nunca se guarda en texto plano: solo se conserva en el dispositivo un hash PBKDF2 (120 000 iteraciones).</string>
+
+    <!-- Pantalla de pausa -->
+    <string name="pause_title">Tómate un momento.</string>
+    <string name="pause_inhale">Inspira suavemente…</string>
+    <string name="pause_exhale">Espira despacio…</string>
+    <string name="action_close">Cerrar</string>
+
+    <!-- Paso: colgar a los 3 minutos -->
+    <string name="hangup_title">Cortar las llamadas a los 3 minutos</string>
+    <string name="hangup_body">Un contacto autorizado siempre puede localizarte, pero no durante una hora. Android solo permite colgar a una app con este permiso: sin él, podrías hablar indefinidamente.</string>
+    <string name="hangup_info_timer">La cuenta atrás empieza al contestar: 3 minutos de conversación, no 3 minutos contando el tono.</string>
+    <string name="hangup_info_end">A las 0:00 se corta la línea. Vuelves a empezar de cero en la siguiente llamada, tantas veces como haga falta.</string>
+    <string name="hangup_denied">El permiso se ha denegado de forma permanente: Android no volverá a mostrarlo. Abre los ajustes de la app para concederlo.</string>
+    <string name="hangup_footer">La app permanece en esta pantalla hasta que se conceda el permiso.</string>
+    <string name="action_allow">Permitir</string>
+    <string name="action_open_settings">Abrir ajustes</string>
+    <string name="action_app_settings">Ajustes de la app</string>
+
+    <!-- Paso: pantalla completa -->
+    <string name="fullscreen_title">La pausa sobre la pantalla de bloqueo</string>
+    <string name="fullscreen_body">Android 14+ ya no concede la visualización a pantalla completa automáticamente: puede que la pantalla de pausa solo aparezca como notificación. La llamada se bloquea igualmente; solo cambia cómo se te muestra la pausa.</string>
+    <string name="fullscreen_info_blocking">El bloqueo de la llamada no depende de este permiso.</string>
+    <string name="fullscreen_info_notification">Sin él, toca la notificación para abrir la pausa.</string>
+    <string name="action_allow_fullscreen">Permitir la pantalla completa</string>
+    <string name="action_continue_without">Continuar sin</string>
+    <string name="fullscreen_footer">Este paso no volverá a aparecer. Puedes cambiar de opinión en los ajustes de Android de la app.</string>
+
+    <!-- Paso: protección contra la desinstalación -->
+    <string name="install_guard_title">Último paso: protege la app</string>
+    <string name="install_guard_body">Sin esta protección, Instant Pause se desinstala en tres toques, y tus franjas desaparecen con ella.</string>
+    <string name="install_guard_explain">Android abrirá una pantalla de confirmación. Es normal: ninguna app puede ser administradora sin tu consentimiento. Toca «Activar».</string>
+    <string name="install_guard_info_does">Qué hace: bloquear una desinstalación impulsiva. Ningún derecho sobre tus datos, tus llamadas ni tu pantalla.</string>
+    <string name="install_guard_info_prevents">Qué evita: desinstalar la app sin desactivarla antes desde los ajustes de Android.</string>
+    <string name="install_guard_footer">La app permanece en esta pantalla hasta que la protección esté activa. Puedes quitarla más tarde, con tu código, desde la pestaña Seguridad.</string>
+
+    <!-- Pestaña Franjas: estado y notificaciones -->
+    <string name="status_zen_until">Modo Zen activo hasta las %1$s</string>
+    <string name="status_zen">Modo Zen activo</string>
+    <string name="status_active">Protección activa</string>
+    <string name="status_inactive">Protección inactiva</string>
+    <string name="action_add_schedule">Añadir una franja</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_add">Añadir</string>
+
+    <!-- Modo Zen -->
+    <string name="zen_card_desc">Modo Zen</string>
+    <string name="zen_title">¿Necesitas una pausa ahora?</string>
+    <string name="zen_running_help">Periodo Zen en curso, hasta las %1$s. Una duración más corta pedirá tu código.</string>
+    <string name="zen_help">Elige tu periodo Zen: toca el número de horas que quieras. La protección empieza de inmediato.</string>
+    <string name="action_stop_zen">Detener el modo Zen</string>
+    <string name="zen_shorten_reason">¿Acortar el periodo Zen? Las llamadas volverían a bloquearse a las %1$s en lugar de a las %2$s. Introduce tu código para confirmar.</string>
+    <string name="zen_cancel_reason">¿Detener el modo Zen ahora? Las llamadas dejarán de bloquearse hasta la próxima franja.</string>
+
+    <!-- Franjas -->
+    <string name="empty_title">Ninguna franja configurada</string>
+    <string name="empty_body">Añade una franja para activar la protección automática (p. ej., de 22:00 a 7:00).</string>
+    <string name="schedule_disable_reason">¿Desactivar la franja %1$s – %2$s? Sin ella, nada bloqueará tus llamadas en ese tramo.</string>
+    <string name="schedule_delete_reason">¿Eliminar definitivamente la franja %1$s – %2$s?</string>
+    <string name="dialog_new_schedule">Nueva franja</string>
+    <string name="label_start">Inicio</string>
+    <string name="label_end">Fin</string>
+    <string name="label_days">Días</string>
+    <string name="schedule_same_day">Franja dentro del mismo día.</string>
+    <string name="schedule_crosses_midnight">Cruza la medianoche: la franja empieza el día seleccionado.</string>
+
+    <!-- Días -->
+    <string name="days_none">Ningún día</string>
+    <string name="days_every">Todos los días</string>
+    <string name="days_weekdays">Lun – Vie</string>
+    <string name="days_weekend">Fin de semana</string>
+    <string-array name="days_short">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mié</item>
+        <item>Jue</item>
+        <item>Vie</item>
+        <item>Sáb</item>
+        <item>Dom</item>
+    </string-array>
+
+    <!-- Pestaña Contactos -->
+    <string name="whitelist_picker_failure">No hay ninguna app de Contactos en este dispositivo.</string>
+    <string name="whitelist_read_error">No se pudo leer este contacto.</string>
+    <string name="whitelist_added">%1$s se ha añadido al círculo de confianza.</string>
+    <string name="whitelist_duplicate">Este número ya está autorizado.</string>
+    <string name="whitelist_limit_short">Límite de %1$d contactos alcanzado.</string>
+    <string name="whitelist_invalid">Número ilegible: no se puede autorizar.</string>
+    <string name="whitelist_add_reason">¿Añadir un contacto autorizado? Sus llamadas pasarán incluso durante una franja.</string>
+    <string name="whitelist_remove_reason">¿Quitar a %1$s del círculo de confianza? Sus llamadas volverán a bloquearse durante las franjas.</string>
+    <string name="action_add_contact">Añadir un contacto</string>
+    <string name="action_remove">Quitar</string>
+    <string name="whitelist_limit_note">Límite de %1$d contactos alcanzado. Quita un contacto para añadir otro.</string>
+    <string name="trust_circle_title">Círculo de confianza</string>
+    <string name="trust_circle_body">Estos contactos nunca se bloquean, ni siquiera durante una franja activa. Máximo %1$d contactos, y una llamada autorizada dura 3 minutos: después se corta automáticamente.</string>
+    <string name="whitelist_counter">Contactos autorizados</string>
+    <string name="whitelist_empty_title">Ningún contacto autorizado</string>
+    <string name="whitelist_empty_body">Sin contacto autorizado, todas las llamadas se bloquean durante las franjas (salvo emergencias: 112 y los números de emergencia locales).</string>
+
+    <!-- Pestaña Historial -->
+    <string name="log_blocked">Bloqueada</string>
+    <string name="log_allowed">Autorizada (círculo de confianza)</string>
+    <string name="log_date_pattern">d MMM \'a las\' HH:mm</string>
+    <string name="logs_empty_title">Aún no hay llamadas</string>
+    <string name="logs_empty_body">Las llamadas bloqueadas y las autorizadas por tu círculo de confianza aparecerán aquí.</string>
+
+    <!-- Notificaciones y canales -->
+    <string name="channel_protection_name">Protección de Instant Pause</string>
+    <string name="channel_protection_desc">Avisos de bloqueo de llamadas</string>
+    <string name="channel_service_name">Servicio de Instant Pause</string>
+    <string name="channel_service_desc">Notificación discreta mientras se abre la pantalla de pausa</string>
+    <string name="channel_quiet_name">Pausa abierta</string>
+    <string name="channel_quiet_desc">Recordatorio discreto mientras se muestra la pantalla de pausa</string>
+    <string name="channel_call_timer_name">Temporizador de llamada autorizada</string>
+    <string name="channel_call_timer_desc">Cuenta atrás de las llamadas al círculo de confianza</string>
+    <string name="channel_watchdog_name">Vigilancia de Instant Pause</string>
+    <string name="channel_watchdog_desc">Mantiene la protección activa en segundo plano</string>
+    <string name="notif_blocked_title">Llamada bloqueada</string>
+    <string name="notif_blocked_text">Toca aquí para recuperar el aliento.</string>
+    <string name="notif_blocked_big_text">Toca para abrir la pantalla de pausa y respirar un momento.</string>
+    <string name="notif_pause_preparing">Preparando la pausa…</string>
+    <string name="notif_allowed_call_title">Llamada autorizada</string>
+    <string name="notif_watchdog_title">Vigilancia de Instant Pause</string>
+    <string name="notif_watchdog_text">Tu protección está activa.</string>
+    <string name="call_timer_prefix">Tiempo restante</string>
+    <string name="call_timer_line">%1$s: %2$s</string>
+    <string name="call_time_up_cut">Tiempo agotado: llamada cortada</string>
+    <string name="call_time_up_hang_up">Tiempo agotado: cuelga</string>
+
+    <!-- Silencio durante las franjas (No molestar) -->
+    <string name="dnd_title">Silencio durante la pausa</string>
+    <string name="dnd_subtitle">Silencia los tonos de WhatsApp, Signal y Telegram durante tus franjas. Las llamadas de emergencia y las alarmas siguen siendo posibles.</string>
+    <string name="dnd_allow">Permitir el acceso a «No molestar»</string>
+    <string name="dnd_access_needed">Acceso no concedido: Android exige una autorización explícita (Ajustes › Acceso especial de apps).</string>
+    <string name="dnd_access_lost">Acceso retirado: el sonido sigue silenciado hasta que desactives «No molestar» manualmente.</string>
+    <string name="dnd_access_granted">Acceso concedido.</string>
+    <string name="dnd_active_now">«No molestar» está activo mientras la protección lo está.</string>
+    <string name="dnd_suspended">Desactivado para esta franja. Volverá a silenciar la próxima.</string>
+    <string name="dnd_priority_link">Configurar mis contactos prioritarios</string>
+
+    <!-- Idioma de la aplicación -->
+    <string name="language_title">Idioma de la aplicación</string>
+    <string name="language_subtitle">Se aplica a toda la aplicación, notificaciones incluidas.</string>
+    <string name="language_change">Elegir el idioma</string>
+    <string name="language_option_system">Idioma del teléfono (%1$s)</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_es">Español</string>
+    <string name="language_requires_android13">Disponible desde Android 13. Antes, la aplicación sigue el idioma del teléfono.</string>
+</resources>

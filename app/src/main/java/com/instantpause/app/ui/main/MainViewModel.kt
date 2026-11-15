@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.instantpause.app.data.datastore.ProtectionPrefs
+import com.instantpause.app.domain.dnd.DndController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val prefs: ProtectionPrefs
+    private val prefs: ProtectionPrefs,
+    private val dnd: DndController
 ) : ViewModel() {
 
     private val roleManager: RoleManager? =
@@ -82,6 +84,17 @@ class MainViewModel @Inject constructor(
     fun refreshRole() {
         _roleHeld.value = roleManager
             ?.isRoleHeld(RoleManager.ROLE_CALL_REDIRECTION) == true
+    }
+
+    /**
+     * Recale le filtre « Ne pas déranger » sur l'état réel de la protection.
+     *
+     * Appelé à chaque reprise de l'activité : c'est le moment où l'utilisateur
+     * revient des réglages système (accès accordé ou retiré), et où une plage a
+     * pu se terminer pendant que l'app était en arrière-plan.
+     */
+    fun syncDnd() {
+        viewModelScope.launch { runCatching { dnd.sync() } }
     }
 
     fun isRoleAvailable(): Boolean =

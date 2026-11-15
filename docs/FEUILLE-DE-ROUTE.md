@@ -185,12 +185,17 @@ dossier de permissions. **Ne pas toucher au code avant la publication du test fe
 4. Texte personnalisé de l'écran de pause.
 5. Tuile Zen.
 
-### 1.6.0 - produit
-6. Pause volontaire hors plage.
-7. Choix après la pause (`ACTION_DIAL`, notification de report).
-8. Statistiques locales.
-9. Export / import JSON.
-10. Option « Ne pas déranger » pendant les plages (voix, WhatsApp, Signal), désactivée
-    par défaut. Spécification et justification Play : `docs/DND-1.6.0.md`.
+### 1.6.0 — livré (branche `release/1.6.0`)
+1. Interface anglaise par défaut, française et espagnole, sélecteur de langue Android et
+   sélecteur dans l'application (onglet Sécurité).
+2. Mode « Ne pas déranger » optionnel pendant les plages (`docs/DND-1.6.0.md`).
+3. Notes de version et justification Play trilingues.
+4. Suivi du lancement : `docs/LANCEMENT-1.6.0.md`.
 
-Rien de tout cela ne justifie de retarder la 1.4.0.
+### 1.7.0 — produit (à chiffrer)
+1. Pause volontaire hors plage.
+2. Choix après la pause (`ACTION_DIAL`, notification de report).
+3. Statistiques locales.
+4. Export / import JSON.
+
+Rien de tout cela ne justifie de retarder la publication.

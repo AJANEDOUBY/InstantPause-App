@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Langues déclarées à Android : elles alimentent Réglages > Applications >
+    Instant Pause > Langue, et permettent à `adb shell cmd locale` de basculer
+    l'app sans changer la langue du téléphone.
+    Toute nouvelle traduction doit être ajoutée ici.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="fr" />
+    <locale android:name="es" />
+</locale-config>

@@ -25,8 +25,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 
 /**
  * Étape d'installation : autoriser le raccrochage automatique à 3 minutes.
@@ -65,15 +67,13 @@ fun HangupPermissionScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Couper les appels à 3 minutes",
+                text = stringResource(R.string.hangup_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Un contact autorisé peut toujours vous joindre — mais pas pendant " +
-                        "une heure. Android n'autorise une application à raccrocher qu'avec " +
-                        "cette permission : sans elle, vous pourriez parler indéfiniment.",
+                text = stringResource(R.string.hangup_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -82,32 +82,28 @@ fun HangupPermissionScreen(
 
             InfoLine(
                 icon = { Icon(Icons.Default.Timer, null, tint = Color(0xFF10B981)) },
-                text = "Le décompte part du décroché : 3 minutes de parole, pas 3 minutes " +
-                        "incluant la sonnerie."
+                text = stringResource(R.string.hangup_info_timer)
             )
             InfoLine(
                 icon = { Icon(Icons.Default.CallEnd, null, tint = Color(0xFF10B981)) },
-                text = "À 0:00, la ligne est coupée. Vous repartez de zéro pour le prochain " +
-                        "appel, autant de fois que nécessaire."
+                text = stringResource(R.string.hangup_info_end)
             )
 
             Spacer(Modifier.height(24.dp))
 
             if (needsSettings) {
                 Text(
-                    text = "L'autorisation a été refusée définitivement : Android ne " +
-                            "réaffichera plus la demande. Ouvrez les réglages de l'app pour " +
-                            "l'accorder.",
+                    text = stringResource(R.string.hangup_denied),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )
                 Spacer(Modifier.height(12.dp))
                 Button(onClick = onOpenSettings, modifier = Modifier.fillMaxWidth()) {
-                    Text("Ouvrir les réglages")
+                    Text(stringResource(R.string.action_open_settings))
                 }
             } else {
                 Button(onClick = onRequest, modifier = Modifier.fillMaxWidth()) {
-                    Text("Autoriser")
+                    Text(stringResource(R.string.action_allow))
                 }
             }
 
@@ -117,14 +113,13 @@ fun HangupPermissionScreen(
                 onClick = onOpenSettings,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Réglages de l'app")
+                Text(stringResource(R.string.action_app_settings))
             }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "L'app reste bloquée sur cet écran tant que l'autorisation n'est pas " +
-                        "accordée.",
+                text = stringResource(R.string.hangup_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

@@ -6,11 +6,13 @@ import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Phone
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.instantpause.app.R
 import com.instantpause.app.domain.model.WhitelistEntry
 import com.instantpause.app.domain.phone.PhoneNumberAnalyzer
 import com.instantpause.app.domain.repository.AddWhitelistResult
 import com.instantpause.app.domain.repository.WhitelistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WhitelistViewModel @Inject constructor(
     private val whitelist: WhitelistRepository,
-    private val numbers: PhoneNumberAnalyzer
+    private val numbers: PhoneNumberAnalyzer,
+    @param:ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     val entries: StateFlow<List<WhitelistEntry>> = whitelist.observeAll()
@@ -47,29 +50,33 @@ class WhitelistViewModel @Inject constructor(
 
     /** Le répertoire n'a pas pu être ouvert (aucune app Contacts, par exemple). */
     fun reportPickerFailure() {
-        _messages.tryEmit("Aucune application Contacts sur cet appareil.")
+        _messages.tryEmit(appContext.getString(R.string.whitelist_picker_failure))
     }
 
     fun addFromUri(context: Context, uri: Uri) {
         viewModelScope.launch {
             val contact = withContext(Dispatchers.IO) { readContact(context, uri) }
             if (contact == null) {
-                _messages.tryEmit("Impossible de lire ce contact.")
+                _messages.tryEmit(appContext.getString(R.string.whitelist_read_error))
                 return@launch
             }
 
             when (whitelist.add(contact.name, contact.number, numbers.defaultRegion())) {
                 AddWhitelistResult.ADDED ->
-                    _messages.tryEmit("${contact.name} ajouté au cercle de confiance.")
+                    _messages.tryEmit(
+                        appContext.getString(R.string.whitelist_added, contact.name)
+                    )
 
                 AddWhitelistResult.DUPLICATE ->
-                    _messages.tryEmit("Ce numéro est déjà autorisé.")
+                    _messages.tryEmit(appContext.getString(R.string.whitelist_duplicate))
 
                 AddWhitelistResult.LIMIT_REACHED ->
-                    _messages.tryEmit("Limite de $MAX_CONTACTS contacts atteinte.")
+                    _messages.tryEmit(
+                        appContext.getString(R.string.whitelist_limit_short, MAX_CONTACTS)
+                    )
 
                 AddWhitelistResult.INVALID_NUMBER ->
-                    _messages.tryEmit("Numéro illisible : impossible de l'autoriser.")
+                    _messages.tryEmit(appContext.getString(R.string.whitelist_invalid))
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.instantpause.app.ui.security
 
+import android.content.res.Resources
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,12 +28,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.domain.security.PassphrasePolicy
 import kotlinx.coroutines.delay
@@ -44,27 +48,33 @@ internal fun formatWait(ms: Long): String {
     return if (seconds < 60) "$seconds s" else "${(seconds + 59) / 60} min"
 }
 
-internal fun violationText(violations: List<PassphrasePolicy.Violation>): String = buildList {
+internal fun violationText(res: Resources, violations: List<PassphrasePolicy.Violation>): String = buildList {
     if (PassphrasePolicy.Violation.TOO_SHORT in violations) {
-        add("au moins ${PassphrasePolicy.MIN_LENGTH} caractères")
+        add(res.getString(R.string.violation_too_short, PassphrasePolicy.MIN_LENGTH))
     }
-    if (PassphrasePolicy.Violation.MISSING_LETTER in violations) add("au moins une lettre")
-    if (PassphrasePolicy.Violation.MISSING_DIGIT in violations) add("au moins un chiffre")
-}.joinToString(", ")
+    if (PassphrasePolicy.Violation.MISSING_LETTER in violations) {
+        add(res.getString(R.string.violation_missing_letter))
+    }
+    if (PassphrasePolicy.Violation.MISSING_DIGIT in violations) {
+        add(res.getString(R.string.violation_missing_digit))
+    }
+}.joinToString(res.getString(R.string.list_separator))
 
-internal fun resultMessage(result: AppLockManager.Result, now: Long = System.currentTimeMillis()): String? =
+internal fun resultMessage(
+    result: AppLockManager.Result,
+    res: Resources,
+    now: Long = System.currentTimeMillis()
+): String? =
     when (result) {
         is AppLockManager.Result.Success -> null
-        is AppLockManager.Result.NotConfigured -> "Aucun code n'est défini."
-        is AppLockManager.Result.AlreadyConfigured -> "Un code est déjà défini."
+        is AppLockManager.Result.NotConfigured -> res.getString(R.string.error_no_code)
+        is AppLockManager.Result.AlreadyConfigured -> res.getString(R.string.error_code_exists)
         is AppLockManager.Result.RateLimited ->
-            "Trop d'essais. Réessayez dans ${formatWait(result.until - now)}."
+            res.getString(R.string.error_too_many_attempts, formatWait(result.until - now))
         is AppLockManager.Result.Wrong ->
-            "Code incorrect (majuscules et minuscules comptent). " +
-                    "Encore ${result.attemptsLeft} essai(s) avant une temporisation."
-        is AppLockManager.Result.Rejected -> violationText(result.violations)
-        is AppLockManager.Result.StorageError ->
-            "Impossible d'enregistrer le code. Vérifiez l'espace de stockage et réessayez."
+            res.getString(R.string.error_wrong_code, result.attemptsLeft)
+        is AppLockManager.Result.Rejected -> violationText(res, result.violations)
+        is AppLockManager.Result.StorageError -> res.getString(R.string.error_storage)
     }
 
 /** Champ de saisie masqué, avec bouton « œil ». */
@@ -95,7 +105,11 @@ internal fun SecretField(
             IconButton(onClick = { visible = !visible }) {
                 Icon(
                     imageVector = if (visible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                    contentDescription = if (visible) "Masquer" else "Afficher"
+                    contentDescription = if (visible) {
+                        stringResource(R.string.action_hide)
+                    } else {
+                        stringResource(R.string.action_show)
+                    }
                 )
             }
         }
@@ -114,10 +128,11 @@ fun UnlockDialog(
     message: String,
     onDismiss: () -> Unit,
     onSuccess: () -> Unit,
-    title: String = "Code requis"
+    title: String? = null
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val res = LocalContext.current.resources
 
     var code by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -144,7 +159,7 @@ fun UnlockDialog(
                 onSuccess()
                 onDismiss()
             } else {
-                error = resultMessage(result)
+                error = resultMessage(result, res)
                 code = ""
             }
             busy = false
@@ -154,7 +169,7 @@ fun UnlockDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Default.Lock, contentDescription = null) },
-        title = { Text(title) },
+        title = { Text(title ?: stringResource(R.string.dialog_code_required)) },
         text = {
             Column {
                 Text(message, style = MaterialTheme.typography.bodyMedium)
@@ -162,7 +177,7 @@ fun UnlockDialog(
                 SecretField(
                     value = code,
                     onValueChange = { code = it; error = null },
-                    label = "Code alphanumérique",
+                    label = stringResource(R.string.field_code),
                     imeAction = ImeAction.Done,
                     onDone = { submit() }
                 )
@@ -177,7 +192,7 @@ fun UnlockDialog(
                 if (blocked) {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "Réessayez dans ${formatWait(remainingMs)}.",
+                        text = stringResource(R.string.error_retry_in, formatWait(remainingMs)),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -188,10 +203,10 @@ fun UnlockDialog(
             Button(
                 onClick = { submit() },
                 enabled = code.isNotBlank() && !busy && !blocked
-            ) { Text("Déverrouiller") }
+            ) { Text(stringResource(R.string.action_unlock)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annuler") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }
@@ -208,6 +223,7 @@ fun PassphraseDialog(
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val res = LocalContext.current.resources
 
     var current by remember { mutableStateOf("") }
     var newCode by remember { mutableStateOf("") }
@@ -244,7 +260,7 @@ fun PassphraseDialog(
                 onDone()
                 onDismiss()
             } else {
-                error = resultMessage(result)
+                error = resultMessage(result, res)
             }
             busy = false
         }
@@ -256,8 +272,8 @@ fun PassphraseDialog(
         title = {
             Text(
                 when (mode) {
-                    PassphraseMode.CREATE -> "Définir un code"
-                    PassphraseMode.CHANGE -> "Changer le code"
+                    PassphraseMode.CREATE -> stringResource(R.string.dialog_set_code)
+                    PassphraseMode.CHANGE -> stringResource(R.string.dialog_change_code)
                 }
             )
         },
@@ -265,12 +281,8 @@ fun PassphraseDialog(
             Column {
                 Text(
                     text = when (mode) {
-                        PassphraseMode.CREATE ->
-                            "Choisissez un code alphanumérique (lettres + chiffres). " +
-                                    "Il sera demandé pour désactiver une plage, la supprimer, " +
-                                    "ou revenir sur ces réglages."
-                        PassphraseMode.CHANGE ->
-                            "Saisissez le code actuel, puis le nouveau."
+                        PassphraseMode.CREATE -> stringResource(R.string.dialog_set_code_help)
+                        PassphraseMode.CHANGE -> stringResource(R.string.dialog_change_code_help)
                     },
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -280,7 +292,7 @@ fun PassphraseDialog(
                     SecretField(
                         value = current,
                         onValueChange = { current = it; error = null },
-                        label = "Code actuel"
+                        label = stringResource(R.string.field_current_code)
                     )
                     Spacer(Modifier.height(12.dp))
                 }
@@ -288,13 +300,13 @@ fun PassphraseDialog(
                 SecretField(
                     value = newCode,
                     onValueChange = { newCode = it; error = null },
-                    label = "Nouveau code"
+                    label = stringResource(R.string.field_new_code)
                 )
                 Spacer(Modifier.height(12.dp))
                 SecretField(
                     value = confirm,
                     onValueChange = { confirm = it; error = null },
-                    label = "Confirmer le code",
+                    label = stringResource(R.string.field_confirm_code),
                     imeAction = ImeAction.Done,
                     onDone = { submit() }
                 )
@@ -302,7 +314,7 @@ fun PassphraseDialog(
                 if (newCode.isNotEmpty() && policyErrors.isNotEmpty()) {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "Il faut ${violationText(policyErrors)}.",
+                        text = stringResource(R.string.error_requirements, violationText(res, policyErrors)),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -310,7 +322,7 @@ fun PassphraseDialog(
                 if (mismatch) {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "Les deux saisies diffèrent.",
+                        text = stringResource(R.string.error_mismatch),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -327,7 +339,7 @@ fun PassphraseDialog(
                 if (blocked) {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = "Réessayez dans ${formatWait(remainingMs)}.",
+                        text = stringResource(R.string.error_retry_in, formatWait(remainingMs)),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -341,14 +353,14 @@ fun PassphraseDialog(
             ) {
                 Text(
                     when (mode) {
-                        PassphraseMode.CREATE -> "Enregistrer"
-                        PassphraseMode.CHANGE -> "Changer"
+                        PassphraseMode.CREATE -> stringResource(R.string.action_save)
+                        PassphraseMode.CHANGE -> stringResource(R.string.action_change)
                     }
                 )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Annuler") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
         }
     )
 }

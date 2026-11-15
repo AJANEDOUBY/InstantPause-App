@@ -32,6 +32,10 @@ class BootReceiver : BroadcastReceiver() {
         runCatching { WatchdogAlarmReceiver.startAlarm(context) }
             .onSuccess { Log.i(TAG, "Alarme de sécurité reprogrammée.") }
             .onFailure { Log.w(TAG, "Alarme non reprogrammée (restriction système ?)", it) }
+
+        // Une plage a pu se terminer pendant l'arrêt : le filtre « Ne pas
+        // déranger » doit être retiré même si l'app n'est jamais rouverte.
+        DndRestore.request(context)
     }
 
     private companion object {

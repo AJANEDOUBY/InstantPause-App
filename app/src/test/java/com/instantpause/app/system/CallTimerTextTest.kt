@@ -19,14 +19,6 @@ class CallTimerTextTest {
     }
 
     @Test
-    fun `la notification annonce le temps restant`() {
-        assertEquals(
-            "Temps restant : 2:59 / 3:00",
-            CallTimerText.notificationLine(179, 180)
-        )
-    }
-
-    @Test
     fun `deux chiffres sont conserves pour les secondes`() {
         assertEquals("1:05", CallTimerText.format(65))
         assertEquals("0:05", CallTimerText.format(5))

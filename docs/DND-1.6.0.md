@@ -237,3 +237,48 @@ Aucune permission sensible, aucun service d'accessibilité, aucun risque R8 part
 
 Si la seconde réponse est faible, l'option reste utile mais ne doit pas être présentée
 comme une promesse de joignabilité des proches.
+
+---
+
+## 13. État d'implémentation — 15 novembre 2026
+
+Livré sur `release/1.6.0` (versionCode 16), dans la même version que la traduction.
+
+| Élément | Fichier |
+|---|---|
+| Calcul unique de la protection | `domain/protection/ProtectionState.kt` |
+| Contrôleur et état | `domain/dnd/DndController.kt` |
+| Passerelle `NotificationManager` | `system/AndroidDndGateway.kt` |
+| Clés `dnd_*` (DataStore) | `data/datastore/ProtectionPrefs.kt` |
+| Carte de l'onglet Sécurité | `ui/security/SecurityScreen.kt`, `SecurityViewModel.kt` |
+| Restauration hors activité | `system/DndRestore.kt`, `BootReceiver`, `WatchdogAlarmReceiver` |
+| Injection | `di/DndModule.kt`, `di/DndEntryPoint.kt` |
+| Tests | `DndControllerTest` (12 cas), `ShouldBlockCallUseCaseTest`, `ScheduleViewModelTest` |
+
+L'état persistant contient quatre champs : `enabled` (choix de l'utilisateur),
+`active` (filtre effectivement posé), `previousFilter` (valeur exacte à restaurer)
+et `overridden` (coupure manuelle pendant la plage en cours).
+
+### Écarts par rapport à la spécification
+
+- **Coupure manuelle** : la réapplication était possible au retour dans l'app
+  (une synchronisation remettait `PRIORITY`). Repéré sur la tablette, corrigé par
+  le drapeau `overridden`, effacé à la fin de la plage ou au prochain geste sur
+  l'interrupteur. L'interface affiche alors une ligne orange explicite.
+- **Accès retiré** : `active` reste vrai et l'interface le signale, comme prévu.
+
+### Vérifications faites sur tablette (SM-X236B, Android 15)
+
+| Scénario | Résultat |
+|---|---|
+| Interrupteur activé, accès non accordé | bouton « Autoriser » affiché |
+| « Autoriser » | ouvre `ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS` |
+| Retour après accord | « Accès accordé » + lien contacts prioritaires |
+| Zen actif avec option activée | `interruptionFilter = 2` (PRIORITY) |
+| Interrupteur coupé pendant le Zen | retour à `1` (sonnerie) |
+| Interrupteur réactivé | retour à `2` |
+| Coupure depuis le volet, puis retour dans l'app | reste à `1`, ligne orange, pas de réapplication |
+| Langues | carte vérifiée en anglais, français et espagnol |
+
+Reste à vérifier sur appareil : redémarrage pendant et après une plage, appel
+WhatsApp entrant silencieux, alarme qui sonne toujours.

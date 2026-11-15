@@ -20,12 +20,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 
 /**
  * Étape d'installation : protéger la désinstallation, juste après la création du code.
@@ -34,14 +35,12 @@ import androidx.compose.ui.unit.dp
  * `ACTION_ADD_DEVICE_ADMIN` ouvre toujours une confirmation système. On ne peut donc
  * pas l'activer « tout seul » — mais on peut refuser d'aller plus loin sans elle.
  *
- * Le dialogue système est lancé **dès l'affichage** de l'écran (une seule fois) : pour
- * l'utilisateur, l'étape fait partie de l'installation. S'il refuse, l'app reste ici.
+ * Le dialogue système n'est **plus ouvert automatiquement** : il apparaissait avant même
+ * que l'utilisateur ait lu pourquoi. Le bouton « Protéger la désinstallation » le lance
+ * désormais après explication. Un refus laisse simplement l'app sur cet écran.
  */
 @Composable
 fun UninstallGuardScreen(onActivate: () -> Unit) {
-    // Une seule tentative automatique : sinon un refus relancerait le dialogue en boucle.
-    LaunchedEffect(Unit) { onActivate() }
-
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -60,14 +59,13 @@ fun UninstallGuardScreen(onActivate: () -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Dernière étape : protégez l'app",
+                text = stringResource(R.string.install_guard_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Sans cette protection, Instant Pause se désinstalle en trois taps — " +
-                        "et vos plages disparaissent avec elle.",
+                text = stringResource(R.string.install_guard_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -75,9 +73,7 @@ fun UninstallGuardScreen(onActivate: () -> Unit) {
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Android va ouvrir un écran de confirmation. C'est normal : aucune " +
-                        "application ne peut devenir administrateur sans votre accord. " +
-                        "Appuyez sur « Activer ».",
+                text = stringResource(R.string.install_guard_explain),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -85,13 +81,11 @@ fun UninstallGuardScreen(onActivate: () -> Unit) {
 
             InfoLine(
                 icon = { Icon(Icons.Default.Shield, null, tint = Color(0xFF10B981)) },
-                text = "Ce qu'elle fait : bloquer une désinstallation impulsive. " +
-                        "Aucun droit sur vos données, vos appels ou votre écran."
+                text = stringResource(R.string.install_guard_info_does)
             )
             InfoLine(
                 icon = { Icon(Icons.Default.DeleteForever, null, tint = Color(0xFF10B981)) },
-                text = "Ce qu'elle empêche : désinstaller l'app sans d'abord la désactiver " +
-                        "depuis les réglages Android."
+                text = stringResource(R.string.install_guard_info_prevents)
             )
 
             Spacer(Modifier.height(24.dp))
@@ -100,15 +94,13 @@ fun UninstallGuardScreen(onActivate: () -> Unit) {
                 onClick = onActivate,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Protéger la désinstallation")
+                Text(stringResource(R.string.action_protect_uninstall))
             }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "L'app reste bloquée sur cet écran tant que la protection n'est pas " +
-                        "active. Vous pourrez la retirer plus tard, avec votre code, depuis " +
-                        "l'onglet Sécurité.",
+                text = stringResource(R.string.install_guard_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

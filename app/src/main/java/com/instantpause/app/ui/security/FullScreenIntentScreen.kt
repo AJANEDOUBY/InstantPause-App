@@ -30,8 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 
 /**
  * Étape d'installation : autoriser l'écran de pause à s'afficher en plein écran.
@@ -80,16 +82,13 @@ fun FullScreenIntentScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "La pause par-dessus le verrouillage",
+                text = stringResource(R.string.fullscreen_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Android 14+ n'accorde plus d'office l'affichage en plein écran : " +
-                        "l'écran de pause risque de n'apparaître que comme une notification. " +
-                        "L'appel est bloqué dans tous les cas — seule la façon de vous " +
-                        "montrer la pause change.",
+                text = stringResource(R.string.fullscreen_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -98,19 +97,19 @@ fun FullScreenIntentScreen(
 
             InfoLine(
                 icon = { Icon(Icons.Default.PhoneLocked, null, tint = Color(0xFF10B981)) },
-                text = "Le blocage de l'appel ne dépend pas de cette autorisation."
+                text = stringResource(R.string.fullscreen_info_blocking)
             )
             InfoLine(
                 icon = {
                     Icon(Icons.Default.NotificationsActive, null, tint = Color(0xFF10B981))
                 },
-                text = "Sans elle, touchez la notification pour ouvrir la pause."
+                text = stringResource(R.string.fullscreen_info_notification)
             )
 
             Spacer(Modifier.height(24.dp))
 
             Button(onClick = onAllow, modifier = Modifier.fillMaxWidth()) {
-                Text("Autoriser l'affichage")
+                Text(stringResource(R.string.action_allow_fullscreen))
             }
 
             Spacer(Modifier.height(12.dp))
@@ -119,14 +118,13 @@ fun FullScreenIntentScreen(
                 onClick = onSkip,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Continuer sans")
+                Text(stringResource(R.string.action_continue_without))
             }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Cette étape ne reviendra plus. Vous pourrez changer d'avis dans " +
-                        "les réglages Android de l'app.",
+                text = stringResource(R.string.fullscreen_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

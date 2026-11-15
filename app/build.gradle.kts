@@ -18,8 +18,8 @@ android {
         applicationId = "com.instantpause.app"
         minSdk = 29
         targetSdk = 37
-        versionCode = 14
-        versionName = "1.4.0"
+        versionCode = 16
+        versionName = "1.6.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -150,6 +150,7 @@ dependencies {
 
     // === Tests ===
     testImplementation(libs.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -37,10 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
+import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.system.ProtectionAlertNotifier
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -50,6 +54,7 @@ import javax.inject.Inject
 class PauseActivity : ComponentActivity() {
 
     @Inject lateinit var notifier: ProtectionAlertNotifier
+    @Inject lateinit var prefs: ProtectionPrefs
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +74,14 @@ class PauseActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
+                // Phrase écrite à froid par l'utilisateur (onglet Sécurité).
+                // Tant que DataStore n'a pas répondu, ou si rien n'a été saisi,
+                // c'est la phrase par défaut de la langue courante qui s'affiche.
+                val message by prefs.pauseMessage.collectAsStateWithLifecycle(
+                    initialValue = ""
+                )
                 SensoryPauseScreen(
+                    message = message.ifBlank { getString(R.string.pause_message_default) },
                     onClose = {
                         notifier.dismissBlockedCall()
                         finish()
@@ -84,7 +96,25 @@ class PauseActivity : ComponentActivity() {
         setIntent(intent)
         if (intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
             notifier.dismissBlockedCall()
+        } else {
+            notifier.setPauseVisible(true)
+            intent.getStringExtra(EXTRA_NUMBER)?.let { notifier.softenBlockedCall(it) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notifier.setPauseVisible(true)
+        // L'écran s'est ouvert tout seul : la notification ne doit pas recouvrir
+        // le titre. Elle reste dans le volet, simplement sans tête haute.
+        if (!intent.getBooleanExtra(EXTRA_FROM_USER, false)) {
+            intent.getStringExtra(EXTRA_NUMBER)?.let { notifier.softenBlockedCall(it) }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        notifier.setPauseVisible(false)
     }
 
     companion object {
@@ -123,7 +153,7 @@ private const val MAX_SCALE = 1.2f
 private const val MIN_DWELL_MS = 4_000L
 
 @Composable
-fun SensoryPauseScreen(onClose: () -> Unit) {
+fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
     val context = LocalContext.current
 
     val vibrator = remember {
@@ -169,7 +199,11 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
     }
 
     val scale = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * phase.value
-    val cue = if (phase.value < 0.5f) "Inspirer doucement…" else "Expirer lentement…"
+    val cue = if (phase.value < 0.5f) {
+        stringResource(R.string.pause_inhale)
+    } else {
+        stringResource(R.string.pause_exhale)
+    }
 
     Box(
         modifier = Modifier
@@ -183,14 +217,14 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
             modifier = Modifier.padding(24.dp)
         ) {
             Text(
-                text = "Prenez un instant.",
+                text = stringResource(R.string.pause_title),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Light,
                 color = Color.White
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Cet appel peut attendre demain.",
+                text = message,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 color = Color(0xFFCBD5E1)
@@ -224,7 +258,7 @@ fun SensoryPauseScreen(onClose: () -> Unit) {
             if (canClose) {
                 TextButton(onClick = onClose) {
                     Text(
-                        text = "Fermer",
+                        text = stringResource(R.string.action_close),
                         color = Color(0xFF94A3B8),
                         fontSize = 14.sp
                     )

@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!--
+        Mode « Ne pas déranger » optionnel pendant les plages (voir docs/DND-1.6.0.md).
+        Permission de niveau normal, mais l'accès reste soumis à un accord explicite
+        dans les réglages système : l'app ne le demande jamais d'elle-même.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!--
         Écran de pause en plein écran quand un appel est bloqué. Sur Android 14+, cette
         permission n'est accordée d'office qu'aux apps dont le cœur de métier est l'alarme
         ou les appels ; les autres doivent obtenir le consentement de l'utilisateur.
@@ -49,6 +55,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CoolDown"

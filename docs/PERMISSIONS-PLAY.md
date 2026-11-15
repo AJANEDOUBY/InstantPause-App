@@ -308,7 +308,37 @@ ne détient aucun wake lock.
 
 ---
 
-## 5. Script de la vidéo de démonstration (`specialUse`)
+## 5. `ACCESS_NOTIFICATION_POLICY` (mode « Ne pas déranger »)
+
+Permission de niveau normal, mais l'accès reste soumis à un accord explicite de
+l'utilisateur dans les réglages système. Play Console demande une déclaration
+d'usage pour cette permission : la coller telle quelle en anglais.
+
+### Texte de déclaration (anglais)
+
+```
+Instant Pause helps people avoid impulsive late-night phone calls. When the user
+explicitly enables the optional "Silence during the pause" setting, the app switches
+the device to the Do Not Disturb "priority only" filter while a user-defined
+protection window is running, so that VoIP calls (WhatsApp, Signal, Telegram) do not
+ring. The filter is restored to its exact previous value when the window ends, when
+the user turns the option off, or after a reboot. The setting is off by default, is
+never enabled automatically, and the app never reads notifications. Alarms and
+priority conversations keep ringing, so emergency calls remain possible.
+```
+
+### À vérifier avant de soumettre
+
+1. L'option est bien désactivée par défaut (`dnd_enabled` absent = faux).
+2. Aucun écran ne demande l'accès au premier lancement : seule la carte de l'onglet
+   Sécurité propose « Autoriser ».
+3. Après un refus, l'app n'insiste pas et le téléphone sonne normalement (fail-open).
+4. La valeur d'origine est restaurée à l'identique (`dnd_previous_filter`).
+5. Une coupure manuelle de l'utilisateur n'est jamais annulée par l'app.
+
+---
+
+## 6. Script de la vidéo de démonstration (`specialUse`)
 
 Contraintes : **montrer l'app réelle en fonctionnement**, pas de diapositives, pas de montage
 trompeur. 60 à 90 secondes suffisent. Google veut voir la tâche visible par l'utilisateur

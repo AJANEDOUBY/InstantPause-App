@@ -13,6 +13,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
+import com.instantpause.app.R
 
 /**
  * Service permanent qui maintient CoolDown en vie en arrière-plan.
@@ -47,8 +48,8 @@ class CoolDownWatchdogService : Service() {
         val manager = NotificationManagerCompat.from(this)
         manager.createNotificationChannel(
             NotificationChannelCompat.Builder(CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
-                .setName("Instant Pause veille")
-                .setDescription("Maintient la protection active en arrière-plan")
+                .setName(getString(R.string.channel_watchdog_name))
+                .setDescription(getString(R.string.channel_watchdog_desc))
                 .setShowBadge(false)
                 .build()
         )
@@ -65,8 +66,8 @@ class CoolDownWatchdogService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("Instant Pause veille")
-            .setContentText("Votre protection est active.")
+            .setContentTitle(getString(R.string.notif_watchdog_title))
+            .setContentText(getString(R.string.notif_watchdog_text))
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setOngoing(true)

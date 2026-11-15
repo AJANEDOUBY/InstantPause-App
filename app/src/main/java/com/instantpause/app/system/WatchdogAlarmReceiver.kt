@@ -23,6 +23,10 @@ class WatchdogAlarmReceiver : BroadcastReceiver() {
 
         // 2. On reprogramme la prochaine alarme (dans 15 minutes)
         scheduleNextAlarm(context)
+
+        // 3. Le filtre « Ne pas déranger » suit l'état réel de la protection :
+        //    une plage terminée doit rendre le son, même sans ouvrir l'app.
+        DndRestore.request(context)
     }
 
     companion object {

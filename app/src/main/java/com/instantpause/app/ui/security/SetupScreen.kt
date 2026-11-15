@@ -26,9 +26,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.instantpause.app.R
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.domain.security.PassphrasePolicy
 import kotlinx.coroutines.launch
@@ -47,6 +50,7 @@ fun SetupScreen(vm: SecurityViewModel) {
     var error by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val res = LocalContext.current.resources
 
     val violations = PassphrasePolicy.violations(code)
     val mismatch = confirm.isNotEmpty() && confirm != code
@@ -63,7 +67,7 @@ fun SetupScreen(vm: SecurityViewModel) {
                 code = ""
                 confirm = ""
             } else {
-                error = resultMessage(result)
+                error = resultMessage(result, res)
             }
             busy = false
         }
@@ -88,14 +92,14 @@ fun SetupScreen(vm: SecurityViewModel) {
             )
             Spacer(Modifier.height(16.dp))
             Text(
-                text = "Bienvenue dans Instant Pause",
+                text = stringResource(R.string.setup_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Dernière étape avant la protection : choisissez votre code.",
+                text = stringResource(R.string.setup_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -104,9 +108,7 @@ fun SetupScreen(vm: SecurityViewModel) {
             Spacer(Modifier.height(24.dp))
 
             Text(
-                text = "Il sera demandé pour couper une plage, la supprimer, ou retirer " +
-                        "la protection anti-désinstallation. Choisissez-le maintenant, à froid : " +
-                        "c'est lui qui tiendra ce soir-là.",
+                text = stringResource(R.string.setup_explanation),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -115,13 +117,13 @@ fun SetupScreen(vm: SecurityViewModel) {
             SecretField(
                 value = code,
                 onValueChange = { code = it; error = null },
-                label = "Code alphanumérique"
+                label = stringResource(R.string.field_code)
             )
             Spacer(Modifier.height(12.dp))
             SecretField(
                 value = confirm,
                 onValueChange = { confirm = it; error = null },
-                label = "Confirmer le code",
+                label = stringResource(R.string.field_confirm_code),
                 imeAction = ImeAction.Done,
                 onDone = { submit() }
             )
@@ -129,7 +131,7 @@ fun SetupScreen(vm: SecurityViewModel) {
             if (code.isNotEmpty() && violations.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Il faut ${violationText(violations)}.",
+                    text = stringResource(R.string.error_requirements, violationText(res, violations)),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -137,7 +139,7 @@ fun SetupScreen(vm: SecurityViewModel) {
             if (mismatch) {
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Les deux saisies diffèrent.",
+                    text = stringResource(R.string.error_mismatch),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -158,15 +160,13 @@ fun SetupScreen(vm: SecurityViewModel) {
                 enabled = canSubmit,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Activer la protection")
+                Text(stringResource(R.string.role_activate))
             }
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "6 caractères minimum, avec au moins une lettre et un chiffre. " +
-                        "Le code n'est jamais stocké en clair et ne peut pas être récupéré : " +
-                        "si vous l'oubliez, il faudra effacer les données de l'app.",
+                text = stringResource(R.string.setup_rules),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

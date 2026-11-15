@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +39,7 @@ fun WhitelistScreen(
 ) {
     val entries by viewModel.entries.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -96,14 +98,17 @@ fun WhitelistScreen(
             if (!limitReached) {
                 FloatingActionButton(
                     onClick = {
-                        guard("Ajouter un contact autorisé ? Ses appels passeront même pendant une plage.") {
+                        guard(resources.getString(R.string.whitelist_add_reason)) {
                             runCatching { pickContact.launch(Unit) }
                                 .onFailure { viewModel.reportPickerFailure() }
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Ajouter un contact")
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.action_add_contact)
+                    )
                 }
             }
         }
@@ -133,8 +138,10 @@ fun WhitelistScreen(
                         entry = entry,
                         onDelete = {
                             guard(
-                                "Retirer ${entry.contactName} du cercle de confiance ? " +
-                                        "Ses appels seront de nouveau bloqués pendant les plages."
+                                resources.getString(
+                                    R.string.whitelist_remove_reason,
+                                    entry.contactName
+                                )
                             ) { viewModel.remove(entry) }
                         }
                     )
@@ -144,8 +151,10 @@ fun WhitelistScreen(
             if (limitReached) {
                 item {
                     Text(
-                        text = "Limite de ${WhitelistViewModel.MAX_CONTACTS} contacts atteinte. " +
-                                "Retirez un contact pour en ajouter un autre.",
+                        text = stringResource(
+                            R.string.whitelist_limit_note,
+                            WhitelistViewModel.MAX_CONTACTS
+                        ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -185,14 +194,15 @@ private fun TrustCircleBanner() {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
-                    text = "Cercle de confiance",
+                    text = stringResource(R.string.trust_circle_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Ces contacts ne sont jamais bloqués, même pendant une plage active. " +
-                            "${WhitelistViewModel.MAX_CONTACTS} contacts maximum, et un appel " +
-                            "autorisé dure 3 minutes : il est coupé automatiquement ensuite.",
+                    text = stringResource(
+                        R.string.trust_circle_body,
+                        WhitelistViewModel.MAX_CONTACTS
+                    ),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -208,7 +218,7 @@ private fun CounterRow(count: Int) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Contacts autorisés",
+            text = stringResource(R.string.whitelist_counter),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
@@ -242,14 +252,13 @@ private fun EmptyState() {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Aucun contact autorisé",
+            text = stringResource(R.string.whitelist_empty_title),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Sans contact autorisé, tous les appels sont bloqués pendant les plages " +
-                    "(sauf urgences : 15, 17, 18, 19, 112).",
+            text = stringResource(R.string.whitelist_empty_body),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -296,7 +305,11 @@ private fun ContactCard(entry: WhitelistEntry, onDelete: () -> Unit) {
                 )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Retirer", tint = Color.Gray)
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.action_remove),
+                    tint = Color.Gray
+                )
             }
         }
     }

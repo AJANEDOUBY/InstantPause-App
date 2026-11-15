@@ -37,6 +37,86 @@ No account, no ads, no network connection: everything stays on your phone.
 
 ---
 
+## 1.5.0 - mode Zen et message personnel
+
+### Français - `fr-FR`
+
+```
+<fr-FR>
+Le mode Zen ne crée plus de plage permanente : il s'arrête tout seul, et vous choisissez sa durée d'un seul appui (4 h à 12 h).
+
+Vous pouvez maintenant écrire votre propre phrase sur l'écran de pause, depuis l'onglet Sécurité.
+
+Correctifs : notifications accentuées, explication affichée avant le dialogue anti-désinstallation.
+</fr-FR>
+```
+
+### Anglais - `en-US`
+
+```
+<en-US>
+Zen mode no longer creates a permanent schedule: it ends by itself, and you pick its duration in one tap (4 h to 12 h).
+
+You can now write your own sentence on the pause screen, from the Security tab.
+
+Fixes: accented notifications, explanation shown before the uninstall-protection dialog.
+</en-US>
+```
+
+### Espagnol - `es-ES`
+
+```
+<es-ES>
+El modo Zen ya no crea una franja permanente: termina solo, y eliges su duración con un solo toque (de 4 h a 12 h).
+
+Ahora puedes escribir tu propia frase en la pantalla de pausa, desde la pestaña Seguridad.
+
+Correcciones: notificaciones con acentos, explicación antes del diálogo de anti-desinstalación.
+</es-ES>
+```
+
+---
+
+## 1.6.0 - interface multilingue
+
+### Français - `fr-FR`
+
+```
+<fr-FR>
+L'application est maintenant disponible en anglais, en français et en espagnol. Vous pouvez changer sa langue directement dans l'onglet Sécurité, ou depuis Réglages > Applications > Instant Pause > Langue.
+
+Pendant vos plages, vous pouvez aussi couper les sonneries WhatsApp, Signal et Telegram. Vos appels d'urgence et vos alarmes passent toujours. L'option est désactivée par défaut.
+
+Correctifs : dates de l'historique et noms des canaux de notification traduits.
+</fr-FR>
+```
+
+### Anglais - `en-US`
+
+```
+<en-US>
+The app is now available in English, French and Spanish. You can change its language right in the Security tab, or from Settings > Apps > Instant Pause > Language.
+
+During your windows, you can also mute WhatsApp, Signal and Telegram ringtones. Emergency calls and alarms still get through. The option is off by default.
+
+Fixes: translated history dates and notification channel names.
+</en-US>
+```
+
+### Espagnol - `es-ES`
+
+```
+<es-ES>
+La aplicación ya está disponible en inglés, francés y español. Puedes cambiar su idioma desde la pestaña Seguridad, o en Ajustes > Aplicaciones > Instant Pause > Idioma.
+
+Durante tus franjas, también puedes silenciar los tonos de WhatsApp, Signal y Telegram. Las llamadas de emergencia y las alarmas siguen pasando. La opción está desactivada por defecto.
+
+Correcciones: fechas del historial y nombres de los canales de notificación traducidos.
+</es-ES>
+```
+
+---
+
 ## Modèle pour la prochaine version
 
 Garde la même structure : trois phrases maximum, ce qui change pour l'utilisateur, aucun détail

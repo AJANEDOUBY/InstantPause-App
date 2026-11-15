@@ -28,9 +28,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.system.CoolDownDeviceAdminReceiver
 import com.instantpause.app.system.CoolDownWatchdogService
@@ -202,6 +204,7 @@ class MainActivity : ComponentActivity() {
                 PackageManager.PERMISSION_GRANTED
         refreshAdmin()
         refreshFullScreenIntent()
+        viewModel.syncDnd()
     }
 
     /**
@@ -247,8 +250,7 @@ class MainActivity : ComponentActivity() {
             putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
             putExtra(
                 DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Instant Pause empêchera sa désinstallation accidentelle ou impulsive. " +
-                        "Aucun autre droit n'est demandé."
+                getString(R.string.admin_explanation)
             )
         }
         runCatching { adminLauncher.launch(intent) }
@@ -306,33 +308,24 @@ private fun MainScreen(
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
+    val tabs = listOf(
+        stringResource(R.string.tab_schedules) to Icons.Default.Schedule,
+        stringResource(R.string.tab_contacts) to Icons.Default.Contacts,
+        stringResource(R.string.tab_history) to Icons.Default.History,
+        stringResource(R.string.tab_security) to Icons.Default.Lock
+    )
+
     Scaffold(
         bottomBar = {
             NavigationBar {
-                NavigationBarItem(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    icon = { Icon(Icons.Default.Schedule, contentDescription = "Plages") },
-                    label = { Text("Plages") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    icon = { Icon(Icons.Default.Contacts, contentDescription = "Contacts") },
-                    label = { Text("Contacts") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
-                    icon = { Icon(Icons.Default.History, contentDescription = "Historique") },
-                    label = { Text("Historique") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 },
-                    icon = { Icon(Icons.Default.Lock, contentDescription = "Sécurité") },
-                    label = { Text("Sécurité") }
-                )
+                tabs.forEachIndexed { index, (label, icon) ->
+                    NavigationBarItem(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        icon = { Icon(icon, contentDescription = label) },
+                        label = { Text(label) }
+                    )
+                }
             }
         }
     ) { padding ->

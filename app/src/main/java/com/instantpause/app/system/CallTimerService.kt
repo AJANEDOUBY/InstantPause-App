@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
+import com.instantpause.app.R
 import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
@@ -27,10 +28,11 @@ import androidx.core.app.ServiceCompat
  * Compte à rebours de [LIMIT_SECONDS] secondes pour un appel passé vers un contact
  * du cercle de confiance.
  *
- * ⚠️ Limite assumée : Android interdit à une application tierce de raccrocher un
- * appel qu'elle n'a pas établi. Ce service ne coupe donc **pas** la ligne : il
- * affiche le temps restant (pastille + notification) et prévient par vibration à
- * [WARN_SECONDS], puis à 0:00. Raccrocher reste un geste de l'utilisateur.
+ * À l'échéance, le service **raccroche** via `TelecomManager.endCall()`, autorisé par
+ * la permission `ANSWER_PHONE_CALLS`. Si le constructeur refuse (ou si la permission
+ * a été retirée), [hangUp] échoue sans crash : la pastille et la notification
+ * continuent d'afficher 0:00 et l'utilisateur doit raccrocher lui-même. C'est le
+ * seul cas où la limite redevient un simple rappel visuel.
  */
 class CallTimerService : Service() {
 
@@ -59,7 +61,13 @@ class CallTimerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startInForeground(CallTimerText.notificationLine(LIMIT_SECONDS, LIMIT_SECONDS))
+        startInForeground(
+            getString(
+                R.string.call_timer_line,
+                getString(R.string.call_timer_prefix),
+                CallTimerText.countdown(LIMIT_SECONDS, LIMIT_SECONDS)
+            )
+        )
 
         deadline = SystemClock.elapsedRealtime() + (LIMIT_SECONDS * 1_000L)
         warned = false
@@ -72,7 +80,7 @@ class CallTimerService : Service() {
         overlay?.show()
         overlay?.updateText(
             CallTimerText.countdown(LIMIT_SECONDS, LIMIT_SECONDS),
-            prefix = CallTimerText.PREFIX,
+            prefix = getString(R.string.call_timer_prefix),
         )
 
         handler.removeCallbacks(tick)
@@ -111,7 +119,7 @@ class CallTimerService : Service() {
             if (leftSec > 0) {
                 overlay?.updateText(
                     CallTimerText.countdown(leftSec, LIMIT_SECONDS),
-                    prefix = CallTimerText.PREFIX,
+                    prefix = getString(R.string.call_timer_prefix),
                 )
 
                 if (leftSec <= WARN_SECONDS && !warned) {
@@ -123,7 +131,13 @@ class CallTimerService : Service() {
                 // Rafraîchit la notification sans spammer : une fois par tranche de 30 s.
                 if (leftSec % 30 == 0 && leftSec != lastNotifiedSecond) {
                     lastNotifiedSecond = leftSec
-                    updateNotification(CallTimerText.notificationLine(leftSec, LIMIT_SECONDS))
+                    updateNotification(
+                        getString(
+                            R.string.call_timer_line,
+                            getString(R.string.call_timer_prefix),
+                            CallTimerText.countdown(leftSec, LIMIT_SECONDS)
+                        )
+                    )
                 }
 
                 handler.postDelayed(this, 500L)
@@ -134,16 +148,16 @@ class CallTimerService : Service() {
                         // La ligne est coupée par le système : la pastille s'efface au
                         // prochain relevé (l'audio repasse en mode normal).
                         Log.i(TAG, "Temps écoulé — appel coupé")
-                        overlay?.updateText("Temps écoulé — appel coupé")
+                        overlay?.updateText(getString(R.string.call_time_up_cut))
                         overlay?.updateWarning(true)
-                        updateNotification("Temps écoulé — appel coupé")
+                        updateNotification(getString(R.string.call_time_up_cut))
                     } else {
                         // Permission absente ou constructeur récalcitrant : on ne peut
                         // que prévenir. L'utilisateur raccroche lui-même.
                         Log.w(TAG, "Raccrochage refusé par le système")
-                        overlay?.updateText("Temps écoulé — raccrochez")
+                        overlay?.updateText(getString(R.string.call_time_up_hang_up))
                         overlay?.updateWarning(true)
-                        updateNotification("Temps écoulé — raccrochez")
+                        updateNotification(getString(R.string.call_time_up_hang_up))
                     }
                     vibrate(600)
                     handler.postDelayed({ stopSelf() }, END_GRACE_MS)
@@ -219,7 +233,7 @@ class CallTimerService : Service() {
     private fun buildNotification(content: String): Notification {
         ensureChannel()
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Appel autorisé")
+            .setContentTitle(getString(R.string.notif_allowed_call_title))
             .setContentText(content)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -238,14 +252,15 @@ class CallTimerService : Service() {
 
     private fun ensureChannel() {
         val manager = getSystemService(NotificationManager::class.java) ?: return
-        if (manager.getNotificationChannel(CHANNEL_ID) != null) return
+        // Recréé à chaque démarrage : c'est le seul moyen de mettre à jour le nom
+        // du canal quand l'utilisateur change la langue de l'appareil.
         manager.createNotificationChannel(
             NotificationChannel(
                 CHANNEL_ID,
-                "Minuteur d'appel autorisé",
+                getString(R.string.channel_call_timer_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Compte à rebours des appels vers le cercle de confiance"
+                description = getString(R.string.channel_call_timer_desc)
                 setShowBadge(false)
             }
         )

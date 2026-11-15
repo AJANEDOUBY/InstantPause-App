@@ -3,8 +3,10 @@ package com.instantpause.app.ui.security
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Intent
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,9 +21,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.Translate
+import androidx.compose.material.icons.filled.NotificationsPaused
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,8 +35,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,13 +50,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.instantpause.app.R
+import com.instantpause.app.domain.language.LanguageTags
+import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.system.CoolDownDeviceAdminReceiver
+import java.util.Locale
 
 private const val GREEN = 0xFF10B981
 private const val AMBER = 0xFFF59E0B
@@ -56,8 +74,20 @@ fun SecurityScreen(
     vm: SecurityViewModel = hiltViewModel()
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
+    val pauseMessage by vm.pauseMessage.collectAsStateWithLifecycle()
+    val languageTag by vm.languageTag.collectAsStateWithLifecycle()
+    val dndEnabled by vm.dndEnabled.collectAsStateWithLifecycle()
+    val dndActive by vm.dndActive.collectAsStateWithLifecycle()
+    val dndSuspended by vm.dndSuspended.collectAsStateWithLifecycle()
+    val dndAccessGranted by vm.dndAccessGranted.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val resources = LocalResources.current
+
+    // L'accès « Ne pas déranger » se donne dans les réglages système : on relit
+    // l'état à chaque retour dans l'écran.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refreshDndAccess() }
+
     val component = remember { ComponentName(context, CoolDownDeviceAdminReceiver::class.java) }
     val dpm = remember { context.getSystemService(DevicePolicyManager::class.java) }
     var adminActive by remember { mutableStateOf(dpm?.isAdminActive(component) == true) }
@@ -82,12 +112,12 @@ fun SecurityScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Sécurité",
+            text = stringResource(R.string.security_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Empêcher la protection d'être coupée sur un coup de tête.",
+            text = stringResource(R.string.security_subtitle),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -101,6 +131,40 @@ fun SecurityScreen(
         )
 
         Spacer(Modifier.height(12.dp))
+        PauseMessageCard(
+            current = pauseMessage,
+            onSave = { vm.savePauseMessage(it) }
+        )
+
+        Spacer(Modifier.height(12.dp))
+        DndCard(
+            enabled = dndEnabled,
+            active = dndActive,
+            suspended = dndSuspended,
+            accessGranted = dndAccessGranted,
+            onToggle = { vm.setDndEnabled(it) },
+            onAllow = {
+                runCatching {
+                    context.startActivity(
+                        Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                    )
+                }
+            },
+            onPrioritySettings = {
+                val opened = runCatching {
+                    context.startActivity(Intent(Settings.ACTION_ZEN_MODE_PRIORITY_SETTINGS))
+                }.isSuccess
+                if (!opened) {
+                    runCatching {
+                        context.startActivity(
+                            Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        )
+                    }
+                }
+            }
+        )
+
+        Spacer(Modifier.height(12.dp))
         UninstallCard(
             adminActive = adminActive,
             onActivate = {
@@ -108,7 +172,7 @@ fun SecurityScreen(
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component)
                     putExtra(
                         DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                        "Instant Pause empêchera sa désinstallation accidentelle ou impulsive."
+                        resources.getString(R.string.security_admin_explanation)
                     )
                 }
                 runCatching { adminLauncher.launch(intent) }
@@ -116,6 +180,14 @@ fun SecurityScreen(
             onDeactivate = {
                 if (lockState.isLocked) dialog = Dialog.UNINSTALL_GUARD else deactivateAdmin()
             }
+        )
+
+        Spacer(Modifier.height(12.dp))
+        LanguageCard(
+            currentTag = languageTag,
+            deviceLanguage = vm.deviceLanguage,
+            available = vm.languageAvailable,
+            onSelect = { vm.setLanguage(it) }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -128,7 +200,7 @@ fun SecurityScreen(
             }.getOrNull()
         }
         Text(
-            text = "Instant Pause $version",
+            text = stringResource(R.string.version_label, version.orEmpty()),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -155,9 +227,8 @@ fun SecurityScreen(
 
         Dialog.UNINSTALL_GUARD -> UnlockDialog(
             vm = vm,
-            title = "Retirer la protection",
-            message = "Sans administrateur, Instant Pause pourra être désinstallé " +
-                    "sans aucune résistance. Saisissez votre code pour confirmer.",
+            title = stringResource(R.string.action_remove_protection),
+            message = stringResource(R.string.dialog_remove_protection_message),
             onDismiss = { dialog = null },
             onSuccess = {
                 deactivateAdmin()
@@ -170,6 +241,161 @@ fun SecurityScreen(
 }
 
 private enum class Dialog { SET, CHANGE, UNINSTALL_GUARD }
+
+/**
+ * Phrase affichée sur l'écran de pause, au moment où l'appel est intercepté.
+ *
+ * Elle est saisie ici, à froid, puis relue pendant l'impulsion : c'est la voix
+ * de l'utilisateur lui-même, pas celle du développeur.
+ */
+@Composable
+private fun PauseMessageCard(
+    current: String,
+    onSave: (String) -> Unit
+) {
+    var draft by remember(current) { mutableStateOf(current) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.pause_message_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.pause_message_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            OutlinedTextField(
+                value = draft,
+                onValueChange = { draft = it.take(PauseMessagePolicy.MAX_LENGTH) },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.pause_message_label)) },
+                placeholder = { Text(stringResource(R.string.pause_message_default)) },
+                minLines = 2,
+                supportingText = {
+                    Text("${draft.length} / ${PauseMessagePolicy.MAX_LENGTH}")
+                }
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.pause_message_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(Modifier.width(8.dp))
+                Button(
+                    onClick = { onSave(draft) },
+                    enabled = draft != current
+                ) {
+                    Text(stringResource(R.string.action_save))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DndCard(
+    enabled: Boolean,
+    active: Boolean,
+    suspended: Boolean,
+    accessGranted: Boolean,
+    onToggle: (Boolean) -> Unit,
+    onAllow: () -> Unit,
+    onPrioritySettings: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.NotificationsPaused,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.dnd_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.dnd_subtitle),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Switch(checked = enabled, onCheckedChange = onToggle)
+            }
+
+            if (enabled) {
+                Spacer(Modifier.height(12.dp))
+                if (!accessGranted) {
+                    Text(
+                        text = if (active) {
+                            stringResource(R.string.dnd_access_lost)
+                        } else {
+                            stringResource(R.string.dnd_access_needed)
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(AMBER)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Button(onClick = onAllow) {
+                        Text(stringResource(R.string.dnd_allow))
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.dnd_access_granted),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(GREEN)
+                    )
+                    if (active) {
+                        Text(
+                            text = stringResource(R.string.dnd_active_now),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    } else if (suspended) {
+                        Text(
+                            text = stringResource(R.string.dnd_suspended),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(AMBER)
+                        )
+                    }
+                    TextButton(onClick = onPrioritySettings) {
+                        Text(stringResource(R.string.dnd_priority_link))
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 private fun LockCard(
@@ -196,15 +422,19 @@ private fun LockCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (enabled) "Code de protection activé" else "Aucun code défini",
+                        text = if (enabled) {
+                            stringResource(R.string.lock_configured)
+                        } else {
+                            stringResource(R.string.lock_none)
+                        },
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            !enabled -> "Un code est requis avant d'utiliser l'app."
-                            state.isLocked -> "Verrouillé — le code sera demandé."
-                            else -> "Déverrouillé pour cette session."
+                            !enabled -> stringResource(R.string.lock_none_help)
+                            state.isLocked -> stringResource(R.string.lock_locked)
+                            else -> stringResource(R.string.lock_unlocked)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -221,30 +451,28 @@ private fun LockCard(
 
             if (!enabled) {
                 Button(onClick = onSet, modifier = Modifier.fillMaxWidth()) {
-                    Text("Définir un code")
+                    Text(stringResource(R.string.dialog_set_code))
                 }
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "À faire maintenant, à froid : c'est ce code qui vous " +
-                            "empêchera de tout couper ce soir.",
+                    text = stringResource(R.string.lock_set_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
                 OutlinedButton(onClick = onChange, modifier = Modifier.fillMaxWidth()) {
-                    Text("Changer le code")
+                    Text(stringResource(R.string.dialog_change_code))
                 }
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = "Le code est défini à l'installation et ne peut pas être " +
-                            "supprimé depuis l'app. Seul un changement (avec l'ancien code) est possible.",
+                    text = stringResource(R.string.lock_change_help),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 if (!state.isLocked) {
                     Spacer(Modifier.height(4.dp))
                     TextButton(onClick = onLockNow, modifier = Modifier.fillMaxWidth()) {
-                        Text("Verrouiller maintenant")
+                        Text(stringResource(R.string.action_lock_now))
                     }
                 }
             }
@@ -273,15 +501,15 @@ private fun UninstallCard(
                 Spacer(Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Désinstallation",
+                        text = stringResource(R.string.uninstall_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = if (adminActive) {
-                            "Protégée — désactivation de l'administrateur requise."
+                            stringResource(R.string.uninstall_protected)
                         } else {
-                            "Non protégée — l'app peut être désinstallée en 3 taps."
+                            stringResource(R.string.uninstall_unprotected)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -293,24 +521,160 @@ private fun UninstallCard(
 
             if (adminActive) {
                 OutlinedButton(onClick = onDeactivate, modifier = Modifier.fillMaxWidth()) {
-                    Text("Retirer la protection")
+                    Text(stringResource(R.string.action_remove_protection))
                 }
             } else {
                 Button(onClick = onActivate, modifier = Modifier.fillMaxWidth()) {
-                    Text("Protéger la désinstallation")
+                    Text(stringResource(R.string.action_protect_uninstall))
                 }
             }
 
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Honnêtement : aucune application ne peut empêcher une " +
-                        "désinstallation. Android demandera seulement de désactiver cet " +
-                        "administrateur d'abord — deux taps de plus, mais deux taps qui " +
-                        "laissent le temps de réfléchir.",
+                text = stringResource(R.string.uninstall_help),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Composable
+private fun LanguageCard(
+    currentTag: String,
+    deviceLanguage: String,
+    available: Boolean,
+    onSelect: (String) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Langue effective de l'app (celle dans laquelle cet écran est écrit).
+    val appLocale = LocalConfiguration.current.locales[0]
+    val deviceLabel = remember(deviceLanguage, appLocale) {
+        // Seulement la langue : « Français » plutôt que « Français (France) »,
+        // pour éviter les parenthèses imbriquées dans l'étiquette.
+        Locale.forLanguageTag(deviceLanguage)
+            .getDisplayLanguage(appLocale)
+            .replaceFirstChar { it.titlecase(appLocale) }
+    }
+
+    val currentLabel =
+        if (currentTag == LanguageTags.SYSTEM) {
+            stringResource(R.string.language_option_system, deviceLabel)
+        } else {
+            nativeName(currentTag)
+        }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Translate,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.language_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.language_subtitle),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = currentLabel,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            if (available) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = { showDialog = true }) {
+                    Text(stringResource(R.string.language_change))
+                }
+            } else {
+                // Avant Android 13 il n'existe pas de langue par application :
+                // mieux vaut l'expliquer que d'afficher un bouton sans effet.
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.language_requires_android13),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(AMBER)
+                )
+            }
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(stringResource(R.string.language_title)) },
+            text = {
+                Column {
+                    LanguageOptionRow(
+                        label = stringResource(R.string.language_option_system, deviceLabel),
+                        selected = currentTag == LanguageTags.SYSTEM,
+                        onClick = {
+                            showDialog = false
+                            onSelect(LanguageTags.SYSTEM)
+                        }
+                    )
+                    LanguageTags.supported.forEach { tag ->
+                        LanguageOptionRow(
+                            label = nativeName(tag),
+                            selected = currentTag == tag,
+                            onClick = {
+                                showDialog = false
+                                onSelect(tag)
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.action_close))
+                }
+            }
+        )
+    }
+}
+
+/** Nom de la langue dans cette langue : « Français » ne se traduit pas. */
+@Composable
+private fun nativeName(tag: String): String = when (tag) {
+    "fr" -> stringResource(R.string.language_name_fr)
+    "es" -> stringResource(R.string.language_name_es)
+    else -> stringResource(R.string.language_name_en)
+}
+
+@Composable
+private fun LanguageOptionRow(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Spacer(Modifier.width(8.dp))
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
@@ -322,20 +686,19 @@ private fun HowItWorksCard() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Ce que le code protège (et ne protège pas)",
+                text = stringResource(R.string.how_title),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(8.dp))
-            Bullet("Le code est créé à la première ouverture de l'app : impossible de l'ignorer ou de le supprimer ensuite.")
-            Bullet("Demandé pour : couper une plage, la supprimer (y compris une plage Zen en cours), changer le code, retirer la protection anti-désinstallation.")
-            Bullet("Jamais demandé pour : bloquer un appel, ajouter une plage, activer le Zen, consulter l'historique.")
-            Bullet("Le déverrouillage ne dure que le temps de la session : 60 s en arrière-plan et il faut retaper le code.")
-            Bullet("Trois essais, puis 30 s, 1 min, 2 min… jusqu'à 15 min d'attente entre deux tentatives.")
+            Bullet(stringResource(R.string.how_bullet_1))
+            Bullet(stringResource(R.string.how_bullet_2))
+            Bullet(stringResource(R.string.how_bullet_3))
+            Bullet(stringResource(R.string.how_bullet_4))
+            Bullet(stringResource(R.string.how_bullet_5))
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(
-                text = "Le code n'est jamais stocké en clair : seule une empreinte PBKDF2 " +
-                        "(120 000 itérations) est conservée sur l'appareil.",
+                text = stringResource(R.string.how_footer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
