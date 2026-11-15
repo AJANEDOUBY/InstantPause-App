@@ -186,9 +186,11 @@ dossier de permissions. **Ne pas toucher au code avant la publication du test fe
 5. Tuile Zen.
 
 ### 1.6.0 — livré (branche `release/1.6.0`)
-1. Interface anglaise par défaut, française et espagnole, sélecteur de langue Android.
+1. Interface anglaise par défaut, française et espagnole, sélecteur de langue Android et
+   sélecteur dans l'application (onglet Sécurité).
 2. Mode « Ne pas déranger » optionnel pendant les plages (`docs/DND-1.6.0.md`).
 3. Notes de version et justification Play trilingues.
+4. Suivi du lancement : `docs/LANCEMENT-1.6.0.md`.
 
 ### 1.7.0 — produit (à chiffrer)
 4. Pause volontaire hors plage.
