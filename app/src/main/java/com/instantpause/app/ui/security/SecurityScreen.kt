@@ -6,6 +6,7 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,8 +24,10 @@ import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.filled.NotificationsPaused
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,9 +36,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,9 +60,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.instantpause.app.R
+import com.instantpause.app.domain.language.LanguageTags
 import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
 import com.instantpause.app.system.CoolDownDeviceAdminReceiver
+import java.util.Locale
 
 private const val GREEN = 0xFF10B981
 private const val AMBER = 0xFFF59E0B
@@ -68,6 +75,7 @@ fun SecurityScreen(
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val pauseMessage by vm.pauseMessage.collectAsStateWithLifecycle()
+    val languageTag by vm.languageTag.collectAsStateWithLifecycle()
     val dndEnabled by vm.dndEnabled.collectAsStateWithLifecycle()
     val dndActive by vm.dndActive.collectAsStateWithLifecycle()
     val dndSuspended by vm.dndSuspended.collectAsStateWithLifecycle()
@@ -172,6 +180,14 @@ fun SecurityScreen(
             onDeactivate = {
                 if (lockState.isLocked) dialog = Dialog.UNINSTALL_GUARD else deactivateAdmin()
             }
+        )
+
+        Spacer(Modifier.height(12.dp))
+        LanguageCard(
+            currentTag = languageTag,
+            deviceLanguage = vm.deviceLanguage,
+            available = vm.languageAvailable,
+            onSelect = { vm.setLanguage(it) }
         )
 
         Spacer(Modifier.height(12.dp))
@@ -520,6 +536,145 @@ private fun UninstallCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Composable
+private fun LanguageCard(
+    currentTag: String,
+    deviceLanguage: String,
+    available: Boolean,
+    onSelect: (String) -> Unit
+) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Langue effective de l'app (celle dans laquelle cet écran est écrit).
+    val appLocale = LocalConfiguration.current.locales[0]
+    val deviceLabel = remember(deviceLanguage, appLocale) {
+        // Seulement la langue : « Français » plutôt que « Français (France) »,
+        // pour éviter les parenthèses imbriquées dans l'étiquette.
+        Locale.forLanguageTag(deviceLanguage)
+            .getDisplayLanguage(appLocale)
+            .replaceFirstChar { it.titlecase(appLocale) }
+    }
+
+    val currentLabel =
+        if (currentTag == LanguageTags.SYSTEM) {
+            stringResource(R.string.language_option_system, deviceLabel)
+        } else {
+            nativeName(currentTag)
+        }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Translate,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.language_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.language_subtitle),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = currentLabel,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            if (available) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(onClick = { showDialog = true }) {
+                    Text(stringResource(R.string.language_change))
+                }
+            } else {
+                // Avant Android 13 il n'existe pas de langue par application :
+                // mieux vaut l'expliquer que d'afficher un bouton sans effet.
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.language_requires_android13),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(AMBER)
+                )
+            }
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(stringResource(R.string.language_title)) },
+            text = {
+                Column {
+                    LanguageOptionRow(
+                        label = stringResource(R.string.language_option_system, deviceLabel),
+                        selected = currentTag == LanguageTags.SYSTEM,
+                        onClick = {
+                            showDialog = false
+                            onSelect(LanguageTags.SYSTEM)
+                        }
+                    )
+                    LanguageTags.supported.forEach { tag ->
+                        LanguageOptionRow(
+                            label = nativeName(tag),
+                            selected = currentTag == tag,
+                            onClick = {
+                                showDialog = false
+                                onSelect(tag)
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.action_close))
+                }
+            }
+        )
+    }
+}
+
+/** Nom de la langue dans cette langue : « Français » ne se traduit pas. */
+@Composable
+private fun nativeName(tag: String): String = when (tag) {
+    "fr" -> stringResource(R.string.language_name_fr)
+    "es" -> stringResource(R.string.language_name_es)
+    else -> stringResource(R.string.language_name_en)
+}
+
+@Composable
+private fun LanguageOptionRow(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(selected = selected, onClick = onClick)
+        Spacer(Modifier.width(8.dp))
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
     }
 }
 

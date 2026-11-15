@@ -248,4 +248,14 @@
     <string name="dnd_active_now">Do Not Disturb is on while the protection is active.</string>
     <string name="dnd_suspended">You turned it off for this window. It will silence the next one again.</string>
     <string name="dnd_priority_link">Set my priority contacts</string>
+
+    <!-- Langue de l'application -->
+    <string name="language_title">App language</string>
+    <string name="language_subtitle">Applies to the whole app, notifications included.</string>
+    <string name="language_change">Choose the language</string>
+    <string name="language_option_system">Phone language (%1$s)</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_es">Español</string>
+    <string name="language_requires_android13">Available from Android 13. Before that, the app follows your phone language.</string>
 </resources>

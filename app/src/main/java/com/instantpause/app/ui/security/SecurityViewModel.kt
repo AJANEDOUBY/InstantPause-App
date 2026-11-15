@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.dnd.DndGateway
+import com.instantpause.app.domain.language.AppLanguageController
 import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ class SecurityViewModel @Inject constructor(
     private val lock: AppLockManager,
     private val prefs: ProtectionPrefs,
     private val dnd: DndController,
-    private val dndGateway: DndGateway
+    private val dndGateway: DndGateway,
+    private val language: AppLanguageController
 ) : ViewModel() {
 
     val state: StateFlow<AppLockManager.State> = lock.state
@@ -59,6 +61,22 @@ class SecurityViewModel @Inject constructor(
 
     private val _dndAccessGranted = MutableStateFlow(dndGateway.isAccessGranted())
     val dndAccessGranted: StateFlow<Boolean> = _dndAccessGranted.asStateFlow()
+
+    /** Langue choisie ("" = langue du téléphone). */
+    private val _languageTag = MutableStateFlow(language.safeCurrentTag())
+    val languageTag: StateFlow<String> = _languageTag.asStateFlow()
+
+    /** Faux avant Android 13 : la carte explique au lieu de proposer un choix. */
+    val languageAvailable: Boolean = language.isAvailable()
+
+    /** Langue du téléphone (étiquette `fr`, `es`…), pour l'option « système ». */
+    val deviceLanguage: String = language.safeSystemLocaleTag()
+
+    /** Applique la langue choisie ; le système recrée l'application. */
+    fun setLanguage(tag: String) {
+        _languageTag.value = tag
+        language.setLanguage(tag)
+    }
 
     init {
         viewModelScope.launch { lock.ensureLoaded() }

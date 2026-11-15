@@ -250,4 +250,14 @@
     <string name="dnd_active_now">«No molestar» está activo mientras la protección lo está.</string>
     <string name="dnd_suspended">Desactivado para esta franja. Volverá a silenciar la próxima.</string>
     <string name="dnd_priority_link">Configurar mis contactos prioritarios</string>
+
+    <!-- Idioma de la aplicación -->
+    <string name="language_title">Idioma de la aplicación</string>
+    <string name="language_subtitle">Se aplica a toda la aplicación, notificaciones incluidas.</string>
+    <string name="language_change">Elegir el idioma</string>
+    <string name="language_option_system">Idioma del teléfono (%1$s)</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_es">Español</string>
+    <string name="language_requires_android13">Disponible desde Android 13. Antes, la aplicación sigue el idioma del teléfono.</string>
 </resources>

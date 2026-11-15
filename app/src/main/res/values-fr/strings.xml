@@ -245,4 +245,14 @@
     <string name="dnd_active_now">« Ne pas déranger » est actif pendant la protection.</string>
     <string name="dnd_suspended">Coupé pour cette plage. Le prochain silence reviendra automatiquement.</string>
     <string name="dnd_priority_link">Configurer mes contacts prioritaires</string>
+
+    <!-- Langue de l'application -->
+    <string name="language_title">Langue de l\'application</string>
+    <string name="language_subtitle">S\'applique à toute l\'application, notifications comprises.</string>
+    <string name="language_change">Choix de la langue</string>
+    <string name="language_option_system">Langue du téléphone (%1$s)</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_es">Español</string>
+    <string name="language_requires_android13">Disponible à partir d\'Android 13. Avant, l\'application suit la langue du téléphone.</string>
 </resources>

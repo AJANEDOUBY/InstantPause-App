@@ -104,9 +104,9 @@ Réalisé sur la branche `release/1.6.0` (versionCode 16, versionName 1.6.0) :
 | 6. Écran de pause, services, canaux et notifications | fait |
 | 7. Espagnol (`values-es/`) | fait |
 
-Résultat : **183 clés**, strictement identiques dans `values/`, `values-fr/` et
+Résultat : **191 clés**, strictement identiques dans `values/`, `values-fr/` et
 `values-es/` ; mêmes marqueurs de format dans les trois langues ;
-**112 tests, 0 échec** ; `lintDebug` vert (0 erreur) ; vérifié sur la tablette
+**117 tests, 0 échec** ; `lintDebug` vert (0 erreur) ; vérifié sur la tablette
 en anglais, français et espagnol.
 
 ### Points traités pendant l'extraction
@@ -122,6 +122,12 @@ en anglais, français et espagnol.
 - `android:localeConfig` ajouté : l'app apparaît dans Réglages › Applications ›
   Instant Pause › Langue, et `adb shell cmd locale set-app-locales` peut la
   basculer sans changer la langue du téléphone.
+- Sélecteur de langue **dans l'app** (onglet Sécurité) : quatre options
+  (langue du téléphone, English, Français, Español). Il s'appuie sur
+  `LocaleManager` ; sur Android 12 et antérieur, il n'existe pas de langue par
+  application, la carte l'explique au lieu d'afficher un bouton sans effet.
+  La langue du téléphone vient de `systemLocales`, jamais de
+  `Resources.getSystem()` (qui porte la langue choisie pour l'app).
 - Les journaux (`Log.d`, `Log.i`…) restent en français : ils ne sont pas affichés
   à l'utilisateur.
 
