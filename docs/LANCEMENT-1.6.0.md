@@ -81,9 +81,11 @@ trop tôt renvoie les testeurs vers « application introuvable ».
       version en/fr/es (3 langues sur 3), nom « 1.6.0 - trilingue + silence optionnel »,
       puis **Envoyer 1 modification pour examen**.
   - Date : 16 nov. 2026 — en cours d'examen
-- [ ] **Étape 3 — Attendre la disponibilité.** La revue prend de quelques heures à 2 jours.
-      Vérifier que la 1.6.0 apparaît comme version active du test fermé.
-  - Date de disponibilité : ____
+- [x] **Étape 3 — Attendre la disponibilité.** La revue est passée en moins de deux heures :
+      la 1.6.0 (versionCode 16) est **Disponible pour certains testeurs** sur la piste
+      *Tests fermés - Alpha*, 178 pays/régions. Le lien d'opt-in répond et le compte du
+      développeur y figure déjà comme testeur.
+  - Date de disponibilité : 16 nov. 2026 à 08:57
 - [x] **Étape 4 — Groupe Google des testeurs.** Le groupe
       `instant-pause-testers@googlegroups.com` est déjà déclaré dans la piste *Testeurs*
       (avec un message de 99 caractères pour les commentaires). Reste à y ajouter les
@@ -199,6 +201,8 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 16 nov. 2026 | Commentaires d'échange sur Beam (`u/Miatrn`) et Eazy Player (`u/Low_Cartographer_368`), liens du groupe et d'opt-in en texte | /comments/1xxka00, /comments/1xxjxo3 |
 | 16 nov. 2026 | Modmail aux modérateurs : demande d'approbation manuelle du post retiré | à confirmer côté modos |
 | 16 nov. 2026 | Politique de confidentialité mise à jour : `ACCESS_NOTIFICATION_POLICY` déclarée et mode silencieux décrit, dans les trois langues ; date au 16 nov. | https://ajanedouby.github.io/instant-pause-privacy/ — commit `fd70620` |
+| 16 nov. 2026 | Revue Google terminée en moins de deux heures : **1.6.0 disponible pour certains testeurs** (versionCode 16, 178 pays/régions) | Play Console › Tests fermés - Alpha, date de sortie 16 nov. 08:57 |
+| 16 nov. 2026 | Lien d'opt-in vérifié dans le navigateur : la page répond « You are a tester » pour le compte du développeur | https://play.google.com/apps/testing/com.instantpause.app |
 | | | |
 
 ---
