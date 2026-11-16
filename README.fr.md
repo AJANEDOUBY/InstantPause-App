@@ -16,8 +16,10 @@ un **écran de pause sensoriel** : respirer, se calmer, puis décider.
 
 Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur votre téléphone.
 
-L'interface est disponible en **anglais, français et espagnol**, selon la langue du téléphone
-(Réglages › Applications › Instant Pause › Langue).
+L'interface est disponible en **anglais (par défaut), français et espagnol**. La langue se
+choisit dans l'app — **onglet Sécurité › Langue de l'application** (Android 13 et plus) — ou
+dans **Réglages › Applications › Instant Pause › Langue** ; sinon l'app suit la langue du
+téléphone.
 
 ---
 
@@ -69,7 +71,18 @@ Les **numéros d'urgence** (112, 15, 17, 18, 19…) ne sont **jamais** bloqués.
 
 ### 🧘 Mode Zen
 Un bouton « Besoin d'une pause maintenant ? » active une protection immédiate de **4, 6, 8,
-10 ou 12 heures**, sans créer de plage permanente.
+10 ou 12 heures**, sans créer de plage permanente. La raccourcir ou l'arrêter exige le code ;
+la démarrer ou la prolonger est libre.
+
+### 🔇 Silence pendant la pause (optionnel)
+Désactivé par défaut. Une fois l'**accès au mode Ne pas déranger** accordé dans l'onglet
+Sécurité, Instant Pause coupe aussi les **sonneries WhatsApp, Signal et Telegram** pendant
+une plage ou un mode Zen, puis rétablit le réglage sonore précédent à la fin.
+- **Les appels d'urgence et les alarmes ne sont jamais réduits au silence** : Android les
+  laisse toujours passer.
+- Si vous coupez le mode Ne pas déranger à la main pendant une plage, l'app ne le
+  réactive **pas** avant la fin de la plage : votre décision est respectée.
+- Si l'accès est retiré, l'app le dit au lieu de faire semblant.
 
 ### 📇 Cercle de confiance (whitelist)
 Un onglet **Contacts** permet de désigner jusqu'à **3 personnes** dont les appels passent
@@ -302,12 +315,12 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6,4 Mo · Android 10+
+**[⬇ InstantPause-1.6.0.apk](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** — 6,7 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum InstantPause-1.4.0.apk
-# → voir le hash publié dans la release (recalculé à chaque build)
+sha256sum InstantPause-1.6.0.apk
+# 889e751f00883a45e57779218bb5ebebc0b1d677c59da9db51b5f79f66e38f0c
 ```
 
 > 🔄 **Paquet renommé en 1.4.0** : les versions 1.3.x et antérieures utilisaient
@@ -415,7 +428,7 @@ tag git et publication GitHub avec l'APK en asset.
 .\release.ps1 -DryRun
 
 # Avec des notes de release personnalisées
-.\release.ps1 -Notes .\notes-1.4.0.md
+.\release.ps1 -Notes .\notes-1.6.0.md
 ```
 
 Si les identifiants de signature sont renseignés (voir ci-dessous), Gradle produit directement un
@@ -469,21 +482,28 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 
 ## Tests
 
-81 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+117 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
 
 | Suite | Couverture |
 |---|---|
 | `ScheduleTest` (11) | fenêtres, bornes incluses/exclues, jours, franchissement de minuit |
+| `ScheduleViewModelTest` (7) | le mode Zen ne crée aucune plage, durée ramenée dans les bornes, réduction soumise au code |
 | `ShouldBlockCallUseCaseTest` (8) | urgence, mode Zen, plage, whitelist, expiration, région par défaut |
+| `EmergencyNumberMatcherTest` (6) | 112/15/17/18/19, séparateurs, numéros ordinaires, région de secours |
+| `DndControllerTest` (12) | filtre précédent mémorisé, coupure manuelle non réappliquée, restauration en fin de plage |
+| `PauseMessagePolicyTest` (4) | saisie vide, espaces réduits, longueur bornée, phrase ordinaire conservée |
+| `ProtectionPrefsTest` (3) | message enregistré, normalisation, effacement → phrase par défaut |
 | `BlockStatusConvertersTest` (2) | mapping Room ↔ `BlockStatus`, valeur inconnue |
 | `PassphrasePolicyTest` (7) | longueur, lettre + chiffre, normalisation, accents |
 | `PassphraseHasherTest` (7) | déterminisme, sel, bon/mauvais code, empreinte corrompue |
 | `LockoutPolicyTest` (4) | essais libres, doublement, plafond 15 min, compteur |
 | `AppLockManagerTest` (20) | cycle de vie, code créé verrouillé, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
-| `CallTimerTextTest` (4) | format `2:59 / 3:00`, secondes toujours sur deux chiffres, chiffres latins quelle que soit la locale |
+| `CallTimerTextTest` (3) | format `2:59 / 3:00`, secondes sur deux chiffres, chiffres latins quelle que soit la locale |
+| `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, langue non traduite → langue du téléphone |
 | `OnboardingStageTest` (17) | ordre des étapes : code → anti-désinstallation → raccrochage → rôle → plein écran → app |
+| `ExampleUnitTest` (1) | contrôle de bon fonctionnement du lanceur de tests |
 
-Soit **81 tests** au total.
+Soit **117 tests** au total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -513,6 +533,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
 | `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
+| `ACCESS_NOTIFICATION_POLICY` | Optionnel : couper les sonneries WhatsApp/Signal/Telegram pendant une plage (accordée dans l'onglet Sécurité, désactivé par défaut) |
 | `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée, étape obligatoire à l'installation |
 
 ---
@@ -520,7 +541,7 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 ## Limites connues
 
 - **Appels VoIP non couverts** (WhatsApp, Signal, Messenger, Telegram) — *prochain chantier,
-  hors périmètre de la 1.4.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
+  hors périmètre de la 1.6.x*. Ces apps ne composent pas via Telecom : elles ouvrent leur propre
   flux audio, et `CallScreeningService` n'est jamais consulté. Aucune API Android ne permet à
   une app tierce de voir ni de refuser un appel VoIP. Concrètement, pendant une plage
   protégée :

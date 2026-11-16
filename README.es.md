@@ -17,8 +17,10 @@ luego decidir.
 
 Sin bloqueo de emergencia, sin vigilancia, sin servidor: todo se queda en tu teléfono.
 
-La interfaz está disponible en **inglés, francés y español**, según el idioma del teléfono
-(Ajustes › Aplicaciones › Instant Pause › Idioma).
+La interfaz está disponible en **inglés (por defecto), francés y español**. El idioma se
+elige en la app — **pestaña Seguridad › Idioma de la aplicación** (Android 13 o superior) — o
+en **Ajustes › Aplicaciones › Instant Pause › Idioma**; si no, la app sigue el idioma del
+teléfono.
 
 ---
 
@@ -70,7 +72,18 @@ Los **números de emergencia** (112, 15, 17, 18, 19…) **nunca** se bloquean.
 
 ### 🧘 Modo Zen
 Un botón «¿Necesitas una pausa ahora?» activa una protección inmediata de **4, 6, 8, 10 o
-12 horas**, sin crear una franja permanente.
+12 horas**, sin crear una franja permanente. Acortarlo o detenerlo exige el código;
+iniciarlo o prolongarlo es libre.
+
+### 🔇 Silencio durante la pausa (opcional)
+Desactivado por defecto. Una vez concedido el **acceso a No molestar** en la pestaña
+Seguridad, Instant Pause también silencia los **tonos de WhatsApp, Signal y Telegram**
+durante una franja o un modo Zen, y restablece el ajuste de sonido anterior al terminar.
+- **Las llamadas de emergencia y las alarmas nunca se silencian**: Android siempre las deja
+  pasar.
+- Si desactivas No molestar a mano durante una franja, la app **no** lo vuelve a activar
+  antes de que termine: se respeta tu decisión.
+- Si se retira el acceso, la app lo dice en lugar de disimularlo.
 
 ### 📇 Círculo de confianza (lista blanca)
 Una pestaña **Contactos** permite designar hasta **3 personas** cuyas llamadas siempre
@@ -307,12 +320,12 @@ Sin dependencia de red, sin analítica, sin cuenta.
 
 La última versión firmada está disponible en **[Releases](../../releases/latest)**:
 
-**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6,4 MB · Android 10+
+**[⬇ InstantPause-1.6.0.apk](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** — 6,7 MB · Android 10+
 
 ```bash
 # Verificar la integridad del archivo descargado
-sha256sum InstantPause-1.4.0.apk
-# → consulta el hash publicado en la release (recalculado en cada build)
+sha256sum InstantPause-1.6.0.apk
+# 889e751f00883a45e57779218bb5ebebc0b1d677c59da9db51b5f79f66e38f0c
 ```
 
 > 🔄 **Paquete renombrado en 1.4.0**: las versiones 1.3.x y anteriores usaban
@@ -424,7 +437,7 @@ etiqueta git y publicación en GitHub con el APK como asset.
 .\release.ps1 -DryRun
 
 # Con notas de release personalizadas
-.\release.ps1 -Notes .\notes-1.4.0.md
+.\release.ps1 -Notes .\notes-1.6.0.md
 ```
 
 Si las credenciales de firma están configuradas (ver abajo), Gradle produce directamente un
@@ -477,22 +490,29 @@ La etiqueta creada es `v<versionName>`; hay que incrementar `versionName`/`versi
 
 ## Pruebas
 
-81 pruebas unitarias cubren la lógica de negocio, sin dependencia de Android en tiempo de
+117 pruebas unitarias cubren la lógica de negocio, sin dependencia de Android en tiempo de
 ejecución:
 
 | Suite | Cobertura |
 |---|---|
 | `ScheduleTest` (11) | franjas, límites incluidos/excluidos, días, cruce de medianoche |
+| `ScheduleViewModelTest` (7) | el modo Zen no crea franjas, duración acotada, acortar exige el código |
 | `ShouldBlockCallUseCaseTest` (8) | emergencia, modo Zen, franja, lista blanca, caducidad, región por defecto |
+| `EmergencyNumberMatcherTest` (6) | 112/15/17/18/19, separadores, números normales, región de respaldo |
+| `DndControllerTest` (12) | filtro anterior memorizado, corte manual no reaplicado, restauración al final |
+| `PauseMessagePolicyTest` (4) | entrada vacía, espacios reducidos, longitud acotada, frase conservada |
+| `ProtectionPrefsTest` (3) | mensaje guardado, normalización, borrado → frase por defecto |
 | `BlockStatusConvertersTest` (2) | mapeo Room ↔ `BlockStatus`, valor desconocido |
 | `PassphrasePolicyTest` (7) | longitud, letra + dígito, normalización, acentos |
 | `PassphraseHasherTest` (7) | determinismo, sal, código correcto/incorrecto, hash corrupto |
 | `LockoutPolicyTest` (4) | intentos libres, duplicación, tope de 15 min, contador |
 | `AppLockManagerTest` (20) | ciclo de vida, código creado bloqueado, reinicio, retardo persistido, rebloqueo 60 s, cambio/eliminación, fallo de almacenamiento |
-| `CallTimerTextTest` (4) | formato `2:59 / 3:00`, segundos siempre con dos dígitos, dígitos latinos sea cual sea la locale |
+| `CallTimerTextTest` (3) | formato `2:59 / 3:00`, segundos con dos dígitos, dígitos latinos sea cual sea la locale |
+| `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, idioma no traducido → idioma del teléfono |
 | `OnboardingStageTest` (17) | orden de los pasos: código → anti-desinstalación → colgar → rol → pantalla completa → app |
+| `ExampleUnitTest` (1) | comprobación de que el lanzador de pruebas funciona |
 
-Es decir, **81 pruebas** en total.
+Es decir, **117 pruebas** en total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -522,6 +542,7 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proponer la exención de energía desde el banner |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, apertura de UI |
 | `ANSWER_PHONE_CALLS` | Colgar a las 3:00 la llamada a un contacto autorizado — permiso obligatorio al instalar |
+| `ACCESS_NOTIFICATION_POLICY` | Opcional: silenciar los tonos de WhatsApp/Signal/Telegram durante una franja (se concede en la pestaña Seguridad, desactivado por defecto) |
 | `BIND_DEVICE_ADMIN` (en el receiver) | Fricción anti-desinstalación — ninguna política solicitada, paso obligatorio al instalar |
 
 ---
@@ -529,7 +550,7 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 ## Límites conocidos
 
 - **Llamadas VoIP no cubiertas** (WhatsApp, Signal, Messenger, Telegram) — *próximo
-  proyecto, fuera del alcance de la 1.4.x*. Estas apps no llaman a través de Telecom: abren
+  proyecto, fuera del alcance de la 1.6.x*. Estas apps no llaman a través de Telecom: abren
   su propio flujo de audio, y `CallScreeningService` nunca se consulta. Ninguna API de
   Android permite a una app de terceros ver ni rechazar una llamada VoIP. En concreto,
   durante una franja protegida:

@@ -15,8 +15,9 @@ During the time windows you set, every outgoing call is intercepted and replaced
 
 No emergency blocking, no surveillance, no server: everything stays on your phone.
 
-The interface is available in **English, French and Spanish**, following the phone language
-(Settings › Apps › Instant Pause › Language).
+The interface is available in **English (default), French and Spanish**. Pick the language
+in the app — **Security tab › App language** (Android 13 and later) — or from
+**Settings › Apps › Instant Pause › Language**; otherwise the app follows the phone language.
 
 ---
 
@@ -68,7 +69,17 @@ Three mechanisms, all controlled by you:
 
 ### 🧘 Zen mode
 A "Need a pause now?" button enables an immediate protection of **4, 6, 8, 10 or 12
-hours**, without creating a permanent window.
+hours**, without creating a permanent window. Shortening or stopping it requires the code;
+starting or extending it does not.
+
+### 🔇 Silence during the pause (optional)
+Off by default. Once **Do Not Disturb access** is granted in the Security tab, Instant Pause
+also mutes **WhatsApp, Signal and Telegram ringtones** while a window or a Zen mode is
+active, then restores the previous sound setting when it ends.
+- **Emergency calls and alarms are never silenced**: Android always lets them through.
+- If you switch Do Not Disturb off by hand during a window, the app does **not** turn it
+  back on before the window ends: it respects your decision.
+- If the access is revoked, the app says so instead of pretending.
 
 ### 📇 Trusted circle (whitelist)
 A **Contacts** tab lets you designate up to **3 people** whose calls always go through,
@@ -245,7 +256,11 @@ app/src/main/java/com/instantpause/app/
 ├── di/                                 # Hilt modules (DataStore, security, hasher, clock)
 ├── domain/
 │   ├── model/Models.kt                 # Schedule, WhitelistEntry, BlockedLog
+│   ├── dnd/                            # Optional Do Not Disturb during a window
+│   ├── language/                       # App language (LocaleManager) + supported tags
+│   ├── pause/PauseMessagePolicy.kt     # User pause sentence: trimming, length cap
 │   ├── phone/                          # PhoneNumberAnalyzer (interface) + implementation
+│   ├── protection/ProtectionState.kt   # Single source of truth: window or Zen active?
 │   ├── repository/Repositories.kt      # Contracts
 │   ├── security/                       # PassphrasePolicy, PBKDF2, delays, AppLockManager
 │   └── usecase/ShouldBlockCallUseCase.kt  # Core logic: Allow / Block
@@ -301,12 +316,12 @@ No network dependency, no analytics, no account.
 
 The latest signed version is available in **[Releases](../../releases/latest)**:
 
-**[⬇ InstantPause-1.4.0.apk](../../releases/download/v1.4.0/InstantPause-1.4.0.apk)** — 6.4 MB · Android 10+
+**[⬇ InstantPause-1.6.0.apk](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** — 6.7 MB · Android 10+
 
 ```bash
 # Verify the integrity of the downloaded file
-sha256sum InstantPause-1.4.0.apk
-# → see the hash published in the release (recomputed on every build)
+sha256sum InstantPause-1.6.0.apk
+# 889e751f00883a45e57779218bb5ebebc0b1d677c59da9db51b5f79f66e38f0c
 ```
 
 > 🔄 **Package renamed in 1.4.0**: versions 1.3.x and earlier used
@@ -414,7 +429,7 @@ verification, git tag and GitHub publication with the APK as an asset.
 .\release.ps1 -DryRun
 
 # With custom release notes
-.\release.ps1 -Notes .\notes-1.4.0.md
+.\release.ps1 -Notes .\notes-1.6.0.md
 ```
 
 If the signing credentials are set (see below), Gradle produces a signed APK directly:
@@ -469,21 +484,28 @@ The tag created is `v<versionName>`; `versionName`/`versionCode` must be increme
 
 ## Tests
 
-81 unit tests cover the business logic, with no Android dependency at runtime:
+117 unit tests cover the business logic, with no Android dependency at runtime:
 
 | Suite | Coverage |
 |---|---|
 | `ScheduleTest` (11) | windows, included/excluded bounds, days, midnight crossing |
+| `ScheduleViewModelTest` (7) | Zen mode creates no window, duration clamped, shortening needs the code |
 | `ShouldBlockCallUseCaseTest` (8) | emergency, Zen mode, window, whitelist, expiry, default region |
+| `EmergencyNumberMatcherTest` (6) | 112/15/17/18/19, separators, normal numbers, region fallback |
+| `DndControllerTest` (12) | previous filter saved, manual cut-off not reapplied, restore at the end |
+| `PauseMessagePolicyTest` (4) | blank input, trimming, length cap, ordinary sentence kept |
+| `ProtectionPrefsTest` (3) | stored pause message, normalisation, clearing returns the default |
 | `BlockStatusConvertersTest` (2) | Room ↔ `BlockStatus` mapping, unknown value |
 | `PassphrasePolicyTest` (7) | length, letter + digit, normalisation, accents |
 | `PassphraseHasherTest` (7) | determinism, salt, correct/wrong code, corrupted hash |
 | `LockoutPolicyTest` (4) | free attempts, doubling, 15 min ceiling, counter |
 | `AppLockManagerTest` (20) | lifecycle, code created locked, restart, persisted delay, 60 s relock, change/removal, storage failure |
-| `CallTimerTextTest` (4) | `2:59 / 3:00` format, seconds always two digits, Latin digits whatever the locale |
+| `CallTimerTextTest` (3) | `2:59 / 3:00` format, two-digit seconds, Latin digits whatever the locale |
+| `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, unsupported language falls back to the phone |
 | `OnboardingStageTest` (17) | step order: code → anti-uninstall → hang-up → role → full screen → app |
+| `ExampleUnitTest` (1) | sanity check of the test runner |
 
-That is **81 tests** in total.
+That is **117 tests** in total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -513,6 +535,7 @@ implementation), which allows it to run with in-memory fakes.
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Offer the energy exemption from the banner |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, opening the UI |
 | `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — mandatory permission at install |
+| `ACCESS_NOTIFICATION_POLICY` | Optional: mute WhatsApp/Signal/Telegram ringtones during a window (granted in the Security tab, off by default) |
 | `BIND_DEVICE_ADMIN` (on the receiver) | Anti-uninstall friction — no policy requested, mandatory step at install |
 
 ---
@@ -520,7 +543,7 @@ implementation), which allows it to run with in-memory fakes.
 ## Known limitations
 
 - **VoIP calls not covered** (WhatsApp, Signal, Messenger, Telegram) — *next project,
-  outside the scope of 1.4.x*. These apps do not place calls through Telecom: they open
+  outside the scope of 1.6.x*. These apps do not place calls through Telecom: they open
   their own audio stream, and `CallScreeningService` is never consulted. No Android API
   allows a third-party app to see or reject a VoIP call. Concretely, during a protected
   window:

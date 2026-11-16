@@ -127,9 +127,17 @@ $sdk = if ($env:ANDROID_HOME) { $env:ANDROID_HOME }
        else { $null }
 if (-not $sdk -or -not (Test-Path $sdk)) { Fail "SDK Android introuvable (ANDROID_HOME ou local.properties)." }
 
+# Certaines installations de build-tools sont incomplètes (36.1.0 livrée sans
+# apksigner.bat) : on ne retient que les dossiers qui contiennent réellement les
+# outils utilisés plus bas, sinon la release échoue à mi-parcours.
 $buildTools = Get-ChildItem (Join-Path $sdk 'build-tools') -Directory |
-    Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1
-if (-not $buildTools) { Fail "Aucun build-tools dans $sdk" }
+    Sort-Object { [version]$_.Name } -Descending |
+    Where-Object {
+        (Test-Path (Join-Path $_.FullName 'apksigner.bat')) -and
+        (Test-Path (Join-Path $_.FullName 'zipalign.exe')) -and
+        (Test-Path (Join-Path $_.FullName 'aapt2.exe'))
+    } | Select-Object -First 1
+if (-not $buildTools) { Fail "Aucun build-tools complet (apksigner, zipalign, aapt2) dans $sdk" }
 
 $zipalign  = Join-Path $buildTools.FullName 'zipalign.exe'
 $apksigner = Join-Path $buildTools.FullName 'apksigner.bat'
