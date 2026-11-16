@@ -92,9 +92,13 @@ trop tôt renvoie les testeurs vers « application introuvable ».
 - [ ] **Étape 5 — Formulaire d'inscription.** Champs de la section 6, réponses liées à un Google
       Sheets, colonne « date d'inscription » remplie à la main.
   - Date : ____
-- [ ] **Étape 6 — Éditer le post Reddit.** Texte de la section 5, avec le lien du groupe et le
-      lien d'opt-in. Répondre à chaque commentaire.
-  - Date : ____
+- [ ] **Étape 6 — Éditer le post Reddit.** Le post du 7 nov. a été **retiré par les filtres
+      automatiques** (compte à 1 karma, 3 liens dans le corps) : il n'apparaît pas dans le
+      fil et une édition ne le rétablira pas. Trois gestes faits le 16 nov. : commentaire
+      technique sans lien pour gagner du karma, modmail de demande d'approbation,
+      commentaires d'échange sur deux posts. Tant que le post est filtré, le texte de la
+      section 5 ne sert à rien : le poster en commentaire, ou attendre l'accord des modos.
+  - Date : 16 nov. 2026 — en attente des modérateurs
 - [ ] **Étape 7 — Recruter 15 à 20 testeurs.** Noter les dates d'inscription. Relancer à J+7
       ceux qui n'ont pas installé.
   - 12ᵉ inscription (début des 14 jours) : ____
@@ -190,6 +194,10 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 16 nov. 2026 | Release GitHub `v1.6.0` publiée avec l'APK signé (6,7 Mo, sha256 `e4c7dde1…56920af3`) | https://github.com/AJANEDOUBY/InstantPause-App/releases/tag/v1.6.0 |
 | 16 nov. 2026 | AAB `16 (1.6.0)` reconstruit après nettoyage du dossier `build` : 5 456 986 octets, certificat `4F:14:D6:…:F0:F5` | `keytool -printcert` |
 | 16 nov. 2026 | AAB 1.6.0 téléversé sur la piste *Tests fermés - Alpha*, notes en/fr/es, envoyé pour examen | Play Console › Vue d'ensemble de la publication |
+| 16 nov. 2026 | Constat : le post Reddit du 7 nov. a été retiré par les filtres automatiques (absent du fil ; compte à 1 karma, 0 contribution, 3 liens dans le corps) | r/AndroidClosedTesting, fil *new* |
+| 16 nov. 2026 | Commentaire technique (ADB/PowerShell) sur le post routine 14 jours de `u/Angel07Castillo`, sans lien externe : premier karma | /comments/1xxdtvk |
+| 16 nov. 2026 | Commentaires d'échange sur Beam (`u/Miatrn`) et Eazy Player (`u/Low_Cartographer_368`), liens du groupe et d'opt-in en texte | /comments/1xxka00, /comments/1xxjxo3 |
+| 16 nov. 2026 | Modmail aux modérateurs : demande d'approbation manuelle du post retiré | à confirmer côté modos |
 | | | |
 
 ---
