@@ -94,13 +94,14 @@ trop tôt renvoie les testeurs vers « application introuvable ».
 - [ ] **Étape 5 — Formulaire d'inscription.** Champs de la section 6, réponses liées à un Google
       Sheets, colonne « date d'inscription » remplie à la main.
   - Date : ____
-- [ ] **Étape 6 — Éditer le post Reddit.** Le post du 7 nov. a été **retiré par les filtres
-      automatiques** (compte à 1 karma, 3 liens dans le corps) : il n'apparaît pas dans le
-      fil et une édition ne le rétablira pas. Trois gestes faits le 16 nov. : commentaire
-      technique sans lien pour gagner du karma, modmail de demande d'approbation,
-      commentaires d'échange sur deux posts. Tant que le post est filtré, le texte de la
-      section 5 ne sert à rien : le poster en commentaire, ou attendre l'accord des modos.
-  - Date : 16 nov. 2026 — en attente des modérateurs
+- [ ] **Étape 6 — Éditer le post Reddit.** Le post du 7 nov. (r/AndroidClosedTesting) a été
+      **retiré par les filtres automatiques** : il n'apparaît pas dans le fil et une édition ne
+      le rétablira pas. Modmail envoyé le 16 nov., sans réponse à ce jour.
+      **Relance faite ailleurs le 16 nov.** : nouveau post dans r/testerscommunity, publié et
+      vérifié en ligne, sans aucun lien dans le corps (les liens sont dans le premier
+      commentaire) — c'est la piste qui a fonctionné.
+  - Date : 16 nov. 2026 — post visible, en attente de réponses
+  - URL : https://www.reddit.com/r/testerscommunity/comments/1xxli15/test_for_test_instant_pause_a_pause_screen/
 - [ ] **Étape 7 — Recruter 15 à 20 testeurs.** Noter les dates d'inscription. Relancer à J+7
       ceux qui n'ont pas installé.
   - 12ᵉ inscription (début des 14 jours) : ____
@@ -203,6 +204,8 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 16 nov. 2026 | Politique de confidentialité mise à jour : `ACCESS_NOTIFICATION_POLICY` déclarée et mode silencieux décrit, dans les trois langues ; date au 16 nov. | https://ajanedouby.github.io/instant-pause-privacy/ — commit `fd70620` |
 | 16 nov. 2026 | Revue Google terminée en moins de deux heures : **1.6.0 disponible pour certains testeurs** (versionCode 16, 178 pays/régions) | Play Console › Tests fermés - Alpha, date de sortie 16 nov. 08:57 |
 | 16 nov. 2026 | Lien d'opt-in vérifié dans le navigateur : la page répond « You are a tester » pour le compte du développeur | https://play.google.com/apps/testing/com.instantpause.app |
+| 16 nov. 2026 | Trois commentaires Reddit vérifiés publics via l'API (`removed_by_category: null`) : le compte n'est pas bridé, c'est le post qui était filtré | `/r/AndroidClosedTesting/comments/{1xxdtvk,1xxka00,1xxjxo3}.json` |
+| 16 nov. 2026 | Nouveau post publié dans **r/testerscommunity**, sans lien dans le corps, flair « Testers Needed » ; liens dans le premier commentaire. Visible dans le fil, score 1, non supprimé | https://www.reddit.com/r/testerscommunity/comments/1xxli15/test_for_test_instant_pause_a_pause_screen/ |
 | | | |
 
 ---
