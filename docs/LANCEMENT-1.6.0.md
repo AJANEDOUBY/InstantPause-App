@@ -59,7 +59,7 @@ désistement sans repartir de zéro.
 | Post Reddit | https://www.reddit.com/r/AndroidClosedTesting/comments/1xq4okr/closed_test_instant_pause_block_impulsive/ |
 | Formulaire d'inscription | https://docs.google.com/forms/d/10v7wGpqtbf9_r-WR1i5wGyHZLjwkf0N-6g3WSJJL_as/edit |
 | Release GitHub 1.6.0 | https://github.com/AJANEDOUBY/InstantPause-App/releases/tag/v1.6.0 |
-| Groupe testeurs (à créer) | `instantpause-testers@googlegroups.com` — *remplacer par le lien réel* |
+| Groupe testeurs | `instant-pause-testers@googlegroups.com` (déjà déclaré dans la piste Alpha) |
 | Contact testeurs | janedouby@gmail.com |
 | Notes de version à copier | `docs/RELEASE-NOTES.md`, section 1.6.0 |
 | Texte de déclaration DND | `docs/PERMISSIONS-PLAY.md`, section 5 |
@@ -71,19 +71,24 @@ désistement sans repartir de zéro.
 Cocher et dater au fur et à mesure. Ne pas sauter l'étape 3 avant l'étape 5 : un lien diffusé
 trop tôt renvoie les testeurs vers « application introuvable ».
 
-- [ ] **Étape 1 — Déclaration DND.** Play Console › *Contenu de l'application* › accès au mode
-      « Ne pas déranger ». Coller le texte anglais de `docs/PERMISSIONS-PLAY.md` §5.
-  - Date : ____
-- [ ] **Étape 2 — Téléverser l'AAB.** *Test et publication › Tests › Test fermé › Alpha* ›
-      **Créer une version** › téléverser `app-release.aab` (versionCode 16) › notes de version
-      en/fr/es › **Déployer**.
-  - Date : ____
+- [x] **Étape 1 — Déclaration DND.** Play Console › *Contenu de l'application* : aucune
+      déclaration « Ne pas déranger » n'y est demandée, et l'onglet *Traitée* ne la liste pas.
+      Play ne réclame cette déclaration que s'il la juge nécessaire pendant la revue ; le
+      texte de `docs/PERMISSIONS-PLAY.md` §5 reste prêt à être collé dans ce cas.
+  - Date : 16 nov. 2026 (vérifié, rien à remplir)
+- [x] **Étape 2 — Téléverser l'AAB.** *Test et publication › Tests › Test fermé › Alpha* :
+      brouillon V14 supprimé, **Créer une version**, AAB `16 (1.6.0)` téléversé, notes de
+      version en/fr/es (3 langues sur 3), nom « 1.6.0 - trilingue + silence optionnel »,
+      puis **Envoyer 1 modification pour examen**.
+  - Date : 16 nov. 2026 — en cours d'examen
 - [ ] **Étape 3 — Attendre la disponibilité.** La revue prend de quelques heures à 2 jours.
       Vérifier que la 1.6.0 apparaît comme version active du test fermé.
   - Date de disponibilité : ____
-- [ ] **Étape 4 — Créer le groupe Google des testeurs.** Ajouter **le groupe** (pas les adresses
-      une par une) dans *Gérer les testeurs*. Copier son lien d'inscription.
-  - Date : ____
+- [x] **Étape 4 — Groupe Google des testeurs.** Le groupe
+      `instant-pause-testers@googlegroups.com` est déjà déclaré dans la piste *Testeurs*
+      (avec un message de 99 caractères pour les commentaires). Reste à y ajouter les
+      adresses des volontaires.
+  - Date : déjà en place le 16 nov. 2026
 - [ ] **Étape 5 — Formulaire d'inscription.** Champs de la section 6, réponses liées à un Google
       Sheets, colonne « date d'inscription » remplie à la main.
   - Date : ____
@@ -183,6 +188,8 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 15 nov. 2026 | `release/1.6.0` et `main` poussés sur GitHub | `git push` |
 | 16 nov. 2026 | `release/1.6.0` fusionnée dans `main` : la branche par défaut affiche la 1.6.0 (versionCode 16) | commit `74e679e` |
 | 16 nov. 2026 | Release GitHub `v1.6.0` publiée avec l'APK signé (6,7 Mo, sha256 `e4c7dde1…56920af3`) | https://github.com/AJANEDOUBY/InstantPause-App/releases/tag/v1.6.0 |
+| 16 nov. 2026 | AAB `16 (1.6.0)` reconstruit après nettoyage du dossier `build` : 5 456 986 octets, certificat `4F:14:D6:…:F0:F5` | `keytool -printcert` |
+| 16 nov. 2026 | AAB 1.6.0 téléversé sur la piste *Tests fermés - Alpha*, notes en/fr/es, envoyé pour examen | Play Console › Vue d'ensemble de la publication |
 | | | |
 
 ---
