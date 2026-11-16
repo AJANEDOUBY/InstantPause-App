@@ -336,6 +336,14 @@ priority conversations keep ringing, so emergency calls remain possible.
 4. La valeur d'origine est restaurée à l'identique (`dnd_previous_filter`).
 5. Une coupure manuelle de l'utilisateur n'est jamais annulée par l'app.
 
+### Cohérence avec la politique de confidentialité
+
+Depuis le 16 novembre 2026, la page publique
+<https://ajanedouby.github.io/instant-pause-privacy/> décrit cette permission et le stockage
+de `dnd_previous_filter`, dans les trois langues (dépôt `instant-pause-privacy`, commit
+`fd70620`). Si le texte ci-dessus change, mettre la page à jour dans le même mouvement :
+un examinateur peut comparer les deux.
+
 ---
 
 ## 6. Script de la vidéo de démonstration (`specialUse`)

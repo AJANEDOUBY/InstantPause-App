@@ -198,6 +198,7 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 16 nov. 2026 | Commentaire technique (ADB/PowerShell) sur le post routine 14 jours de `u/Angel07Castillo`, sans lien externe : premier karma | /comments/1xxdtvk |
 | 16 nov. 2026 | Commentaires d'échange sur Beam (`u/Miatrn`) et Eazy Player (`u/Low_Cartographer_368`), liens du groupe et d'opt-in en texte | /comments/1xxka00, /comments/1xxjxo3 |
 | 16 nov. 2026 | Modmail aux modérateurs : demande d'approbation manuelle du post retiré | à confirmer côté modos |
+| 16 nov. 2026 | Politique de confidentialité mise à jour : `ACCESS_NOTIFICATION_POLICY` déclarée et mode silencieux décrit, dans les trois langues ; date au 16 nov. | https://ajanedouby.github.io/instant-pause-privacy/ — commit `fd70620` |
 | | | |
 
 ---
