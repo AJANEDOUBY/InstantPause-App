@@ -14,7 +14,7 @@ mesure. Toute modification de ce fichier est un fait daté, pas une intention.
 
 ---
 
-## 1. État au 15 novembre 2026
+## 1. État au 16 novembre 2026
 
 | Contrôle | Résultat |
 |---|---|

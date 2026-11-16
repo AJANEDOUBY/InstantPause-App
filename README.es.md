@@ -411,8 +411,8 @@ Antes de la primera publicación, Play Console exige:
 
 ```bash
 # Clonar
-git clone https://github.com/AJANEDOUBY/CoolDown.git
-cd CoolDown
+git clone https://github.com/AJANEDOUBY/InstantPause-App.git
+cd InstantPause-App
 
 # APK de debug
 ./gradlew :app:assembleDebug
