@@ -321,7 +321,7 @@ The latest signed version is available in **[Releases](../../releases/latest)**:
 ```bash
 # Verify the integrity of the downloaded file
 sha256sum InstantPause-1.6.0.apk
-# 889e751f00883a45e57779218bb5ebebc0b1d677c59da9db51b5f79f66e38f0c
+# e4c7dde1d3e6a89be20dde68449560fbad13f2e1cb93c42ccd30b42256920af3
 ```
 
 > 🔄 **Package renamed in 1.4.0**: versions 1.3.x and earlier used

@@ -6,7 +6,7 @@ mesure. Toute modification de ce fichier est un fait daté, pas une intention.
 | Élément | Valeur |
 |---|---|
 | Version à publier | **1.6.0**, versionCode **16** |
-| Branche | `release/1.6.0` (poussée sur GitHub le 15 nov. 2026) |
+| Branche | `main` (branche par défaut, fusionnée le 16 nov. 2026) — `release/1.6.0` conservée |
 | Paquet | `com.instantpause.app` |
 | Dépôt | https://github.com/AJANEDOUBY/InstantPause-App |
 | Éditeur | JANEDOUBY — janedouby@gmail.com |
@@ -24,7 +24,7 @@ mesure. Toute modification de ce fichier est un fait daté, pas une intention.
 | Lint | 0 erreur, 28 avertissements préexistants |
 | Traduction | 191 clés × 3 langues (en, fr, es), alignées |
 | Fonctions 1.6.0 | interface trilingue + sélecteur de langue + mode « Ne pas déranger » optionnel |
-| `main` | non modifiée par la 1.6.0 (hors documentation) |
+| `main` | contient la 1.6.0 depuis le 16 nov. 2026 (versionCode 16) |
 
 **[CRITIQUE] Ne jamais réutiliser le versionCode 14** (consommé par Play). Le 15 reste libre
 pour la 1.5.0, qui ne sera **pas** téléversée : la 1.6.0 la remplace dans le test fermé.
@@ -58,6 +58,7 @@ désistement sans repartir de zéro.
 | Inscription des testeurs (lien public) | https://play.google.com/apps/testing/com.instantpause.app |
 | Post Reddit | https://www.reddit.com/r/AndroidClosedTesting/comments/1xq4okr/closed_test_instant_pause_block_impulsive/ |
 | Formulaire d'inscription | https://docs.google.com/forms/d/10v7wGpqtbf9_r-WR1i5wGyHZLjwkf0N-6g3WSJJL_as/edit |
+| Release GitHub 1.6.0 | https://github.com/AJANEDOUBY/InstantPause-App/releases/tag/v1.6.0 |
 | Groupe testeurs (à créer) | `instantpause-testers@googlegroups.com` — *remplacer par le lien réel* |
 | Contact testeurs | janedouby@gmail.com |
 | Notes de version à copier | `docs/RELEASE-NOTES.md`, section 1.6.0 |
@@ -180,6 +181,8 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 |---|---|---|
 | 15 nov. 2026 | AAB 1.6.0 signé, empreinte `4F:14:D6:…:F0:F5` vérifiée | `keytool -printcert` |
 | 15 nov. 2026 | `release/1.6.0` et `main` poussés sur GitHub | `git push` |
+| 16 nov. 2026 | `release/1.6.0` fusionnée dans `main` : la branche par défaut affiche la 1.6.0 (versionCode 16) | commit `74e679e` |
+| 16 nov. 2026 | Release GitHub `v1.6.0` publiée avec l'APK signé (6,7 Mo, sha256 `e4c7dde1…56920af3`) | https://github.com/AJANEDOUBY/InstantPause-App/releases/tag/v1.6.0 |
 | | | |
 
 ---

@@ -300,16 +300,20 @@ try {
 Write-Ok "brouillon #$($release.id)"
 
 $uploadUrl = "https://uploads.github.com/repos/$repo/releases/$($release.id)/assets?name=$apkName"
-$response = & curl.exe -s -X POST `
-    -H "Authorization: Bearer $token" `
-    -H "User-Agent: cooldown-release" `
-    -H "Content-Type: application/vnd.android.package-archive" `
-    --data-binary "@$outApk" `
-    --max-time 600 $uploadUrl 2>&1
-
-$asset = $response | ConvertFrom-Json
+# `curl.exe` n'est pas garanti (Windows Server, images allégées) : on utilise
+# Invoke-RestMethod, présent partout depuis PowerShell 5.
+try {
+    $asset = Invoke-RestMethod -Method Post `
+        -Uri $uploadUrl `
+        -Headers $headers `
+        -ContentType 'application/vnd.android.package-archive' `
+        -InFile $outApk `
+        -TimeoutSec 600
+} catch {
+    Fail "Upload de l'APK echoue : $($_.ErrorDetails.Message)"
+}
 if (-not $asset.id -or $asset.state -ne 'uploaded') {
-    Fail "Upload de l'APK echoue : $response"
+    Fail "Upload de l'APK echoue : etat $($asset.state)"
 }
 Write-Ok "$($asset.name) ($([math]::Round($asset.size / 1MB, 2)) Mo)"
 
