@@ -220,6 +220,9 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 17 nov. 2026 | Engagement tenu pour **31 Days** : groupe rejoint, opt-in accepté (« You are a tester »), APK installé sur la tablette `R5GL350ZJ9P` (visible dans le lanceur) | `com.days.android` |
 | 17 nov. 2026 | Engagement partiel pour **OffKit All Tools** : groupe `offkit-all-tools-tester` rejoint, opt-in accepté, mais la fiche Play répond **« Élément introuvable »** même avec le droit testeur — la release de test n'est pas accessible. Signalé à son auteur | `com.offkit.app` |
 | 17 nov. 2026 | Répondu à `u/building_stuffs` (aveu de la réponse trop rapide + engagement tenu), à `u/husnainali197` (test injoignable + contrainte du même compte Google) et à `u/onTestapp` (**refus** de l'achat de testeurs). Les trois vérifiés `removed: null` | `/r/GooglePlayClosedTest/comments/1xxsolu.json` |
+| 17 nov. 2026 | Diagnostic corrigé publiquement chez `u/husnainali197` : le « Item not found » venait d'un compte non opt-in sur la tablette, pas de sa release. Le Play de la tablette `R5GL350ZJ9P` est sur `abdelgalaxy26@gmail.com`, Chrome sur `janedouby@gmail.com` | `t1_19srh300ffq5g` |
+| 17 nov. 2026 | `abdelgalaxy26@gmail.com` ajouté au groupe de test (7ᵉ membre) : c'est le compte Play de la tablette, sans lui l'app restait invisible. Invitation refusée par un **reCAPTCHA** côté console ; adhésion faite par le propriétaire | groups.google.com/g/instant-pause-testers/members |
+| 17 nov. 2026 | Instant Pause **installé depuis Play** sur la tablette avec le compte `abdelgalaxy26@gmail.com` : versionCode 16 / 1.6.0, `firstInstallTime` 08:00:46, premier lancement en français | `adb shell dumpsys package com.instantpause.app` |
 | | | |
 
 ---
