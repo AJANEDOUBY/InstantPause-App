@@ -226,6 +226,7 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 17 nov. 2026 | **OffKit impossible à installer sur tablette** : groupe rejoint et opt-in accepté avec `abdel`, mais la fiche Play répond « Cette application n'est pas disponible pour votre appareil ». Ce n'est ni la release ni le compte — l'app est publique mais incompatible avec un écran de 12 pouces. `pm list packages` confirme l'absence du paquet | `com.offkit.app` |
 | 17 nov. 2026 | Groupe de test à **8 membres** : 4 testeurs externes + `janedouby`, `abdelgalaxy26`, `a.cimarron` et `othman.belmehdi` (comptes du développeur) | groups.google.com/g/instant-pause-testers/members |
 | 17 nov. 2026 | `othman.belmehdi@gmail.com` **retiré** du groupe (7 membres) : même téléphone Itel A665L que `janedouby`, et l'app n'y était jamais installée. Aucune installation perdue | groups.google.com/g/instant-pause-testers/members |
+| 17 nov. 2026 | Instant Pause **installé depuis Play sur l'Itel A665L** (`117591549Y000638`, Android 13, 720x1612) avec `janedouby@gmail.com` : versionCode 16 / 1.6.0, `installerPackageName=com.android.vending`, `firstInstallTime` 10:15:42, premier lancement en français sur l'écran de création du code. Le Play du téléphone sert bien `janedouby` : avec `othman` (retiré du groupe) la fiche aurait répondu « introuvable » | `adb -s 117591549Y000638 shell dumpsys package com.instantpause.app` |
 | | | |
 
 ---
