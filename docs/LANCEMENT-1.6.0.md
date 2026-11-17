@@ -100,8 +100,13 @@ trop tôt renvoie les testeurs vers « application introuvable ».
       **Relance faite ailleurs le 16 nov.** : nouveau post dans r/testerscommunity, publié et
       vérifié en ligne, sans aucun lien dans le corps (les liens sont dans le premier
       commentaire) — c'est la piste qui a fonctionné.
-  - Date : 16 nov. 2026 — post visible, en attente de réponses
-  - URL : https://www.reddit.com/r/testerscommunity/comments/1xxli15/test_for_test_instant_pause_a_pause_screen/
+      **Second post le même jour, ~5 h après** dans r/GooglePlayClosedTest : corps reformulé
+      (jamais le même texte d'un sub à l'autre), lui aussi sans lien, liens en premier
+      commentaire. L'AutoModerator de ce sub exige **les deux liens** (opt-in *et* fiche
+      Store) : le commentaire a été édité pour ajouter la fiche Store.
+  - Date : 16 nov. 2026 — les deux posts visibles, aucun humain n'a encore répondu
+  - URL 1 : https://www.reddit.com/r/testerscommunity/comments/1xxli15/test_for_test_instant_pause_a_pause_screen/
+  - URL 2 : https://www.reddit.com/r/GooglePlayClosedTest/comments/1xxsolu/test_for_test_instant_pause_i_need_12_testers_for/
 - [ ] **Étape 7 — Recruter 15 à 20 testeurs.** Noter les dates d'inscription. Relancer à J+7
       ceux qui n'ont pas installé.
   - 12ᵉ inscription (début des 14 jours) : ____
@@ -206,6 +211,15 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 16 nov. 2026 | Lien d'opt-in vérifié dans le navigateur : la page répond « You are a tester » pour le compte du développeur | https://play.google.com/apps/testing/com.instantpause.app |
 | 16 nov. 2026 | Trois commentaires Reddit vérifiés publics via l'API (`removed_by_category: null`) : le compte n'est pas bridé, c'est le post qui était filtré | `/r/AndroidClosedTesting/comments/{1xxdtvk,1xxka00,1xxjxo3}.json` |
 | 16 nov. 2026 | Nouveau post publié dans **r/testerscommunity**, sans lien dans le corps, flair « Testers Needed » ; liens dans le premier commentaire. Visible dans le fil, score 1, non supprimé | https://www.reddit.com/r/testerscommunity/comments/1xxli15/test_for_test_instant_pause_a_pause_screen/ |
+| 16 nov. 2026, 15:44 | Second post publié dans **r/GooglePlayClosedTest**, corps reformulé (1 376 car., aucun lien), pas de flair disponible dans ce sub. Vérifié API : `removed: null` | https://www.reddit.com/r/GooglePlayClosedTest/comments/1xxsolu/test_for_test_instant_pause_i_need_12_testers_for/ |
+| 16 nov. 2026, 15:45 | Premier commentaire de liens publié (1 285 car.), puis **édité** pour ajouter la fiche Play Store : l'AutoModerator du sub exige opt-in **et** fiche Store. Trois liens vérifiés présents dans le corps final, `removed: null` | `/r/GooglePlayClosedTest/comments/1xxsolu.json` |
+| 16 nov. 2026, 17:35 | **Troisième** copie du même post, cette fois dans r/AndroidTesting (titre identique, corps identique) | https://www.reddit.com/r/AndroidTesting/comments/1xxvnju/ |
+| 16 nov. 2026, 20:14 | Commentaire chez `u/building_stuffs` annonçant « Joined your group and installed your app » **avant** de l'avoir fait | /r/AndroidTesting/comments/1xxosht |
+| 17 nov. 2026 | Vérification : le groupe `31-days-testing` affichait toujours « Rejoindre le groupe ». L'engagement public n'était pas tenu | groups.google.com/g/31-days-testing |
+| 17 nov. 2026 | Reprise en main : commentaire au modèle non rempli (`<APP>`, `<DATE>`) **supprimé** via `/api/del` | `t1_19sq9zyu9diqr` |
+| 17 nov. 2026 | Engagement tenu pour **31 Days** : groupe rejoint, opt-in accepté (« You are a tester »), APK installé sur la tablette `R5GL350ZJ9P` (visible dans le lanceur) | `com.days.android` |
+| 17 nov. 2026 | Engagement partiel pour **OffKit All Tools** : groupe `offkit-all-tools-tester` rejoint, opt-in accepté, mais la fiche Play répond **« Élément introuvable »** même avec le droit testeur — la release de test n'est pas accessible. Signalé à son auteur | `com.offkit.app` |
+| 17 nov. 2026 | Répondu à `u/building_stuffs` (aveu de la réponse trop rapide + engagement tenu), à `u/husnainali197` (test injoignable + contrainte du même compte Google) et à `u/onTestapp` (**refus** de l'achat de testeurs). Les trois vérifiés `removed: null` | `/r/GooglePlayClosedTest/comments/1xxsolu.json` |
 | | | |
 
 ---
@@ -215,6 +229,14 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 - **Acheter des testeurs** (Fiverr, fermes d'installations, échanges d'installations) :
   contraire aux politiques Play, risque de refus d'accès et de suppression de l'app.
 - **Promettre une récompense** contre un avis ou une inscription.
+- **Annoncer une installation ou une inscription avant de l'avoir faite.** C'est arrivé le
+  16 nov. chez `u/building_stuffs` ; ça se répare, mais ça ne se rattrape pas.
+- **Poster le même texte dans plusieurs subs le même jour.** Trois copies en huit heures le
+  16 nov. : c'est le signal qui fait filtrer un compte neuf.
+- **Cliquer « Installer » depuis play.google.com.** La fenêtre d'achat exige une
+  réauthentification Google (`accounts.google.com`) : passer par `adb shell am start -a
+  android.intent.action.VIEW -d "market://details?id=<pkg>"` puis `input tap`, et vérifier
+  avec `pm list packages`.
 - **Téléverser un versionCode déjà utilisé** (14 est consommé).
 - **Diffuser le lien d'opt-in avant que la version soit disponible** sur la piste.
 - **Tester un vrai numéro d'urgence**, y compris pendant une démonstration.
