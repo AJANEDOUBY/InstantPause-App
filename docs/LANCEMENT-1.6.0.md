@@ -233,6 +233,11 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 19 nov. 2026 | Commentaire réciproque chez **MealSnap** (`u/PerceptionNo3222`, 7/12 testeurs) : compte à 7 également, liens en corps de message. Publié, `removed: null`, score 1 | `t1_19sv1io2bikww` |
 | 19 nov. 2026 | Inscription au test **MOONSTOP** via le formulaire de `august.games` (`janedouby@gmail.com`, région Maroc) puis commentaire réciproque sur r/TestMyApp. Publié, `removed: null` | `t1_19sv214lnjpnn` |
 | 19 nov. 2026 | `@AuraloFit` **écarté** : son app est iPhone + Apple Watch, aucune réciprocité Android possible. Vérifié sur son profil X avant tout contact | x.com/AuraloFit |
+| 19 nov. 2026 | Message privé X envoyé à **`@Bumperling`** (réciprocité Number Bumper) : groupe rejoint, opt-in `janedouby@gmail.com`, 1.37.25 installée le 18 nov., les 3 liens rappelés. Aucun code d'accès demandé au final | x.com/i/chat (conversation `978626393369206784-2104493177126211584`) |
+| 19 nov. 2026 | E-mail envoyé à **`ralph.jobbins@gmail.com`** (membre arrivé le 18 nov. via le groupe ouvert, 0 opt-in) : rappel des 3 étapes, mention des 12 testeurs / 14 jours, retrait sur simple réponse. Gmail a confirmé l'envoi | mail.google.com (objet « Instant Pause closed test - are you still in? ») |
+| 19 nov. 2026 | **Publication restreinte à « Modéré »** pour les 8 membres du groupe (propriétaire inchangé) : leurs messages passent désormais par validation. Vérifié après rechargement. Réglage **par membre** : tout nouvel arrivant reste en « Autorisé » par défaut | groups.google.com/g/instant-pause-testers/members |
+| 19 nov. 2026 | **App Circle refusé** (message de `ger8le.` sur TestForge › #app-showcase) : système de coins, app compagnon à installer, testeurs de ferme — incompatible avec le refus public de l'achat de testeurs. Aucune réponse publiée | appcircle.co.uk |
+| 19 nov. 2026 | **Instant Pause listé sur 12apptesters.eu** (`JANEDOUBY`, app id 39, catégorie App, 0/12) : tableau d'affichage gratuit, sans coins ni paiement (éditeur Timo Genzen, Allemagne). Description validée avant envoi, « phones, not tablets » précisé | https://12apptesters.eu/app.php?id=39 |
 | | | |
 
 ---
