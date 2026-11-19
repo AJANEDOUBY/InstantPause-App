@@ -227,6 +227,12 @@ Réglages : *Réponses › Collecter les adresses e-mail (vérifiées)*, *Limite
 | 17 nov. 2026 | Groupe de test à **8 membres** : 4 testeurs externes + `janedouby`, `abdelgalaxy26`, `a.cimarron` et `othman.belmehdi` (comptes du développeur) | groups.google.com/g/instant-pause-testers/members |
 | 17 nov. 2026 | `othman.belmehdi@gmail.com` **retiré** du groupe (7 membres) : même téléphone Itel A665L que `janedouby`, et l'app n'y était jamais installée. Aucune installation perdue | groups.google.com/g/instant-pause-testers/members |
 | 17 nov. 2026 | Instant Pause **installé depuis Play sur l'Itel A665L** (`117591549Y000638`, Android 13, 720x1612) avec `janedouby@gmail.com` : versionCode 16 / 1.6.0, `installerPackageName=com.android.vending`, `firstInstallTime` 10:15:42, premier lancement en français sur l'écran de création du code. Le Play du téléphone sert bien `janedouby` : avec `othman` (retiré du groupe) la fiche aurait répondu « introuvable » | `adb -s 117591549Y000638 shell dumpsys package com.instantpause.app` |
+| 19 nov. 2026 | Réponse honnête à `u/building_stuffs` (« Is this an ai generated comment? ») : assistance IA reconnue, test non automatisé, promesse de capture réelle. Publiée et vérifiée en ligne | `t1_19sv1czf5h7wk` |
+| 19 nov. 2026 | **Capture réelle de 31 Days** prise sur la tablette `R5GL350ZJ9P` (19 nov. 08:09, « Day 1 of 31 ») et publiée dans le fil. Le compteur démarre à l'évaluation, pas à l'installation : expliqué publiquement au lieu d'être masqué | https://x0.at/eOP1.png (expire ≈ 30 jours) |
+| 19 nov. 2026 | Message du propriétaire dans le groupe `instant-pause-testers` : les 2 étapes, les 3 causes de « app not available for your device » (mauvais compte Play, cache Play, tablette/émulateur), et la distinction membre / testeur compté | https://groups.google.com/g/instant-pause-testers/c/Tq0oIDiZncE |
+| 19 nov. 2026 | Commentaire réciproque chez **MealSnap** (`u/PerceptionNo3222`, 7/12 testeurs) : compte à 7 également, liens en corps de message. Publié, `removed: null`, score 1 | `t1_19sv1io2bikww` |
+| 19 nov. 2026 | Inscription au test **MOONSTOP** via le formulaire de `august.games` (`janedouby@gmail.com`, région Maroc) puis commentaire réciproque sur r/TestMyApp. Publié, `removed: null` | `t1_19sv214lnjpnn` |
+| 19 nov. 2026 | `@AuraloFit` **écarté** : son app est iPhone + Apple Watch, aucune réciprocité Android possible. Vérifié sur son profil X avant tout contact | x.com/AuraloFit |
 | | | |
 
 ---
