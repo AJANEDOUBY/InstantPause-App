@@ -1,9 +1,11 @@
 package com.instantpause.app.ui.whitelist
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.instantpause.app.R
@@ -91,50 +93,64 @@ class WhitelistViewModel @Inject constructor(
      * Deux lectures possibles selon ce que renvoie le répertoire du constructeur :
      *  - l'URI d'une ligne téléphone (contient NUMBER et DISPLAY_NAME) ;
      *  - l'URI d'une fiche contact (il faut alors chercher son numéro).
+     *
+     * Toute lecture qui échoue (colonne absente, `SecurityException` faute de droit
+     * sur l'URI, fournisseur indisponible) donne `null` et l'interface affiche
+     * « lecture impossible » : l'ajout d'un contact ne doit jamais faire planter l'app.
      */
     private fun readContact(context: Context, uri: Uri): PickedContact? {
         val resolver = context.contentResolver
 
-        resolver.query(
-            uri,
-            arrayOf(Phone.NUMBER, Phone.DISPLAY_NAME),
-            null,
-            null,
-            null
-        )?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val number = cursor.getString(0)
-                val name = cursor.getString(1)
-                if (!number.isNullOrBlank()) {
-                    return PickedContact(name?.takeIf { it.isNotBlank() } ?: number, number)
-                }
-            }
-        }
+        queryFirstContact(resolver, uri, selection = null, args = null)?.let { return it }
 
         val contactId = runCatching { ContentUris.parseId(uri) }.getOrNull()
             ?.takeIf { it > 0 }
             ?: return null
 
-        resolver.query(
+        return queryFirstContact(
+            resolver,
             Phone.CONTENT_URI,
+            selection = "${Phone.CONTACT_ID} = ?",
+            args = arrayOf(contactId.toString())
+        )
+    }
+
+    /**
+     * Première ligne exploitable, ou `null`. Les exceptions sont absorbées ici :
+     * sans `READ_CONTACTS`, Android n'autorise que l'URI choisie, et une requête
+     * sur un autre URI lève `SecurityException`.
+     */
+    private fun queryFirstContact(
+        resolver: ContentResolver,
+        uri: Uri,
+        selection: String?,
+        args: Array<String>?
+    ): PickedContact? = try {
+        resolver.query(
+            uri,
             arrayOf(Phone.NUMBER, Phone.DISPLAY_NAME),
-            "${Phone.CONTACT_ID} = ?",
-            arrayOf(contactId.toString()),
+            selection,
+            args,
             null
         )?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val number = cursor.getString(0)
-                val name = cursor.getString(1)
-                if (!number.isNullOrBlank()) {
-                    return PickedContact(name?.takeIf { it.isNotBlank() } ?: number, number)
-                }
+            if (!cursor.moveToFirst()) return@use null
+            val number = cursor.getString(0)
+            val name = cursor.getString(1)
+            if (number.isNullOrBlank()) {
+                null
+            } else {
+                PickedContact(name?.takeIf { it.isNotBlank() } ?: number, number)
             }
         }
-
-        return null
+    } catch (e: Exception) {
+        // Jamais le numéro ni le nom dans le journal : seulement le type d'erreur.
+        Log.w(TAG, "Lecture du contact impossible (${e.javaClass.simpleName})")
+        null
     }
 
     companion object {
+        private const val TAG = "WhitelistViewModel"
+
         /** Affichage uniquement : la limite réelle est appliquée par le dépôt. */
         const val MAX_CONTACTS = WhitelistRepository.MAX_ENTRIES
     }
