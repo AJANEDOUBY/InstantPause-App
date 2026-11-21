@@ -6,8 +6,10 @@ Seules les versions publiées depuis le renommage du paquet sont maintenues.
 
 | Version | Supportée          | Notes |
 | ------- | ------------------ | ----- |
-| 1.4.x   | :white_check_mark: | Paquet `com.instantpause.app` |
-| 1.3.x   | :x:                | Paquet `com.cooldown.app`, remplacé — aucune mise à jour possible vers 1.4.x |
+| 1.6.x   | :white_check_mark: | Paquet `com.instantpause.app` — dernière version |
+| 1.5.x   | :x:                | Paquet `com.instantpause.app` — passer en 1.6.x |
+| 1.4.x   | :x:                | Paquet `com.instantpause.app` — passer en 1.6.x |
+| 1.3.x   | :x:                | Paquet `com.cooldown.app`, remplacé — aucune mise à jour possible vers 1.4.x ou plus |
 | < 1.3   | :x:                | Obsolète |
 
 Une faille corrigée n'est rétroportée que sur la dernière version mineure. Les versions
@@ -21,9 +23,10 @@ antérieures ne reçoivent aucun correctif : il faut installer la dernière rele
 >
 > Onglet *Security* → *Report a vulnerability*
 
-Le dépôt du code est privé et son plan GitHub ne permet pas les avis de sécurité : le
-formulaire est donc ouvert sur le dépôt public `instant-pause-privacy`, seul point de contact
-anonyme. Le rapport y reste **privé** et visible de l'auteur uniquement jusqu'à publication.
+Le code source est public (https://github.com/AJANEDOUBY/InstantPause-App), mais le formulaire de
+signalement privé est ouvert sur le dépôt `instant-pause-privacy`, qui sert aussi de point de
+contact pour la politique de confidentialité. Le rapport y reste **privé** et visible de
+l'auteur uniquement jusqu'à publication.
 
 Si vous préférez l'e-mail : **janedouby@gmail.com**. Les rapports y sont traités avec la même
 confidentialité, mais GitHub reste préférable pour le suivi et le crédit.
@@ -69,6 +72,7 @@ vulnérabilités qui nous intéressent sont donc les contournements **sans le co
 | Plage horaire | Appel bloqué hors plage, ou appel non bloqué pendant une plage active (hors fail-open, voir plus bas) |
 | Numéros d'urgence | Un numéro d'urgence bloqué, ou un appel de test routé vers un vrai service d'urgence |
 | Contacts autorisés | Dépassement de la limite de 3, ou accès au répertoire sans permission |
+| Ne pas déranger (option) | Filtre laissé actif après la fin d'une plage, réglage d'origine de l'utilisateur écrasé, ou réglage modifié alors que l'option est désactivée |
 | Fuite de données | Écriture de données de l'app hors de son stockage privé, sauvegarde cloud non déclarée, requête réseau |
 | Élévation de privilèges | Un composant exporté permettant à une autre app de désactiver la protection |
 | Secret exposé | Clé, mot de passe ou jeton versionné dans ce dépôt |
