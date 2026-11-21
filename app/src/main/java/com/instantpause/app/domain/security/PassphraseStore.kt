@@ -16,7 +16,12 @@ interface PassphraseStore {
 
 data class LockoutState(
     val failedAttempts: Int = 0,
-    val lockedUntil: Long = 0L
+    /** Échéance en epoch ms : affichage et ancien format uniquement. */
+    val lockedUntil: Long = 0L,
+    /** Temps monotone (elapsedRealtime) au moment de la temporisation. */
+    val lockedAtElapsed: Long = 0L,
+    /** Durée de la temporisation en ms (0 = aucune, ou ancien format). */
+    val lockDelayMs: Long = 0L
 )
 
 /**

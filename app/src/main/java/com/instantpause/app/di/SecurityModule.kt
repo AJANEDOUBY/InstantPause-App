@@ -1,6 +1,7 @@
 package com.instantpause.app.di
 
 import com.instantpause.app.data.datastore.ProtectionPrefs
+import com.instantpause.app.domain.security.MonotonicClock
 import com.instantpause.app.domain.security.PassphraseHasher
 import com.instantpause.app.domain.security.PassphraseStore
 import dagger.Binds
@@ -29,5 +30,10 @@ abstract class SecurityModule {
         @Provides
         @Singleton
         fun provideClock(): Clock = Clock.systemUTC()
+
+        @Provides
+        @Singleton
+        fun provideMonotonicClock(): MonotonicClock =
+            MonotonicClock { android.os.SystemClock.elapsedRealtime() }
     }
 }
