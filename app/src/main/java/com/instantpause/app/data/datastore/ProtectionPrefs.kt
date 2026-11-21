@@ -12,8 +12,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.instantpause.app.domain.dnd.DndPreferences
 import com.instantpause.app.domain.dnd.DndState
-import com.instantpause.app.domain.security.LockoutState
 import com.instantpause.app.domain.pause.PauseMessagePolicy
+import com.instantpause.app.domain.security.LockoutState
 import com.instantpause.app.domain.security.PassphraseStore
 import com.instantpause.app.domain.security.StoredPassphrase
 import dagger.Module
@@ -21,14 +21,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val Context.coolDownDataStore: DataStore<Preferences> by
 preferencesDataStore(name = "cooldown_prefs")
@@ -187,7 +187,9 @@ class ProtectionPrefs @Inject constructor(
         val prefs = data.first()
         return LockoutState(
             failedAttempts = prefs[PASSPHRASE_FAILED_ATTEMPTS] ?: 0,
-            lockedUntil = prefs[PASSPHRASE_LOCKED_UNTIL] ?: 0L
+            lockedUntil = prefs[PASSPHRASE_LOCKED_UNTIL] ?: 0L,
+            lockedAtElapsed = prefs[PASSPHRASE_LOCKED_AT_ELAPSED] ?: 0L,
+            lockDelayMs = prefs[PASSPHRASE_LOCK_DELAY_MS] ?: 0L
         )
     }
 
@@ -195,6 +197,8 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit {
             it[PASSPHRASE_FAILED_ATTEMPTS] = state.failedAttempts
             it[PASSPHRASE_LOCKED_UNTIL] = state.lockedUntil
+            it[PASSPHRASE_LOCKED_AT_ELAPSED] = state.lockedAtElapsed
+            it[PASSPHRASE_LOCK_DELAY_MS] = state.lockDelayMs
         }
     }
 
@@ -210,6 +214,8 @@ class ProtectionPrefs @Inject constructor(
         val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")
         val PASSPHRASE_FAILED_ATTEMPTS = intPreferencesKey("passphrase_failed_attempts")
         val PASSPHRASE_LOCKED_UNTIL = longPreferencesKey("passphrase_locked_until")
+        val PASSPHRASE_LOCKED_AT_ELAPSED = longPreferencesKey("passphrase_locked_at_elapsed")
+        val PASSPHRASE_LOCK_DELAY_MS = longPreferencesKey("passphrase_lock_delay_ms")
         val DND_ENABLED = booleanPreferencesKey("dnd_enabled")
         val DND_ACTIVE = booleanPreferencesKey("dnd_active")
         val DND_PREVIOUS_FILTER = intPreferencesKey("dnd_previous_filter")

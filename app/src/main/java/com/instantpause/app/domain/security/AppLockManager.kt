@@ -23,19 +23,29 @@ import javax.inject.Singleton
  *    bloquer un appel, ajouter une plage ou activer le Zen reste toujours libre ;
  *  - l'état « déverrouillé » n'existe qu'en mémoire : il meurt avec le processus,
  *    et retombe après un passage en arrière-plan prolongé.
+ *
+ * Les durées (temporisation après échecs, délai d'arrière-plan) sont mesurées
+ * avec [MonotonicClock] : avancer ou reculer l'heure du téléphone ne les raccourcit
+ * pas. L'horloge murale ([Clock]) ne sert qu'à l'affichage (`lockedUntil`).
  */
 @Singleton
 class AppLockManager @Inject constructor(
     private val store: PassphraseStore,
     private val hasher: PassphraseHasher,
-    private val clock: Clock
+    private val clock: Clock,
+    private val monotonic: MonotonicClock
 ) {
+
+    /** Pour les tests : le temps monotone suit alors l'horloge fournie. */
+    constructor(store: PassphraseStore, hasher: PassphraseHasher, clock: Clock) :
+        this(store, hasher, clock, MonotonicClock { clock.millis() })
 
     enum class Status { LOADING, DISABLED, LOCKED, UNLOCKED }
 
     data class State(
         val status: Status = Status.LOADING,
         val failedAttempts: Int = 0,
+        /** Échéance d'affichage (epoch ms). La vérité est mesurée en temps monotone. */
         val lockedUntil: Long = 0L
     ) {
         val isConfigured: Boolean
@@ -57,7 +67,7 @@ class AppLockManager @Inject constructor(
         /** Code faux. [attemptsLeft] avant la prochaine temporisation. */
         data class Wrong(val attemptsLeft: Int, val nextDelayMs: Long) : Result
 
-        /** Trop d'échecs : il faut attendre [until] (horodatage epoch ms). */
+        /** Trop d'échecs : il faut attendre [until] (horodatage epoch ms, pour l'affichage). */
         data class RateLimited(val until: Long) : Result
 
         /** Le nouveau code ne respecte pas la politique de composition. */
@@ -76,13 +86,22 @@ class AppLockManager @Inject constructor(
     @Volatile
     private var loaded = false
 
-    private var backgroundedAt: Long = 0L
+    /** Instant monotone de la dernière temporisation, et sa durée (0 = aucune). */
+    @Volatile
+    private var lockedAtElapsed: Long = 0L
+
+    @Volatile
+    private var lockDelayMs: Long = 0L
+
+    private var backgroundedAtElapsed: Long = NOT_BACKGROUNDED
 
     /** Charge l'état une seule fois par processus. */
     suspend fun ensureLoaded() {
         if (loaded) return
         val stored = runCatching { store.read() }.getOrNull()
         val lockout = runCatching { store.readLockout() }.getOrDefault(LockoutState())
+        lockedAtElapsed = lockout.lockedAtElapsed
+        lockDelayMs = lockout.lockDelayMs
         _state.value = State(
             status = if (stored == null) Status.DISABLED else Status.LOCKED,
             failedAttempts = lockout.failedAttempts,
@@ -101,14 +120,16 @@ class AppLockManager @Inject constructor(
      * Un passage très court (ouvrir les Paramètres, revenir) ne reverrouille pas.
      */
     fun onAppBackgrounded() {
-        backgroundedAt = clock.millis()
+        backgroundedAtElapsed = monotonic.elapsedMillis()
     }
 
     fun onAppForegrounded() {
-        val left = backgroundedAt
-        if (left == 0L) return
-        backgroundedAt = 0L
-        if (clock.millis() - left >= GRACE_MS) lock()
+        val left = backgroundedAtElapsed
+        if (left == NOT_BACKGROUNDED) return
+        backgroundedAtElapsed = NOT_BACKGROUNDED
+        // Un temps négatif (redémarrage entre-temps) est traité comme « long » : on verrouille.
+        val away = monotonic.elapsedMillis() - left
+        if (away < 0L || away >= GRACE_MS) lock()
     }
 
     /**
@@ -165,6 +186,7 @@ class AppLockManager @Inject constructor(
                 if (!cleared || stillStored) return Result.StorageError
 
                 runCatching { store.writeLockout(LockoutState()) }
+                resetLockoutMemory()
                 _state.value = State(status = Status.DISABLED)
                 Result.Success
             }
@@ -191,10 +213,36 @@ class AppLockManager @Inject constructor(
         }
     }
 
-    /** Millisecondes restantes de temporisation (0 si aucune). */
-    fun remainingLockoutMs(): Long {
-        val until = _state.value.lockedUntil
-        return (until - clock.millis()).coerceAtLeast(0L)
+    /** Millisecondes restantes de temporisation (0 si aucune), en temps monotone. */
+    fun remainingLockoutMs(): Long = remainingMs()
+
+    private fun resetLockoutMemory() {
+        lockedAtElapsed = 0L
+        lockDelayMs = 0L
+    }
+
+    /**
+     * Reste de la temporisation.
+     *
+     * - Cas normal : `délai - temps monotone écoulé` depuis l'échec. Changer l'heure
+     *   du téléphone n'y change rien.
+     * - Redémarrage détecté (le temps monotone est repassé sous l'instant de
+     *   l'échec) : on ne peut plus savoir ce qui s'est écoulé. Par prudence on
+     *   compte depuis le démarrage, ce qui ne dépasse jamais le délai d'origine
+     *   mais ne permet pas de le contourner en redémarrant.
+     * - Ancien format (sans délai enregistré) : repli sur l'horloge murale, plafonné
+     *   à [MAX_LOCKOUT_MS] pour qu'une date aberrante ne bloque pas indéfiniment.
+     */
+    private fun remainingMs(): Long {
+        val delay = lockDelayMs
+        if (delay > 0L) {
+            val nowElapsed = monotonic.elapsedMillis()
+            val since = if (nowElapsed >= lockedAtElapsed) nowElapsed - lockedAtElapsed else nowElapsed
+            return (delay - since).coerceIn(0L, MAX_LOCKOUT_MS)
+        }
+        val legacyUntil = _state.value.lockedUntil
+        if (legacyUntil <= 0L) return 0L
+        return (legacyUntil - clock.millis()).coerceIn(0L, MAX_LOCKOUT_MS)
     }
 
     private suspend fun writePassphrase(new: String, unlocked: Boolean): Boolean {
@@ -213,16 +261,24 @@ class AppLockManager @Inject constructor(
         if (!written) return false
 
         runCatching { store.writeLockout(LockoutState()) }
+        resetLockoutMemory()
         _state.value = State(status = if (unlocked) Status.UNLOCKED else Status.LOCKED)
         return true
     }
 
     /** Vérification pure, sans toucher au statut déverrouillé. */
     private suspend fun verify(code: String): Result {
-        val now = clock.millis()
+        val wallNow = clock.millis()
 
         val lockout = _state.value
-        if (lockout.lockedUntil > now) return Result.RateLimited(lockout.lockedUntil)
+        val remaining = remainingMs()
+        if (remaining > 0L) {
+            // Échéance recalculée pour l'affichage : elle reste cohérente même si
+            // l'heure du téléphone a été modifiée.
+            val until = wallNow + remaining
+            _state.update { it.copy(lockedUntil = until) }
+            return Result.RateLimited(until)
+        }
 
         val stored = runCatching { store.read() }.getOrNull()
             ?: return Result.NotConfigured
@@ -240,17 +296,30 @@ class AppLockManager @Inject constructor(
 
         if (matches) {
             runCatching { store.writeLockout(LockoutState()) }
+            resetLockoutMemory()
             _state.update { it.copy(failedAttempts = 0, lockedUntil = 0L) }
             return Result.Success
         }
 
         val failed = lockout.failedAttempts + 1
         val delay = LockoutPolicy.delayMs(failed)
-        val until = if (delay > 0L) now + delay else 0L
-        runCatching { store.writeLockout(LockoutState(failed, until)) }
+        val atElapsed = if (delay > 0L) monotonic.elapsedMillis() else 0L
+        val until = if (delay > 0L) wallNow + delay else 0L
+        lockedAtElapsed = atElapsed
+        lockDelayMs = delay
+        runCatching {
+            store.writeLockout(
+                LockoutState(
+                    failedAttempts = failed,
+                    lockedUntil = until,
+                    lockedAtElapsed = atElapsed,
+                    lockDelayMs = delay
+                )
+            )
+        }
         _state.update { it.copy(failedAttempts = failed, lockedUntil = until) }
 
-        return if (until > now) {
+        return if (delay > 0L) {
             Result.RateLimited(until)
         } else {
             Result.Wrong(
@@ -263,5 +332,10 @@ class AppLockManager @Inject constructor(
     private companion object {
         /** Au-delà de 60 s hors de l'app, il faut retaper le code. */
         const val GRACE_MS = 60_000L
+
+        /** Plafond de [LockoutPolicy] (15 min), utilisé pour borner les repli. */
+        const val MAX_LOCKOUT_MS = 15 * 60_000L
+
+        const val NOT_BACKGROUNDED = Long.MIN_VALUE
     }
 }
