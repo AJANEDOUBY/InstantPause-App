@@ -17,7 +17,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class AndroidDndGateway @Inject constructor(
-    @param:ApplicationContext context: Context
+    @ApplicationContext context: Context
 ) : DndGateway {
 
     private val manager: NotificationManager? =
