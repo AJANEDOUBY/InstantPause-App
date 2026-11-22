@@ -1,3 +1,4 @@
+
 # Privacy Policy — Instant Pause
 
 **English** · [Español](#política-de-privacidad--instant-pause) · [Français](#politique-de-confidentialité--instant-pause)
@@ -60,6 +61,8 @@ mode yourself during a window, the app steps back and does not re-apply its own.
 the app or revoke Do Not Disturb access while a window is active, Android keeps *Do Not Disturb*
 enabled until you turn it off manually in your phone's quick settings.
 
+The app does not override those rules and does not promise that a given app will be blocked. The permission gives access to the Do Not Disturb mode only — the app never reads the content of your notifications.
+
 ## 3. What the app does not do
 
 - **No network connection.** The app does not declare the `INTERNET` permission and embeds no
@@ -94,6 +97,7 @@ prevent it.
 - Windows, contacts and settings: **until the app is uninstalled**.
 - Block log: **90 days** maximum, purged automatically.
 - Protection code: hash kept until it is changed or the app is uninstalled.
+- If you uninstall the app **while a pause window is active**, Android may keep the Do Not Disturb filter on: turn it off in *Settings → Sound → Do Not Disturb* (or *Notifications → Do Not Disturb*, depending on your Android version). The app cannot do it once it is gone.
 
 ## 6. Your rights (GDPR)
 
@@ -194,6 +198,8 @@ imponer el suyo. Si desinstalas la aplicación o retiras el acceso a No molestar
 está activa, Android mantendrá activado el modo *No molestar* hasta que lo desactives manualmente
 en los ajustes rápidos del teléfono.
 
+La aplicación no modifica esas reglas y no promete que una aplicación concreta quede bloqueada. El permiso da acceso únicamente al modo No molestar: la aplicación nunca lee el contenido de tus notificaciones.
+
 ## 3. Lo que la aplicación no hace
 
 - **Ninguna conexión de red.** La aplicación no declara el permiso `INTERNET` y no incluye ningún
@@ -228,6 +234,7 @@ aplicación no puede impedirlo.
 - Franjas, contactos y ajustes: **hasta la desinstalación** de la aplicación.
 - Registro de bloqueos: **90 días** como máximo, purgado automáticamente.
 - Código de protección: huella conservada hasta su modificación o la desinstalación.
+- Si desinstalas la aplicación **con una franja de pausa activa**, Android puede mantener activado el filtro No molestar: desactívalo en *Ajustes → Sonido → No molestar* (o *Notificaciones → No molestar*, según tu versión de Android). La aplicación ya no puede hacerlo cuando desaparece.
 
 ## 6. Tus derechos (RGPD)
 
@@ -329,6 +336,8 @@ s'efface et ne réapplique pas le sien. Si vous désinstallez l'application ou l
 *Ne pas déranger* pendant qu'une plage est active, Android maintient le mode *Ne pas déranger*
 activé jusqu'à ce que vous le désactiviez manuellement dans les réglages rapides du téléphone.
 
+L'application ne contourne pas ces règles et ne promet pas qu'une application donnée sera bloquée. La permission ne donne accès qu'au mode Ne pas déranger : l'application ne lit jamais le contenu de vos notifications.
+
 ## 3. Ce que l'application ne fait pas
 
 - **Aucune connexion réseau.** L'application ne déclare pas la permission `INTERNET` et n'embarque
@@ -363,6 +372,7 @@ l'application ne peut pas vous en empêcher.
 - Plages, contacts et réglages : **jusqu'à la désinstallation** de l'application.
 - Journal des blocages : **90 jours** au maximum, purgé automatiquement.
 - Code de protection : empreinte conservée jusqu'à sa modification ou la désinstallation.
+- Si vous désinstallez l'application **alors qu'une plage de pause est active**, Android peut laisser le filtre Ne pas déranger activé : désactivez-le dans *Paramètres → Son → Ne pas déranger* (ou *Notifications → Ne pas déranger*, selon votre version d'Android). L'application ne peut plus le faire une fois désinstallée.
 
 ## 6. Vos droits (RGPD)
 
