@@ -270,7 +270,6 @@ documento. Si una versión futura introdujera un tratamiento de datos (por ejemp
 sincronización opcional), lo indicaría explícitamente antes de activarse.
 
 ---
-
 # Politique de confidentialité — Instant Pause
 
 [English](#privacy-policy--instant-pause) · [Español](#política-de-privacidad--instant-pause) · **Français**
