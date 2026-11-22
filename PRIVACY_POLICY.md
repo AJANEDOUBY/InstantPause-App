@@ -3,7 +3,7 @@
 
 **English** · [Español](#política-de-privacidad--instant-pause) · [Français](#politique-de-confidentialité--instant-pause)
 
-**Last updated: 21 November 2026**
+**Last updated: 22 November 2026**
 
 Instant Pause (`com.instantpause.app`) is an Android app that helps you resist impulsive calls.
 This policy explains, plainly, what data the app uses and what it does not do with it.
@@ -137,7 +137,7 @@ state so explicitly before activation.
 
 [English](#privacy-policy--instant-pause) · **Español** · [Français](#politique-de-confidentialité--instant-pause)
 
-**Última actualización: 21 de noviembre de 2026**
+**Última actualización: 22 de noviembre de 2026**
 
 Instant Pause (`com.instantpause.app`) es una aplicación Android que te ayuda a resistir las
 llamadas impulsivas. Esta política explica, sin rodeos, qué datos utiliza la aplicación y qué no
@@ -275,7 +275,7 @@ sincronización opcional), lo indicaría explícitamente antes de activarse.
 
 [English](#privacy-policy--instant-pause) · [Español](#política-de-privacidad--instant-pause) · **Français**
 
-**Dernière mise à jour : 21 novembre 2026**
+**Dernière mise à jour : 22 novembre 2026**
 
 Instant Pause (`com.instantpause.app`) est une application Android qui vous aide à résister aux
 appels impulsifs. Cette politique explique, sans détour, quelles données l'application utilise et
