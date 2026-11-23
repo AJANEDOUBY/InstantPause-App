@@ -55,7 +55,7 @@ Messenger ne sont pas interceptés.
 CE QUI LA REND DIFFÉRENTE
 
 • Le code de protection est créé à froid, avant tout le reste, et il n'est jamais stocké en clair.
-• Couper une plage, supprimer un contact autorisé ou retirer l'anti-désinstallation exige ce code.
+• Couper une plage ou supprimer un contact autorisé exige ce code.
 • Aucun compte. Aucune publicité. Aucun analytics. Aucun serveur.
 • L'application ne demande pas la permission de lire votre répertoire : vous désignez un contact
   avec le sélecteur d'Android, et seule cette fiche est enregistrée.
@@ -79,14 +79,13 @@ Pas de connexion réseau, pas de sauvegarde dans le cloud. Plages, contacts et r
 dans le stockage privé de l'application, sur votre téléphone. La politique complète est ici :
 https://ajanedouby.github.io/instant-pause-privacy/
 
-CONFIGURATION EN 6 ÉTAPES
+CONFIGURATION EN 5 ÉTAPES
 
 1. Choisissez votre code.
-2. Activez la protection anti-désinstallation.
-3. Autorisez le raccrochage à 3 minutes.
-4. Acceptez le rôle de redirection d'appels.
-5. Autorisez l'affichage par-dessus les appels.
-6. Créez une plage horaire. C'est tout.
+2. Autorisez le raccrochage à 3 minutes.
+3. Acceptez le rôle de redirection d'appels.
+4. Autorisez l'affichage par-dessus les appels.
+5. Créez une plage horaire. C'est tout.
 
 Une correction de code, un doute, un plantage : écrivez à janedouby@gmail.com.
 ```
@@ -143,15 +142,6 @@ TelecomManager.endCall(). L'application ne lit ni le journal d'appels, ni les SM
 aucun numéro et ne connaît pas l'identité de l'appelant au-delà du numéro composé.
 ```
 
-### Administrateur d'appareil
-
-```
-L'application empêche une désinstallation impulsive : c'est le cœur de sa protection, au même
-titre que le code. L'administrateur d'appareil n'est utilisé que pour cette fonction. Aucune
-politique de sécurité n'est imposée à l'appareil (pas de mot de passe obligatoire, pas de
-chiffrement), aucun effacement à distance n'est possible, et l'utilisateur désactive lui-même
-l'administrateur depuis les réglages Android avec son code.
-```
 
 ### Service de premier plan — `specialUse`
 

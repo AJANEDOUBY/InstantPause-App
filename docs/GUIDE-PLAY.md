@@ -101,7 +101,7 @@ Instant Pause existe pour cette minute-là.
 CE QUI LA REND DIFFÉRENTE
 
 • Le code de protection est créé à froid, avant tout le reste, et il n'est jamais stocké en clair.
-• Couper une plage, supprimer un contact autorisé ou retirer l'anti-désinstallation exige ce code.
+• Couper une plage ou supprimer un contact autorisé exige ce code.
 • Aucun compte. Aucune publicité. Aucun analytics. Aucun serveur.
 • L'application ne demande pas la permission de lire votre répertoire : vous désignez un contact
   avec le sélecteur d'Android, et seule cette fiche est enregistrée.
@@ -117,14 +117,13 @@ Pas de connexion réseau, pas de sauvegarde dans le cloud. Plages, contacts et r
 dans le stockage privé de l'application, sur votre téléphone. La politique complète est ici :
 https://ajanedouby.github.io/instant-pause-privacy/
 
-CONFIGURATION EN 6 ÉTAPES
+CONFIGURATION EN 5 ÉTAPES
 
 1. Choisissez votre code.
-2. Activez la protection anti-désinstallation.
-3. Autorisez le raccrochage à 3 minutes.
-4. Acceptez le rôle de redirection d'appels.
-5. Autorisez l'affichage par-dessus les appels.
-6. Créez une plage horaire. C'est tout.
+2. Autorisez le raccrochage à 3 minutes.
+3. Acceptez le rôle de redirection d'appels.
+4. Autorisez l'affichage par-dessus les appels.
+5. Créez une plage horaire. C'est tout.
 
 Une correction de code, un doute, un plantage : écrivez à janedouby@gmail.com.
 ```
@@ -176,12 +175,11 @@ Menu **Politique → Contenu de l'application**. Chaque ligne doit finir en vert
 3. La Console affiche alors les **déclarations de permissions sensibles**. C'est le moment
    délicat de tout le processus.
 
-### Les cinq déclarations à préparer
+### Les quatre déclarations à préparer
 
 | Sujet | Ce que Google demande | Ce qu'on répond |
 |---|---|---|
 | `ANSWER_PHONE_CALLS` | à quoi sert la permission | « Raccrocher à 3 minutes un appel vers un contact autorisé, pendant une plage de protection » |
-| Administrateur d'appareil | justifier l'usage | « Empêcher une désinstallation impulsive. Aucune politique n'est imposée à l'appareil, aucun effacement à distance » |
 | Service de premier plan `specialUse` | décrire l'usage | « Maintien du minuteur d'appel et de la protection après redémarrage » |
 | `USE_FULL_SCREEN_INTENT` | catégorie d'app | « Application d'appels / de blocage d'appels : afficher l'écran de pause sur l'écran verrouillé » |
 | `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | prouver que Doze dégrade la fonction principale | « Processus gelé = appel non intercepté, sans message. Voir `PERMISSIONS-PLAY.md`, section 4 » |

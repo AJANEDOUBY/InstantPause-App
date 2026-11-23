@@ -111,7 +111,6 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="countdown_for_trusted_contacts_calls" />
         </service>
-
         <!-- Service de veille : maintient l'app en vie sur les téléphones agressifs -->
         <service
             android:name=".system.CoolDownWatchdogService"
@@ -121,19 +120,6 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="call_protection_watchdog" />
         </service>
-        <!-- Administrateur d'appareil : uniquement pour freiner la désinstallation -->
-        <receiver
-            android:name=".system.CoolDownDeviceAdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin" />
-        </receiver>
-
         <!-- Récepteur au démarrage du téléphone (exported=true OBLIGATOIRE) -->
         <receiver
             android:name=".system.BootReceiver"

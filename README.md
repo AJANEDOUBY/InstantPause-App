@@ -175,31 +175,29 @@ Three free attempts, then 30 s, 1 min, 2 min, 4 min… up to **15 minutes** betw
 The counter is persisted: killing the app does not reset it; neither does rebooting the
 phone.
 
-### Anti-uninstall (Device Admin)
+### Anti-uninstall: removed in 1.7.0
 
-Device admin is **without any policy** (no screen lock, no data wipe). Android then refuses
-to uninstall the app while this admin is active.
+Earlier versions used a **device administrator** (no policy) to slow down an impulsive
+uninstall. It was **removed in 1.7.0**: Google Play treats an administrator whose only
+effect is to block uninstallation as an abusive use, and the benefit was two extra taps
+at best.
 
-It is requested **during installation**, right after the code is created: the app does not
-move on to call authorisation until it is active. Android requires a system confirmation
-(no app can activate itself), but Instant Pause opens that screen automatically rather than
-waiting for you to find it in the Security tab.
+Uninstalling the app is now a normal Android action. **No device administrator is
+requested, declared or left behind by 1.7.0.** The protection against impulse lives in
+the code, not in the installer.
 
-Once this step is passed, it does not appear again: removing the admin with your code from
-the Security tab remains possible, and does not trap the user in a loop.
-
-> **Let's be honest**: no application can prevent an uninstall. The admin adds two steps
-> (Settings → Security → Device admin apps → deactivate), and that's it. It is a speed
-> bump that breaks the reflex, not a padlock.
+> If you came from 1.6.x and had activated the old administrator, Android may still list
+> Instant Pause in *Settings → Security → Device admin apps*. Deactivate it there once:
+> 1.7.0 no longer declares it and cannot do it for you.
 
 ### What the lock does not do
 
 - It does **not** block launching the app (a deliberate choice: protection must remain
   consultable).
 - It does not resist `adb`, safe mode, or clearing the app's data.
-- It does not protect against deactivating the admin from the system Settings.
+- It does not prevent an uninstall: nothing in the app can.
 - **Forgotten code = no recovery possible**: you must clear the app's data (which also
-  deletes the windows) or uninstall it after removing the admin.
+  deletes the windows) or uninstall the app.
 
 ---
 
@@ -269,13 +267,12 @@ app/src/main/java/com/instantpause/app/
 │   ├── PauseForegroundService.kt          # Opens the UI from the background
 │   ├── CoolDownWatchdogService.kt         # Keeps the process alive
 │   ├── WatchdogAlarmReceiver.kt           # Periodic re-arming
-│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-uninstall (no policy)
 │   ├── ProtectionAlertNotifier.kt         # Channels + notifications
 │   └── BootReceiver.kt                    # After reboot / update
 └── ui/
     ├── main/      # Home, help banner, role activation
     ├── schedule/  # Windows + history (Compose)
-    ├── security/  # Lock: code, delays, device admin
+    ├── security/  # Lock: code, delays
     ├── pause/     # Sensory pause screen
     ├── logs/      # Detailed log
     └── theme/     # Material 3
@@ -335,8 +332,7 @@ sha256sum InstantPause-1.6.0.apk
 
 > 🛡️ Some preinstalled antivirus apps (AVG/Avast on itel, Infinix…) show "suspicious
 > application" for any APK installed outside the Play Store. It is a heuristic on the
-> **source**, not an analysis of the code: do not tap "REMOVE". (And if the Instant Pause
-> admin is active, uninstallation will fail anyway.)
+> **source**, not an analysis of the code: do not tap "REMOVE".
 
 ### Requirements
 - Android **10 (API 29)** or higher.
@@ -347,19 +343,17 @@ sha256sum InstantPause-1.6.0.apk
 1. Install the APK (release or local build).
 2. Open the app → **choose your protection code**. It is mandatory: the screen cannot be
    bypassed, and the code can no longer be deleted afterwards.
-3. Confirm the **anti-uninstall** protection (Device Admin): the system screen opens
-   automatically at this step, and the app does not continue until it is active.
-4. Grant **Pass and manage phone calls**: this is what allows the call to be cut at
+3. Grant **Pass and manage phone calls**: this is what allows the call to be cut at
    3 minutes. This step is mandatory — without it, an allowed contact could keep you on
    the phone for an hour.
-5. Accept the **Call redirection** role.
-6. Allow **full-screen display** (Android 14+): the Android setting opens
+4. Accept the **Call redirection** role.
+5. Allow **full-screen display** (Android 14+): the Android setting opens
    automatically. This step is offered **only once** and is not blocking — without it,
    the pause screen appears as a simple notification to tap.
-7. Grant the remaining permissions:
+6. Grant the remaining permissions:
    - **Notifications** (Android 13+) — for the block alert;
    - **Display over other apps** — for the pause screen.
-8. Create a time window (or enable Zen mode) and test with a neutral number.
+7. Create a time window (or enable Zen mode) and test with a neutral number.
 
 ---
 
@@ -387,15 +381,13 @@ Before the first publication, the Play Console requires:
 2. the **Data safety** form — here everything is local: "no data collected";
 3. the **justification for sensitive permissions**, to be written when submitting:
    - `ANSWER_PHONE_CALLS`: hang up at 3 minutes a call to an allowed contact;
-   - device admin: slow down an impulsive uninstall (no policy is requested from the
-     device);
    - `specialUse` foreground service: keeping the protection alive and the call timer;
    - `USE_FULL_SCREEN_INTENT`: show the pause screen over the lock screen;
 4. the **foreground services** usage declaration (separate form).
 
-> ⚠️ Play review is the friction point, not the code: device admin and
-> `ANSWER_PHONE_CALLS` are the two most scrutinised permissions. The GitHub repository
-> remains the distribution channel for signed APKs, independently of the Store.
+> ⚠️ Play review is the friction point, not the code: `ANSWER_PHONE_CALLS` is one of the
+> most scrutinised permissions. The GitHub repository remains the distribution channel
+> for signed APKs, independently of the Store.
 
 ---
 
@@ -484,7 +476,7 @@ The tag created is `v<versionName>`; `versionName`/`versionCode` must be increme
 
 ## Tests
 
-117 unit tests cover the business logic, with no Android dependency at runtime:
+122 unit tests cover the business logic, with no Android dependency at runtime:
 
 | Suite | Coverage |
 |---|---|
@@ -502,10 +494,10 @@ The tag created is `v<versionName>`; `versionName`/`versionCode` must be increme
 | `AppLockManagerTest` (20) | lifecycle, code created locked, restart, persisted delay, 60 s relock, change/removal, storage failure |
 | `CallTimerTextTest` (3) | `2:59 / 3:00` format, two-digit seconds, Latin digits whatever the locale |
 | `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, unsupported language falls back to the phone |
-| `OnboardingStageTest` (17) | step order: code → anti-uninstall → hang-up → role → full screen → app |
+| `OnboardingStageTest` (11) | step order: code → hang-up → role → full screen → app |
 | `ExampleUnitTest` (1) | sanity check of the test runner |
 
-That is **117 tests** in total.
+That is **122 tests** in total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -536,7 +528,6 @@ implementation), which allows it to run with in-memory fakes.
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, opening the UI |
 | `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — mandatory permission at install |
 | `ACCESS_NOTIFICATION_POLICY` | Optional: mute WhatsApp/Signal/Telegram ringtones during a window (granted in the Security tab, off by default) |
-| `BIND_DEVICE_ADMIN` (on the receiver) | Anti-uninstall friction — no policy requested, mandatory step at install |
 
 ---
 

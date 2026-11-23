@@ -2,8 +2,6 @@ package com.instantpause.app.ui.main
 
 import android.Manifest
 import android.app.NotificationManager
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -34,7 +32,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.instantpause.app.R
 import com.instantpause.app.domain.security.AppLockManager
-import com.instantpause.app.system.CoolDownDeviceAdminReceiver
 import com.instantpause.app.system.CoolDownWatchdogService
 import com.instantpause.app.system.WatchdogAlarmReceiver
 import com.instantpause.app.ui.logs.LogsScreen
@@ -44,7 +41,6 @@ import com.instantpause.app.ui.security.HangupPermissionScreen
 import com.instantpause.app.ui.security.SecurityScreen
 import com.instantpause.app.ui.security.SecurityViewModel
 import com.instantpause.app.ui.security.SetupScreen
-import com.instantpause.app.ui.security.UninstallGuardScreen
 import com.instantpause.app.ui.theme.CoolDownTheme
 import com.instantpause.app.ui.whitelist.WhitelistScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,24 +52,8 @@ class MainActivity : ComponentActivity() {
     private var hasOverlayPermission by mutableStateOf(false)
     private var batteryOptimized by mutableStateOf(false)
     private var canHangUp by mutableStateOf(false)
-    private var adminActive by mutableStateOf(false)
     private var hangupAsked by mutableStateOf(false)
     private var fullScreenIntentAllowed by mutableStateOf(true)
-
-    private val adminComponent by lazy {
-        ComponentName(this, CoolDownDeviceAdminReceiver::class.java)
-    }
-
-    /**
-     * Administration d'appareil : seule protection contre une désinstallation impulsive.
-     *
-     * Android impose une confirmation système, donc l'app ne peut pas s'activer seule.
-     * En revanche elle peut refuser d'aller plus loin tant que ce n'est pas fait —
-     * c'est ce que fait [UninstallGuardScreen] pendant l'onboarding.
-     */
-    private val adminLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(),
-    ) { refreshAdmin() }
 
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
@@ -108,7 +88,6 @@ class MainActivity : ComponentActivity() {
         CoolDownWatchdogService.startIfNeeded(this)
         WatchdogAlarmReceiver.startAlarm(this)
         batteryOptimized = isBatteryOptimized()
-        refreshAdmin()
         refreshFullScreenIntent()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -118,16 +97,11 @@ class MainActivity : ComponentActivity() {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
 
-        // Raccrochage à 3:00 : la permission n'est plus demandée ici, mais dans l'étape
-        // d'installation dédiée (HangupPermissionScreen) — sinon le dialogue surgirait
-        // par-dessus l'écran de création du code.
-
         setContent {
             CoolDownTheme {
                 val roleHeld by viewModel.roleHeld.collectAsStateWithLifecycle()
                 val securityViewModel: SecurityViewModel = hiltViewModel()
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
-                val guardAcknowledged by viewModel.uninstallGuardDone.collectAsStateWithLifecycle()
                 val fullScreenAcknowledged by
                     viewModel.fullScreenIntentDone.collectAsStateWithLifecycle()
 
@@ -135,8 +109,6 @@ class MainActivity : ComponentActivity() {
                     loading = lockState.status == AppLockManager.Status.LOADING,
                     hasCode = lockState.status != AppLockManager.Status.DISABLED,
                     roleHeld = roleHeld,
-                    adminActive = adminActive,
-                    guardAcknowledged = guardAcknowledged,
                     canHangUp = canHangUp,
                     canUseFullScreenIntent = fullScreenIntentAllowed,
                     fullScreenAcknowledged = fullScreenAcknowledged
@@ -146,10 +118,6 @@ class MainActivity : ComponentActivity() {
 
                     // Aucun code : l'app ne va pas plus loin. Le verrou n'est pas une option.
                     OnboardingStage.SETUP_CODE -> SetupScreen(vm = securityViewModel)
-
-                    // Protection anti-désinstallation : obligatoire avant tout le reste.
-                    OnboardingStage.PROTECT_UNINSTALL ->
-                        UninstallGuardScreen(onActivate = { requestAdmin() })
 
                     // Raccrochage à 3 minutes : obligatoire, ce n'est pas une option.
                     OnboardingStage.HANGUP_PERMISSION -> HangupPermissionScreen(
@@ -202,7 +170,6 @@ class MainActivity : ComponentActivity() {
         batteryOptimized = isBatteryOptimized()
         canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
                 PackageManager.PERMISSION_GRANTED
-        refreshAdmin()
         refreshFullScreenIntent()
         viewModel.syncDnd()
     }
@@ -230,31 +197,6 @@ class MainActivity : ComponentActivity() {
                 )
             )
         }.onFailure { openAppSettings() }
-    }
-
-    private fun refreshAdmin() {
-        val dpm = getSystemService(DevicePolicyManager::class.java)
-        adminActive = dpm?.isAdminActive(adminComponent) == true
-        if (adminActive) viewModel.markUninstallGuardDone()
-    }
-
-    /**
-     * Ouvre l'écran système d'activation de l'administrateur.
-     *
-     * C'est le seul chemin possible : `ACTION_ADD_DEVICE_ADMIN` demande toujours une
-     * confirmation explicite. On l'appelle donc au moment de l'installation, et on ne
-     * laisse pas l'onboarding continuer sans elle.
-     */
-    private fun requestAdmin() {
-        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
-            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
-            putExtra(
-                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                getString(R.string.admin_explanation)
-            )
-        }
-        runCatching { adminLauncher.launch(intent) }
-            .onFailure { refreshAdmin() }
     }
 
     /** Vrai si l'app reste soumise à l'optimisation batterie du système. */

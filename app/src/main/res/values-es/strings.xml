@@ -30,9 +30,6 @@
     <string name="role_reassurance">Es rápido y puedes quitarlo cuando quieras.</string>
     <string name="role_activate">Activar la protección</string>
 
-    <!-- Explicación del administrador (protección antidesinstalación) -->
-    <string name="admin_explanation">Instant Pause impedirá su propia desinstalación accidental o impulsiva. No se solicitan otros permisos.</string>
-
     <!-- Código de protección: reglas y mensajes -->
     <string name="violation_too_short">al menos %1$d caracteres</string>
     <string name="violation_missing_letter">al menos una letra</string>
@@ -69,16 +66,14 @@
     <!-- Primer inicio -->
     <string name="setup_title">Bienvenido a Instant Pause</string>
     <string name="setup_subtitle">Último paso antes de la protección: elige tu código.</string>
-    <string name="setup_explanation">Se pedirá para cortar una franja, eliminarla o quitar la protección antidesinstalación. Elígelo ahora, con la cabeza fría: es lo que te sostendrá esa noche.</string>
+    <string name="setup_explanation">Se pedirá para cortar una franja o eliminarla. Elígelo ahora, con la cabeza fría: es lo que te sostendrá esa noche.</string>
     <string name="setup_rules">Al menos 6 caracteres, con al menos una letra y un dígito. El código nunca se guarda en texto plano y no se puede recuperar: si lo olvidas, tendrás que borrar los datos de la app.</string>
 
     <!-- Pestaña Seguridad -->
     <string name="security_title">Seguridad</string>
     <string name="security_subtitle">Evita que la protección se desactive por impulso.</string>
-    <string name="security_admin_explanation">Instant Pause impedirá su propia desinstalación accidental o impulsiva.</string>
     <string name="version_label">Instant Pause %1$s</string>
     <string name="action_remove_protection">Quitar la protección</string>
-    <string name="dialog_remove_protection_message">Sin el administrador, Instant Pause se puede desinstalar sin resistencia. Introduce tu código para confirmar.</string>
 
     <!-- Mensaje de la pantalla de pausa -->
     <string name="pause_message_title">Mensaje de la pantalla de pausa</string>
@@ -97,17 +92,10 @@
     <string name="lock_change_help">El código se crea en la configuración inicial y no se puede quitar desde la app. Solo se puede cambiar (con el antiguo).</string>
     <string name="action_lock_now">Bloquear ahora</string>
 
-    <!-- Tarjeta de desinstalación -->
-    <string name="uninstall_title">Desinstalación</string>
-    <string name="uninstall_protected">Protegida: hace falta desactivar el administrador.</string>
-    <string name="uninstall_unprotected">Sin proteger: la app se desinstala en 3 toques.</string>
-    <string name="action_protect_uninstall">Proteger la desinstalación</string>
-    <string name="uninstall_help">Con sinceridad: ninguna app puede impedir una desinstalación. Android simplemente pedirá desactivar antes este administrador: dos toques más, pero dos toques que dejan tiempo para pensar.</string>
-
     <!-- Tarjeta explicativa -->
     <string name="how_title">Qué protege el código (y qué no)</string>
     <string name="how_bullet_1">El código se crea la primera vez que abres la app: no se puede omitir ni quitar después.</string>
-    <string name="how_bullet_2">Se pide para: cortar una franja, eliminarla (incluido un periodo Zen en curso), cambiar el código y quitar la protección antidesinstalación.</string>
+    <string name="how_bullet_2">Se pide para: cortar una franja, eliminarla (incluido un periodo Zen en curso) o cambiar el código.</string>
     <string name="how_bullet_3">Nunca se pide para: bloquear una llamada, añadir una franja, iniciar el modo Zen o leer el historial.</string>
     <string name="how_bullet_4">El desbloqueo solo dura la sesión: 60 s en segundo plano y el código vuelve a ser necesario.</string>
     <string name="how_bullet_5">Tres intentos, luego 30 s, 1 min, 2 min… hasta 15 min de espera entre intentos.</string>
@@ -138,14 +126,6 @@
     <string name="action_allow_fullscreen">Permitir la pantalla completa</string>
     <string name="action_continue_without">Continuar sin</string>
     <string name="fullscreen_footer">Este paso no volverá a aparecer. Puedes cambiar de opinión en los ajustes de Android de la app.</string>
-
-    <!-- Paso: protección contra la desinstalación -->
-    <string name="install_guard_title">Último paso: protege la app</string>
-    <string name="install_guard_body">Sin esta protección, Instant Pause se desinstala en tres toques, y tus franjas desaparecen con ella.</string>
-    <string name="install_guard_explain">Android abrirá una pantalla de confirmación. Es normal: ninguna app puede ser administradora sin tu consentimiento. Toca «Activar».</string>
-    <string name="install_guard_info_does">Qué hace: bloquear una desinstalación impulsiva. Ningún derecho sobre tus datos, tus llamadas ni tu pantalla.</string>
-    <string name="install_guard_info_prevents">Qué evita: desinstalar la app sin desactivarla antes desde los ajustes de Android.</string>
-    <string name="install_guard_footer">La app permanece en esta pantalla hasta que la protección esté activa. Puedes quitarla más tarde, con tu código, desde la pestaña Seguridad.</string>
 
     <!-- Pestaña Franjas: estado y notificaciones -->
     <string name="status_zen_until">Modo Zen activo hasta las %1$s</string>

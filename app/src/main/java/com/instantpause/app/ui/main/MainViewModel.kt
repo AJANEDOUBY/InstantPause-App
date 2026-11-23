@@ -32,10 +32,6 @@ class MainViewModel @Inject constructor(
     val helpBannerVisible: StateFlow<Boolean> = _helpBannerVisible.asStateFlow()
 
     /** `null` tant que la valeur n'est pas chargée : l'onboarding ne doit pas clignoter. */
-    private val _uninstallGuardDone = MutableStateFlow<Boolean?>(null)
-    val uninstallGuardDone: StateFlow<Boolean?> = _uninstallGuardDone.asStateFlow()
-
-    /** `null` tant que la valeur n'est pas chargée : l'onboarding ne doit pas clignoter. */
     private val _fullScreenIntentDone = MutableStateFlow<Boolean?>(null)
     val fullScreenIntentDone: StateFlow<Boolean?> = _fullScreenIntentDone.asStateFlow()
 
@@ -45,25 +41,7 @@ class MainViewModel @Inject constructor(
             _helpBannerVisible.value = !prefs.isHelpBannerDismissed()
         }
         viewModelScope.launch {
-            _uninstallGuardDone.value = prefs.isUninstallGuardDone()
-        }
-        viewModelScope.launch {
             _fullScreenIntentDone.value = prefs.isFullScreenIntentDone()
-        }
-    }
-
-    /**
-     * Mémorise que l'étape « protéger la désinstallation » est franchie.
-     *
-     * Appelée dès que l'administrateur est actif : l'étape ne réapparaît donc plus,
-     * même si l'utilisateur retire ensuite la protection avec son code depuis
-     * l'onglet Sécurité.
-     */
-    fun markUninstallGuardDone() {
-        if (_uninstallGuardDone.value == true) return
-        viewModelScope.launch {
-            prefs.setUninstallGuardDone(true)
-            _uninstallGuardDone.value = true
         }
     }
 

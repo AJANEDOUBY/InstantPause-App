@@ -160,7 +160,6 @@ plage redemande le code. Pas de fenêtre de gratuité.
 | Couper une plage active | ✅ |
 | Supprimer une plage (y compris Zen en cours) | ✅ |
 | Changer le code | ✅ |
-| Retirer la protection anti-désinstallation | ✅ |
 | Bloquer un appel, ajouter une plage, activer le Zen | ❌ |
 | Consulter l'historique | ❌ |
 
@@ -178,31 +177,29 @@ plage redemande le code. Pas de fenêtre de gratuité.
 Trois essais libres, puis 30 s, 1 min, 2 min, 4 min… jusqu'à **15 minutes** entre deux essais.
 Le compteur est persisté : tuer l'app ne le remet pas à zéro ; redémarrer le téléphone non plus.
 
-### Anti-désinstallation (Device Admin)
+### Anti-désinstallation : retirée en 1.7.0
 
-L'administrateur d'appareil est **sans aucune politique** (pas de verrouillage d'écran, pas
-d'effacement de données). Android refuse alors de désinstaller l'app tant que cet
-administrateur est actif.
+Les versions précédentes utilisaient un **administrateur d'appareil** (sans politique) pour
+freiner une désinstallation impulsive. Il a été **retiré en 1.7.0** : Google Play considère
+comme un usage abusif un administrateur dont l'unique effet est de bloquer la désinstallation,
+et le bénéfice se limitait à deux taps de plus.
 
-Il est demandé **pendant l'installation**, juste après la création du code : l'app ne passe
-pas à l'autorisation des appels tant qu'il n'est pas actif. Android exige une confirmation
-système (aucune app ne peut s'activer seule), mais Instant Pause ouvre cet écran
-automatiquement plutôt que d'attendre que vous le trouviez dans l'onglet Sécurité.
+Désinstaller l'app redevient une action Android ordinaire. **Aucun administrateur d'appareil
+n'est demandé, déclaré ni laissé par la 1.7.0.** La protection contre l'impulsion vit dans le
+code, pas dans l'installeur.
 
-Une fois l'étape franchie, elle ne réapparaît plus : retirer l'administrateur avec son code
-depuis l'onglet Sécurité reste possible, et n'enferme pas l'utilisateur dans une boucle.
-
-> **Soyons honnêtes** : aucune application ne peut empêcher une désinstallation. L'administrateur
-> ajoute deux étapes (Paramètres → Sécurité → Administrateurs → désactiver), et c'est tout.
-> C'est un ralentisseur qui casse le geste réflexe, pas un cadenas.
+> Si vous venez d'une 1.6.x et aviez activé l'ancien administrateur, Android peut encore
+> lister Instant Pause dans *Paramètres → Sécurité → Applications d'administration*.
+> Désactivez-le une fois à cet endroit : la 1.7.0 ne le déclare plus et ne peut pas le faire
+> elle-même.
 
 ### Ce que le verrou ne fait pas
 
 - Il ne bloque **pas** le lancement de l'app (choix assumé : la protection doit rester consultable).
 - Il ne résiste pas à `adb`, au mode sans échec, ni à un effacement des données de l'app.
-- Il ne protège pas contre une désactivation de l'administrateur depuis les Paramètres système.
+- Il n'empêche pas une désinstallation : rien dans l'app ne le peut.
 - **Code oublié = aucune récupération possible** : il faut effacer les données de l'app
-  (ce qui supprime aussi les plages) ou la désinstaller après avoir retiré l'administrateur.
+  (ce qui supprime aussi les plages) ou la désinstaller.
 
 ---
 
@@ -268,13 +265,12 @@ app/src/main/java/com/instantpause/app/
 │   ├── PauseForegroundService.kt          # Ouverture de l'UI depuis l'arrière-plan
 │   ├── CoolDownWatchdogService.kt         # Maintien en vie
 │   ├── WatchdogAlarmReceiver.kt           # Ré-armement périodique
-│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-désinstallation (aucune politique)
 │   ├── ProtectionAlertNotifier.kt         # Canaux + notifications
 │   └── BootReceiver.kt                    # Après reboot / mise à jour
 └── ui/
     ├── main/      # Accueil, bandeau d'aide, activation du rôle
     ├── schedule/  # Plages + historique (Compose)
-    ├── security/  # Verrou : code, temporisations, administrateur
+    ├── security/  # Verrou : code, temporisations
     ├── pause/     # Écran de pause sensoriel
     ├── logs/      # Journal détaillé
     └── theme/     # Material 3
@@ -334,8 +330,7 @@ sha256sum InstantPause-1.6.0.apk
 
 > 🛡️ Certains antivirus préinstallés (AVG/Avast sur itel, Infinix…) affichent « application
 > suspecte » pour tout APK installé hors Play Store. C'est une heuristique sur la **source**,
-> pas une analyse du code : ne validez pas « SUPPRIMER ». (Et si l'administrateur Instant Pause est
-> actif, la désinstallation échouera de toute façon.)
+> pas une analyse du code : ne validez pas « SUPPRIMER ».
 
 ### Prérequis
 - Android **10 (API 29)** ou supérieur.
@@ -346,19 +341,17 @@ sha256sum InstantPause-1.6.0.apk
 1. Installez l'APK (release ou build locale).
 2. Ouvrez l'app → **choisissez votre code de protection**. Il est obligatoire : l'écran ne se
    contourne pas, et le code ne pourra plus être supprimé ensuite.
-3. Confirmez la protection **anti-désinstallation** (Device Admin) : l'écran système s'ouvre
-   automatiquement à cette étape, et l'app ne continue pas tant qu'elle n'est pas active.
-4. Accordez **Passer et gérer des appels téléphoniques** : c'est ce qui permet de couper
+3. Accordez **Passer et gérer des appels téléphoniques** : c'est ce qui permet de couper
    l'appel à 3 minutes. Cette étape est obligatoire — sans elle, un contact autorisé
    pourrait vous garder une heure au téléphone.
-5. Acceptez le rôle **Redirection d'appels**.
-6. Autorisez l'**affichage plein écran** (Android 14+) : le réglage Android s'ouvre
+4. Acceptez le rôle **Redirection d'appels**.
+5. Autorisez l'**affichage plein écran** (Android 14+) : le réglage Android s'ouvre
    automatiquement. Cette étape est proposée **une seule fois** et n'est pas bloquante —
    sans elle, l'écran de pause s'affiche comme une simple notification à toucher.
-7. Accordez les permissions restantes :
+6. Accordez les permissions restantes :
    - **Notifications** (Android 13+) — pour l'alerte de blocage ;
    - **Affichage par-dessus les autres apps** — pour l'écran de pause.
-8. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
+7. Créez une plage horaire (ou activez le mode Zen) et testez avec un numéro neutre.
 
 ---
 
@@ -534,7 +527,6 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
 | `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
 | `ACCESS_NOTIFICATION_POLICY` | Optionnel : couper les sonneries WhatsApp/Signal/Telegram pendant une plage (accordée dans l'onglet Sécurité, désactivé par défaut) |
-| `BIND_DEVICE_ADMIN` (sur le receiver) | Friction anti-désinstallation — aucune politique demandée, étape obligatoire à l'installation |
 
 ---
 

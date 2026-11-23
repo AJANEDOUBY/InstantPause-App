@@ -182,23 +182,6 @@ desactivar una franja vuelve a pedir el código. Sin periodo de gracia.
 Tres intentos libres, luego 30 s, 1 min, 2 min, 4 min… hasta **15 minutos** entre intentos.
 El contador se persiste: matar la app no lo reinicia; reiniciar el teléfono tampoco.
 
-### Anti-desinstalación (Device Admin)
-
-El administrador de dispositivos es **sin ninguna política** (sin bloqueo de pantalla, sin
-borrado de datos). Android se niega entonces a desinstalar la app mientras este
-administrador esté activo.
-
-Se solicita **durante la instalación**, justo después de crear el código: la app no pasa a
-la autorización de llamadas hasta que está activo. Android exige una confirmación del
-sistema (ninguna app puede activarse sola), pero Instant Pause abre esa pantalla
-automáticamente en lugar de esperar a que la encuentres en la pestaña Seguridad.
-
-Una vez superado este paso, no vuelve a aparecer: quitar el administrador con tu código
-desde la pestaña Seguridad sigue siendo posible, y no encierra al usuario en un bucle.
-
-> **Seamos honestos**: ninguna aplicación puede impedir una desinstalación. El
-> administrador añade dos pasos (Ajustes → Seguridad → Administradores de dispositivos →
-> desactivar), y ya está. Es un freno que rompe el gesto reflejo, no un candado.
 
 ### Lo que el bloqueo no hace
 
@@ -543,7 +526,6 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, apertura de UI |
 | `ANSWER_PHONE_CALLS` | Colgar a las 3:00 la llamada a un contacto autorizado — permiso obligatorio al instalar |
 | `ACCESS_NOTIFICATION_POLICY` | Opcional: silenciar los tonos de WhatsApp/Signal/Telegram durante una franja (se concede en la pestaña Seguridad, desactivado por defecto) |
-| `BIND_DEVICE_ADMIN` (en el receiver) | Fricción anti-desinstalación — ninguna política solicitada, paso obligatorio al instalar |
 
 ---
 

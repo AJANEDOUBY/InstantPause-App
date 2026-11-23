@@ -1,11 +1,7 @@
 package com.instantpause.app.ui.security
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Intent
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -63,7 +58,6 @@ import com.instantpause.app.R
 import com.instantpause.app.domain.language.LanguageTags
 import com.instantpause.app.domain.pause.PauseMessagePolicy
 import com.instantpause.app.domain.security.AppLockManager
-import com.instantpause.app.system.CoolDownDeviceAdminReceiver
 import java.util.Locale
 
 private const val GREEN = 0xFF10B981
@@ -82,28 +76,7 @@ fun SecurityScreen(
     val dndAccessGranted by vm.dndAccessGranted.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
-    val resources = LocalResources.current
-
-    // L'accès « Ne pas déranger » se donne dans les réglages système : on relit
-    // l'état à chaque retour dans l'écran.
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { vm.refreshDndAccess() }
-
-    val component = remember { ComponentName(context, CoolDownDeviceAdminReceiver::class.java) }
-    val dpm = remember { context.getSystemService(DevicePolicyManager::class.java) }
-    var adminActive by remember { mutableStateOf(dpm?.isAdminActive(component) == true) }
-
     var dialog by remember { mutableStateOf<Dialog?>(null) }
-
-    val adminLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        adminActive = dpm?.isAdminActive(component) == true
-    }
-
-    fun deactivateAdmin() {
-        runCatching { dpm?.removeActiveAdmin(component) }
-        adminActive = dpm?.isAdminActive(component) == true
-    }
 
     Column(
         modifier = Modifier
@@ -164,23 +137,7 @@ fun SecurityScreen(
             }
         )
 
-        Spacer(Modifier.height(12.dp))
-        UninstallCard(
-            adminActive = adminActive,
-            onActivate = {
-                val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
-                    putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component)
-                    putExtra(
-                        DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                        resources.getString(R.string.security_admin_explanation)
-                    )
-                }
-                runCatching { adminLauncher.launch(intent) }
-            },
-            onDeactivate = {
-                if (lockState.isLocked) dialog = Dialog.UNINSTALL_GUARD else deactivateAdmin()
-            }
-        )
+
 
         Spacer(Modifier.height(12.dp))
         LanguageCard(
@@ -225,22 +182,11 @@ fun SecurityScreen(
             onDone = { dialog = null }
         )
 
-        Dialog.UNINSTALL_GUARD -> UnlockDialog(
-            vm = vm,
-            title = stringResource(R.string.action_remove_protection),
-            message = stringResource(R.string.dialog_remove_protection_message),
-            onDismiss = { dialog = null },
-            onSuccess = {
-                deactivateAdmin()
-                dialog = null
-            }
-        )
-
         null -> Unit
     }
 }
 
-private enum class Dialog { SET, CHANGE, UNINSTALL_GUARD }
+private enum class Dialog { SET, CHANGE }
 
 /**
  * Phrase affichée sur l'écran de pause, au moment où l'appel est intercepté.
@@ -480,64 +426,7 @@ private fun LockCard(
     }
 }
 
-@Composable
-private fun UninstallCard(
-    adminActive: Boolean,
-    onActivate: () -> Unit,
-    onDeactivate: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.DeleteForever,
-                    contentDescription = null,
-                    tint = if (adminActive) Color(GREEN) else Color(AMBER),
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.uninstall_title),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = if (adminActive) {
-                            stringResource(R.string.uninstall_protected)
-                        } else {
-                            stringResource(R.string.uninstall_unprotected)
-                        },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
 
-            Spacer(Modifier.height(12.dp))
-
-            if (adminActive) {
-                OutlinedButton(onClick = onDeactivate, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.action_remove_protection))
-                }
-            } else {
-                Button(onClick = onActivate, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.action_protect_uninstall))
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.uninstall_help),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
 
 @Composable
 private fun LanguageCard(

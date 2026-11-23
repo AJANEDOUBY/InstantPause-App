@@ -29,3 +29,8 @@ local.properties
 
 # Symboles de debogage natifs pour la Play Console
 *symboles-natifs.zip
+
+# Artefacts locaux temporaires
+CoolDown
+CoolDown-1.zip
+copy

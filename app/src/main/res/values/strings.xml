@@ -28,9 +28,6 @@
     <string name="role_reassurance">It is quick, and you can remove it at any time.</string>
     <string name="role_activate">Enable protection</string>
 
-    <!-- Explication système de l'administrateur (protection contre la désinstallation) -->
-    <string name="admin_explanation">Instant Pause will prevent its own accidental or impulsive uninstallation. No other rights are requested.</string>
-
     <!-- Code de protection : règles et messages -->
     <string name="violation_too_short">at least %1$d characters</string>
     <string name="violation_missing_letter">at least one letter</string>
@@ -67,16 +64,14 @@
     <!-- Premier lancement -->
     <string name="setup_title">Welcome to Instant Pause</string>
     <string name="setup_subtitle">Last step before protection: choose your code.</string>
-    <string name="setup_explanation">It will be required to cut a window, delete it, or remove the anti-uninstall protection. Choose it now, while you are calm: it is what will hold up that evening.</string>
+    <string name="setup_explanation">It will be required to cut a window or delete it. Choose it now, while you are calm: it is what will hold up that evening.</string>
     <string name="setup_rules">At least 6 characters, with at least one letter and one digit. The code is never stored in plain text and cannot be recovered: if you forget it, you will have to clear the app data.</string>
 
     <!-- Onglet Sécurité -->
     <string name="security_title">Security</string>
     <string name="security_subtitle">Stop protection from being switched off on impulse.</string>
-    <string name="security_admin_explanation">Instant Pause will prevent its own accidental or impulsive uninstallation.</string>
     <string name="version_label">Instant Pause %1$s</string>
     <string name="action_remove_protection">Remove protection</string>
-    <string name="dialog_remove_protection_message">Without the administrator, Instant Pause can be uninstalled with no resistance. Enter your code to confirm.</string>
 
     <!-- Message de l'écran de pause -->
     <string name="pause_message_title">Pause screen message</string>
@@ -95,17 +90,10 @@
     <string name="lock_change_help">The code is created at setup and cannot be removed from the app. Only a change (with the old code) is possible.</string>
     <string name="action_lock_now">Lock now</string>
 
-    <!-- Carte de désinstallation -->
-    <string name="uninstall_title">Uninstallation</string>
-    <string name="uninstall_protected">Protected — administrator deactivation required.</string>
-    <string name="uninstall_unprotected">Not protected — the app can be uninstalled in 3 taps.</string>
-    <string name="action_protect_uninstall">Protect uninstallation</string>
-    <string name="uninstall_help">Honestly: no app can prevent an uninstallation. Android will simply ask to deactivate this administrator first — two extra taps, but two taps that leave time to think.</string>
-
     <!-- Carte explicative -->
     <string name="how_title">What the code protects (and does not)</string>
     <string name="how_bullet_1">The code is created the first time you open the app: it cannot be skipped or removed afterwards.</string>
-    <string name="how_bullet_2">Required to: cut a window, delete it (including a running Zen period), change the code, remove the anti-uninstall protection.</string>
+    <string name="how_bullet_2">Required to: cut a window, delete it (including a running Zen period), or change the code.</string>
     <string name="how_bullet_3">Never required to: block a call, add a window, start Zen, read the history.</string>
     <string name="how_bullet_4">Unlocking only lasts for the session: 60 s in the background and the code is required again.</string>
     <string name="how_bullet_5">Three attempts, then 30 s, 1 min, 2 min… up to 15 min of waiting between attempts.</string>
@@ -136,14 +124,6 @@
     <string name="action_allow_fullscreen">Allow full-screen display</string>
     <string name="action_continue_without">Continue without</string>
     <string name="fullscreen_footer">This step will not come back. You can change your mind in the app\'s Android settings.</string>
-
-    <!-- Étape : protection contre la désinstallation -->
-    <string name="install_guard_title">Last step: protect the app</string>
-    <string name="install_guard_body">Without this protection, Instant Pause is uninstalled in three taps — and your windows disappear with it.</string>
-    <string name="install_guard_explain">Android will open a confirmation screen. That is normal: no app can become an administrator without your consent. Tap \'Activate\'.</string>
-    <string name="install_guard_info_does">What it does: block an impulsive uninstallation. No rights over your data, your calls or your screen.</string>
-    <string name="install_guard_info_prevents">What it prevents: uninstalling the app without first deactivating it from the Android settings.</string>
-    <string name="install_guard_footer">The app stays on this screen until the protection is active. You can remove it later, with your code, from the Security tab.</string>
 
     <!-- Onglet Plages : état et notifications -->
     <string name="status_zen_until">Zen mode on until %1$s</string>

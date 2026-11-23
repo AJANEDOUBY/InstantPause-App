@@ -79,7 +79,6 @@ The app does not override those rules and does not promise that a given app will
 |---|---|
 | **Call redirection** role (Telecom) | Intercept the outgoing call to show the pause screen |
 | `ANSWER_PHONE_CALLS` | Automatically hang up at 3 minutes a call to an allowed contact |
-| Device administrator | Slow down an impulsive uninstall. **No policy** is imposed on the device, no remote wipe is possible |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Show the pause screen over the call screen or the lock screen |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Persistent protection notification and haptic feedback |
 | `RECEIVE_BOOT_COMPLETED` | Re-enable protection after a reboot |
@@ -108,9 +107,6 @@ the publisher, these rights are exercised **directly in the app**:
   (with the code).
 - **Erasure**: uninstall the app, or clear its data from
   *Settings → Apps → Instant Pause → Storage*. Everything disappears with the private storage.
-- The anti-uninstall protection prevents an impulsive uninstall: first deactivate the device
-  administrator in *Settings → Security → Device administration*, with your code. It is a guardrail
-  against yourself, not data retention.
 
 Legal basis: performance of the service you request (Article 6(1)(b) GDPR). No processing takes
 place without your action.
@@ -353,7 +349,6 @@ L'application ne contourne pas ces règles et ne promet pas qu'une application d
 |---|---|
 | Rôle **Redirection d'appels** (Telecom) | Intercepter l'appel sortant pour afficher l'écran de pause |
 | `ANSWER_PHONE_CALLS` | Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé |
-| Administrateur d'appareil | Freiner une désinstallation impulsive. **Aucune politique** n'est imposée à l'appareil, aucun effacement à distance n'est possible |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Afficher l'écran de pause par-dessus l'écran d'appel ou de verrouillage |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notification permanente de la protection et retours haptiques |
 | `RECEIVE_BOOT_COMPLETED` | Réactiver la protection après un redémarrage |
@@ -383,9 +378,6 @@ l'application** :
   l'application (avec le code).
 - **Effacement** : désinstallez l'application, ou effacez ses données depuis
   *Paramètres → Applications → Instant Pause → Stockage*. Tout disparaît avec le stockage privé.
-- L'anti-désinstallation empêche une désinstallation impulsive : désactivez d'abord
-  l'administrateur d'appareil dans *Paramètres → Sécurité → Administration de l'appareil*, avec
-  votre code. C'est un garde-fou contre vous-même, pas une rétention de données.
 
 Base légale : exécution du service que vous demandez (article 6.1.b du RGPD). Aucun traitement n'a
 lieu sans votre action.
