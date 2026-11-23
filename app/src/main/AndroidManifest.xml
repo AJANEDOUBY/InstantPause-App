@@ -27,9 +27,6 @@
     <!-- Ré-armement du veilleur après redémarrage (alarme exacte, avec repli inexact) -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
-    <!-- Invitation à exclure l'app de l'optimisation batterie -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
     <!-- Foreground Services (Android 14+) -->
     <!--
         Type `specialUse` pour les trois services (pause, minuteur, veille) : aucun des

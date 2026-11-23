@@ -221,15 +221,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestBatteryExemption() {
-        val direct = Intent(
-            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-            "package:$packageName".toUri(),
-        )
-        runCatching { startActivity(direct) }.onFailure {
-            // Certains constructeurs désactivent cette action : on ouvre la liste générale.
-            runCatching {
-                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-            }
+        // Conforme Google Play : ouvre les réglages batterie sans utiliser REQUEST_IGNORE_BATTERY_OPTIMIZATIONS.
+        runCatching {
+            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+        }.onFailure {
+            openAppSettings()
         }
     }
 }
