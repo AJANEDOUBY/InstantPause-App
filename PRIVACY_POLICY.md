@@ -239,9 +239,10 @@ ningún dato al editor, estos derechos se ejercen **directamente en la aplicaci�
 - **Supresión**: desinstala la aplicación o borra sus datos desde
   *Ajustes → Aplicaciones → Instant Pause → Almacenamiento*. Todo desaparece con el almacenamiento
   privado.
-- La protección anti-desinstalación impide una desinstalación impulsiva: desactiva primero el
-  ajustes de la aplicación en *Ajustes → Aplicaciones → Instant Pause*, con tu
-  código. Es una barrera contra ti mismo, no una retención de datos.
+- **Sin bloqueo de desinstalación**: desde la 1.7.0 la aplicación no declara ningún
+  administrador de dispositivos. Desinstalarla vuelve a ser una acción normal de Android: si
+  una franja está activa, desactívala antes con tu código para no dejar el filtro No molestar
+  activado. Es una barrera contra ti mismo, no una retención de datos.
 
 Base legal: ejecución del servicio que solicitas (artículo 6.1.b del RGPD). Ningún tratamiento
 tiene lugar sin tu acción.

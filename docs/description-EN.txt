@@ -31,8 +31,7 @@ WHAT MAKES IT DIFFERENT
 
 • The protection code is created cold, before anything else, and is never stored
   in clear text.
-• Cutting a window, removing an allowed contact or turning off uninstall protection
-  requires that code.
+• Cutting a window or removing an allowed contact requires that code.
 • No account. No ads. No analytics. No server.
 • The app does not ask for permission to read your contacts: you pick one contact
   with Android's own picker, and only that entry is stored.
@@ -56,13 +55,12 @@ No network connection, no cloud backup. Windows, contacts and settings live in t
 app's private storage, on your phone. The full policy is here:
 https://ajanedouby.github.io/instant-pause-privacy/
 
-SETUP IN 6 STEPS
+SETUP IN 5 STEPS
 
 1. Choose your code.
-2. Turn on uninstall protection.
-3. Allow the 3-minute hang-up.
-4. Accept the call redirection role.
-5. Allow drawing over calls.
-6. Create a time window. That's it.
+2. Allow the 3-minute hang-up.
+3. Accept the call redirection role.
+4. Allow drawing over calls.
+5. Create a time window. That's it.
 
 A code fix, a doubt, a crash: write to janedouby@gmail.com.

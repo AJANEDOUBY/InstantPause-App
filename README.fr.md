@@ -311,11 +311,15 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ InstantPause-1.7.0](../../releases/download/v1.7.0)** — 6,7 Mo · Android 10+
+**[⬇ InstantPause-1.6.0](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** - 6,7 Mo · Android 10+
+
+> La 1.7.0 est en cours de déploiement sur Google Play. Son APK sera joint à la release
+> `v1.7.0` après la revue ; d'ici là, le téléchargement GitHub ci-dessus est le dernier APK
+> signé (1.6.0).
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum InstantPause-1.7.0
+sha256sum InstantPause-1.6.0.apk
 # e4c7dde1d3e6a89be20dde68449560fbad13f2e1cb93c42ccd30b42256920af3
 ```
 
@@ -383,9 +387,9 @@ Avant la première publication, la Play Console réclame :
    - `USE_FULL_SCREEN_INTENT` : afficher l'écran de pause par-dessus le verrouillage ;
 4. la déclaration d'usage des **services de premier plan** (formulaire séparé).
 
-> ⚠️ La revue Play est le point de friction, pas le code : l'administrateur d'appareil et
-> `ANSWER_PHONE_CALLS` sont les deux permissions les plus scrutées. Le dépôt GitHub reste le
-> canal de distribution des APK signés, indépendamment du Store.
+> ⚠️ La revue Play est le point de friction, pas le code : `ANSWER_PHONE_CALLS` fait partie
+> des permissions les plus scrutées. Le dépôt GitHub reste le canal de distribution des APK
+> signés, indépendamment du Store.
 
 ---
 
@@ -473,7 +477,7 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 
 ## Tests
 
-117 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
+122 tests unitaires couvrent la logique métier, sans dépendance Android au runtime :
 
 | Suite | Couverture |
 |---|---|
@@ -491,10 +495,10 @@ Le tag créé est `v<versionName>` ; il faut incrémenter `versionName`/`version
 | `AppLockManagerTest` (20) | cycle de vie, code créé verrouillé, redémarrage, temporisation persistée, reverrouillage 60 s, changement/suppression, stockage en échec |
 | `CallTimerTextTest` (3) | format `2:59 / 3:00`, secondes sur deux chiffres, chiffres latins quelle que soit la locale |
 | `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, langue non traduite → langue du téléphone |
-| `OnboardingStageTest` (17) | ordre des étapes : code → anti-désinstallation → raccrochage → rôle → plein écran → app |
+| `OnboardingStageTest` (11) | ordre des étapes : code → raccrochage → rôle → plein écran → app |
 | `ExampleUnitTest` (1) | contrôle de bon fonctionnement du lanceur de tests |
 
-Soit **117 tests** au total.
+Soit **122 tests** au total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -561,8 +565,8 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 - **Rôle révocable** : si le système retire `ROLE_CALL_REDIRECTION` (autre app de filtrage,
   mise à jour), la protection s'arrête ; l'app le détecte et affiche un bandeau.
 - **Verrou contournable** : le code protège les réglages de l'app, pas le système. Un
-  `adb`, un effacement des données, le mode sans échec ou la désactivation de l'administrateur
-  depuis les Paramètres restent possibles. Voir [Verrou de protection](#verrou-de-protection).
+  `adb`, un effacement des données, le mode sans échec ou une désinstallation depuis les
+  Paramètres restent possibles. Voir [Verrou de protection](#verrou-de-protection).
 - **Réponse interactive** : l'autorisation en un tap (`allowInteractiveResponse` de Telecom)
   n'est pas encore implémentée — le blocage est binaire.
 - **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent

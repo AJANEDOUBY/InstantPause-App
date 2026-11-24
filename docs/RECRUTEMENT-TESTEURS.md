@@ -35,7 +35,7 @@ changent, et les modérateurs appliquent la version du jour, pas celle d'un guid
 Le sub existe précisément pour les tests fermés Play. Ses usagers sont des développeurs qui
 cherchent des testeurs **et** qui en fournissent. Trois conséquences pratiques :
 
-- **Ils connaissent le sujet.** Ils savent qu'une app qui demande l'administrateur d'appareil
+- **Ils connaissent le sujet.** Ils savent qu'une app qui demande des permissions sensibles
   est suspecte par défaut. Préparez l'explication avant de poster, pas après la première
   question.
 - **Ils attendent de la réciprocité.** Beaucoup testent votre app en échange de votre test de
@@ -90,7 +90,7 @@ stables.** Tenez un tableau : pseudo, date d'inscription, date d'installation.
 
 ## 4. Ce qu'il faut assumer devant des développeurs
 
-Votre app demande l'administrateur d'appareil et `ANSWER_PHONE_CALLS`. Sur un sub de
+Votre app demande `ANSWER_PHONE_CALLS` et le rôle de redirection d'appels. Sur un sub de
 développeurs, c'est un drapeau rouge, et ils le diront.
 
 **Ne fuyez pas.** Trois phrases suffisent :
@@ -124,7 +124,6 @@ controls: it slows down an impulse, it does not lock a device.
 
 Permissions, and why (this is the part you will ask about)
 • Call redirection role — Android's own API to intercept an outgoing call before it connects.
-• Device admin — used only to make uninstalling take a few extra taps. No policy, no wipe.
 • ANSWER_PHONE_CALLS — used only to hang up at 3:00 on the three trusted contacts.
 • Full-screen intent — to show the pause screen over the dialer.
 
@@ -188,7 +187,7 @@ Cinq problèmes, dont trois éliminatoires.
 
 Deux manques qui coûtent des testeurs :
 
-- **les permissions** (administrateur d'appareil, `ANSWER_PHONE_CALLS`) ne sont pas annoncées ;
+- **les permissions** (`ANSWER_PHONE_CALLS`, rôle de redirection d'appels) ne sont pas annoncées ;
   sur ce sub, les gens les découvrent à l'écran système et abandonnent ;
 - **les pays**. Un testeur hors France/Maroc ne peut pas installer.
 
@@ -214,7 +213,6 @@ so everything stays in its private storage on the device.
 
 PERMISSIONS YOU WILL BE ASKED FOR (and why)
 • Call redirection role — Android's own API to intercept an outgoing call before it connects.
-• Device admin — only to make uninstalling take a few extra taps. No policy, no wipe.
 • Phone permission (ANSWER_PHONE_CALLS) — only to hang up at 3:00 on the three trusted contacts.
 • Full-screen intent — to show the pause screen over the dialer.
 
@@ -395,7 +393,6 @@ Privacy policy: https://ajanedouby.github.io/instant-pause-privacy/
 PERMISSIONS YOU WILL BE ASKED FOR (and why)
 
 - Call redirection role — Android's own API to intercept an outgoing call before it connects.
-- Device admin — only to make uninstalling take a few extra taps. No policy, no remote wipe.
 - Phone permission (ANSWER_PHONE_CALLS) — only to hang up at 3:00 on the three trusted contacts.
 - Full-screen intent — to show the pause screen over the dialer.
 
@@ -444,7 +441,7 @@ If you get "App not available", wait 5–10 min and reload. Drop your link and I
 **Question sur les permissions**
 
 ```
-Fair question. Device admin is used only to slow down uninstall — no policy, no screen lock, no wipe. ANSWER_PHONE_CALLS is used only to hang up at 3:00 on the three contacts you allow. The app has no INTERNET permission, so nothing can leave the device. You can verify it with any manifest viewer.
+Fair question. ANSWER_PHONE_CALLS is used only to hang up at 3:00 on the three contacts you allow, and the call redirection role is Android's own API to intercept the call before it connects. There is no device administrator, no screen lock and no remote wipe. The app has no INTERNET permission, so nothing can leave the device. You can verify it with any manifest viewer.
 ```
 
 **Quelqu'un partage son lien**

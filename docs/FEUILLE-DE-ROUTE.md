@@ -3,6 +3,11 @@
 Analyse des remarques reçues après la 1.4.0. Chaque point est confronté au code réel, pas à
 l'intention.
 
+> **État 1.7.0** : ce document est un compte rendu historique. L'administrateur d'appareil a
+> été **retiré** en 1.7.0 (voir `notes-1.7.0.md` et la section « Anti-désinstallation » des
+> README). Les sections 1 et 3 décrivent donc l'application telle qu'elle était en 1.4.0 ; elles
+> sont conservées pour la traçabilité de la décision, pas comme état courant.
+
 ---
 
 ## 1. Onboarding lourd — vrai, et il y a un défaut précis

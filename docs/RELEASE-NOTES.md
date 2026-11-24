@@ -117,6 +117,46 @@ Correcciones: fechas del historial y nombres de los canales de notificación tra
 
 ---
 
+## 1.7.0 - retrait de l'administrateur d'appareil
+
+### Français - `fr-FR`
+
+```
+<fr-FR>
+Instant Pause ne demande plus l'administrateur d'appareil : la désinstallation redevient une action Android normale.
+
+Ce retrait répond aux règles Google Play. Le verrouillage par code, les plages, les contacts de confiance et le raccrochage à 3 minutes restent inchangés.
+
+L'exemption d'optimisation batterie n'est plus demandée : un bandeau ouvre désormais les réglages batterie du système.
+</fr-FR>
+```
+
+### Anglais - `en-US`
+
+```
+<en-US>
+Instant Pause no longer requests device administrator: uninstalling is a normal Android action again.
+
+This removal follows Google Play rules. The code lock, time windows, trusted contacts and the 3-minute hang-up are unchanged.
+
+The battery optimisation exemption is no longer requested: a banner now opens the system battery settings.
+</en-US>
+```
+
+### Espagnol - `es-ES`
+
+```
+<es-ES>
+Instant Pause ya no solicita el administrador de dispositivos: desinstalar vuelve a ser una acción normal de Android.
+
+Esta retirada cumple las reglas de Google Play. El bloqueo por código, las franjas, los contactos de confianza y el colgado a los 3 minutos no cambian.
+
+Ya no se solicita la exención de optimización de batería: un aviso abre ahora los ajustes de batería del sistema.
+</es-ES>
+```
+
+---
+
 ## Modèle pour la prochaine version
 
 Garde la même structure : trois phrases maximum, ce qui change pour l'utilisateur, aucun détail

@@ -5,7 +5,7 @@
 > Guide écrit pour être suivi sans rien connaître à la Play Console. Chaque étape dit **où
 cliquer**, **ce qu'on écrit** et **combien de temps ça prend**.
 
-> Version concernée : **1.4.0** (`com.instantpause.app`), bundle `InstantPause-1.4.0.aab`.
+> Version concernée : **1.7.0** (`com.instantpause.app`), bundle `InstantPause-1.7.0.aab`.
 > Compte : personnel, créé après le 13 novembre 2023 — les règles « 12 testeurs » s'appliquent.
 
 ---
@@ -16,7 +16,7 @@ Avant de toucher à la Play Console, réunir ces fichiers. Sans eux, on s'arrêt
 
 | Élément | Où | État |
 |---|---|---|
-| Le bundle | `D:\AndroidStudioProjects.V2\InstantPause-1.4.0.aab` (5,09 Mo) | ✅ prêt |
+| Le bundle | `InstantPause-1.7.0.aab` (généré par `release.ps1`) | ✅ prêt pour la 1.7.0 |
 | URL de confidentialité | `https://ajanedouby.github.io/instant-pause-privacy/` | ✅ en ligne |
 | Icône 512 × 512 px, PNG | à produire depuis `mipmap-anydpi/ic_launcher.xml` | ❌ manquant |
 | Visuel « bannière » 1024 × 500 px | à produire | ❌ manquant |
@@ -171,21 +171,21 @@ Menu **Politique → Contenu de l'application**. Chaque ligne doit finir en vert
 
 1. Menu **Tester et publier → Tests → Tests internes** → **Créer une release**.
    (Les tests internes sont facultatifs, mais ils évitent de griller une soumission en production.)
-2. **Importer** `InstantPause-1.4.0.aab`.
+2. **Importer** `InstantPause-1.7.0.aab`.
 3. La Console affiche alors les **déclarations de permissions sensibles**. C'est le moment
    délicat de tout le processus.
 
-### Les quatre déclarations à préparer
+### Les trois déclarations à préparer
 
 | Sujet | Ce que Google demande | Ce qu'on répond |
 |---|---|---|
 | `ANSWER_PHONE_CALLS` | à quoi sert la permission | « Raccrocher à 3 minutes un appel vers un contact autorisé, pendant une plage de protection » |
 | Service de premier plan `specialUse` | décrire l'usage | « Maintien du minuteur d'appel et de la protection après redémarrage » |
 | `USE_FULL_SCREEN_INTENT` | catégorie d'app | « Application d'appels / de blocage d'appels : afficher l'écran de pause sur l'écran verrouillé » |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | prouver que Doze dégrade la fonction principale | « Processus gelé = appel non intercepté, sans message. Voir `PERMISSIONS-PLAY.md`, section 4 » |
 
-La dernière n'a pas de formulaire dédié : c'est une **permission à usage restreint**, que
-Google peut contester à l'examen. Le texte de défense est prêt dans `docs/PERMISSIONS-PLAY.md`.
+Depuis la 1.7.0, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` n'est plus déclarée : il n'y a donc
+plus de permission à usage restreint à défendre à l'examen. Les textes prêts à coller sont dans
+`docs/PERMISSIONS-PLAY.md`.
 
 Google peut exiger une **vidéo de démonstration** (lien YouTube non répertorié, 1 à 2 minutes) :
 montrer un appel intercepté, l'écran de pause, le raccrochage à 3:00. À filmer sur la tablette,
@@ -221,7 +221,7 @@ Deux choix :
 2. **Importer le zip préparé**, qui contient les `.so` extraits du bundle :
 
    ```
-   InstantPause-1.4.0-symboles-natifs.zip
+   InstantPause-1.7.0-symboles-natifs.zip
    ```
 
    Chemin dans la Console : **Tester et publier → Explorateur d'app bundle → sélectionner
@@ -311,7 +311,7 @@ Une fois approuvé : **Production → Créer une release → Importer l'AAB → 
 ## Étape 8 — Après la publication
 
 - Les mises à jour suivantes passent par **Production → Nouvelle release**, avec un
-  `versionCode` supérieur (`15`, `16`…) : `./release.ps1` le fait, il suffit de changer
+  `versionCode` supérieur (`17`, `18`) : `./release.ps1` le fait, il suffit de changer
   `versionCode` et `versionName` dans `app/build.gradle.kts`.
 - Garder le keystore `keystore/cooldown-release.jks` **en lieu sûr, hors du dépôt** : le perdre
   oblige à repasser par le support Google.

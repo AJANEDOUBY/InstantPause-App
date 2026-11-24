@@ -164,7 +164,6 @@ desactivar una franja vuelve a pedir el código. Sin periodo de gracia.
 | Desactivar una franja activa | ✅ |
 | Eliminar una franja (incluido un Zen en curso) | ✅ |
 | Cambiar el código | ✅ |
-| Quitar la protección anti-desinstalación | ✅ |
 | Bloquear una llamada, añadir una franja, activar el Zen | ❌ |
 | Consultar el historial | ❌ |
 
@@ -182,15 +181,29 @@ desactivar una franja vuelve a pedir el código. Sin periodo de gracia.
 Tres intentos libres, luego 30 s, 1 min, 2 min, 4 min… hasta **15 minutos** entre intentos.
 El contador se persiste: matar la app no lo reinicia; reiniciar el teléfono tampoco.
 
+### Anti-desinstalación: retirada en la 1.7.0
+
+Las versiones anteriores usaban un **administrador de dispositivos** (sin política) para
+frenar una desinstalación impulsiva. Se **retiró en la 1.7.0**: Google Play considera un uso
+abusivo un administrador cuyo único efecto es bloquear la desinstalación, y el beneficio se
+limitaba a dos toques más.
+
+Desinstalar la app vuelve a ser una acción normal de Android. **La 1.7.0 no solicita,
+declara ni deja ningún administrador de dispositivos.** La protección contra el impulso vive
+en el código, no en el instalador.
+
+> Si vienes de una 1.6.x y habías activado el antiguo administrador, Android aún puede
+> mostrar Instant Pause en *Ajustes → Seguridad → Aplicaciones de administración*.
+> Desactívalo una vez ahí: la 1.7.0 ya no lo declara y no puede hacerlo por ti.
 
 ### Lo que el bloqueo no hace
 
 - **No** impide abrir la app (decisión asumida: la protección debe seguir siendo
   consultable).
 - No resiste a `adb`, al modo seguro ni a un borrado de los datos de la app.
-- No protege contra la desactivación del administrador desde los Ajustes del sistema.
+- No impide una desinstalación: nada en la app puede hacerlo.
 - **Código olvidado = ninguna recuperación posible**: hay que borrar los datos de la app
-  (lo que también elimina las franjas) o desinstalarla tras quitar el administrador.
+  (lo que también elimina las franjas) o desinstalarla.
 
 ---
 
@@ -256,13 +269,12 @@ app/src/main/java/com/instantpause/app/
 │   ├── PauseForegroundService.kt          # Apertura de la UI desde segundo plano
 │   ├── CoolDownWatchdogService.kt         # Mantener el proceso vivo
 │   ├── WatchdogAlarmReceiver.kt           # Rearme periódico
-│   ├── CoolDownDeviceAdminReceiver.kt     # Anti-desinstalación (sin política)
 │   ├── ProtectionAlertNotifier.kt         # Canales + notificaciones
 │   └── BootReceiver.kt                    # Tras reinicio / actualización
 └── ui/
     ├── main/      # Inicio, banner de ayuda, activación del rol
     ├── schedule/  # Franjas + historial (Compose)
-    ├── security/  # Bloqueo: código, retardos, administrador
+    ├── security/  # Bloqueo: código, retardos
     ├── pause/     # Pantalla de pausa sensorial
     ├── logs/      # Registro detallado
     └── theme/     # Material 3
@@ -303,11 +315,15 @@ Sin dependencia de red, sin analítica, sin cuenta.
 
 La última versión firmada está disponible en **[Releases](../../releases/latest)**:
 
-**[⬇ InstantPause-1.7.0](../../releases/download/v1.7.0)** — 6,7 MB · Android 10+
+**[⬇ InstantPause-1.6.0](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** - 6,7 MB · Android 10+
+
+> La 1.7.0 se está desplegando en Google Play. Su APK se adjuntará a la release `v1.7.0`
+> tras la revisión; mientras tanto, la descarga de GitHub de arriba es el último APK firmado
+> (1.6.0).
 
 ```bash
 # Verificar la integridad del archivo descargado
-sha256sum InstantPause-1.7.0
+sha256sum InstantPause-1.6.0.apk
 # e4c7dde1d3e6a89be20dde68449560fbad13f2e1cb93c42ccd30b42256920af3
 ```
 
@@ -323,8 +339,7 @@ sha256sum InstantPause-1.7.0
 
 > 🛡️ Algunos antivirus preinstalados (AVG/Avast en itel, Infinix…) muestran «aplicación
 > sospechosa» para cualquier APK instalado fuera de Play Store. Es una heurística sobre la
-> **fuente**, no un análisis del código: no pulses «ELIMINAR». (Y si el administrador de
-> Instant Pause está activo, la desinstalación fallará de todos modos.)
+> **fuente**, no un análisis del código: no pulses «ELIMINAR».
 
 ### Requisitos
 - Android **10 (API 29)** o superior.
@@ -336,19 +351,17 @@ sha256sum InstantPause-1.7.0
 1. Instala el APK (release o build local).
 2. Abre la app → **elige tu código de protección**. Es obligatorio: la pantalla no se puede
    saltar, y el código ya no podrá eliminarse después.
-3. Confirma la protección **anti-desinstalación** (Device Admin): la pantalla del sistema
-   se abre automáticamente en este paso, y la app no continúa hasta que esté activa.
-4. Concede **Llamar y gestionar llamadas**: es lo que permite colgar la llamada a los
+3. Concede **Llamar y gestionar llamadas**: es lo que permite colgar la llamada a los
    3 minutos. Este paso es obligatorio — sin él, un contacto autorizado podría tenerte una
    hora al teléfono.
-5. Acepta el rol **Redirección de llamadas**.
-6. Permite la **visualización a pantalla completa** (Android 14+): el ajuste de Android se
+4. Acepta el rol **Redirección de llamadas**.
+5. Permite la **visualización a pantalla completa** (Android 14+): el ajuste de Android se
    abre automáticamente. Este paso se propone **una sola vez** y no es bloqueante — sin él,
    la pantalla de pausa aparece como una simple notificación que hay que tocar.
-7. Concede los permisos restantes:
+6. Concede los permisos restantes:
    - **Notificaciones** (Android 13+) — para la alerta de bloqueo;
    - **Mostrar sobre otras apps** — para la pantalla de pausa.
-8. Crea una franja horaria (o activa el modo Zen) y prueba con un número neutro.
+7. Crea una franja horaria (o activa el modo Zen) y prueba con un número neutro.
 
 ---
 
@@ -381,10 +394,9 @@ Antes de la primera publicación, Play Console exige:
    - `USE_FULL_SCREEN_INTENT`: mostrar la pantalla de pausa sobre el bloqueo;
 4. la declaración de uso de los **servicios en primer plano** (formulario aparte).
 
-> ⚠️ La revisión de Play es el punto de fricción, no el código: el administrador de
-> dispositivos y `ANSWER_PHONE_CALLS` son los dos permisos más examinados. El repositorio
-> de GitHub sigue siendo el canal de distribución de los APK firmados, independientemente
-> de la Store.
+> ⚠️ La revisión de Play es el punto de fricción, no el código: `ANSWER_PHONE_CALLS` es uno
+> de los permisos más examinados. El repositorio de GitHub sigue siendo el canal de
+> distribución de los APK firmados, independientemente de la Store.
 
 ---
 
@@ -471,7 +483,7 @@ La etiqueta creada es `v<versionName>`; hay que incrementar `versionName`/`versi
 
 ## Pruebas
 
-117 pruebas unitarias cubren la lógica de negocio, sin dependencia de Android en tiempo de
+122 pruebas unitarias cubren la lógica de negocio, sin dependencia de Android en tiempo de
 ejecución:
 
 | Suite | Cobertura |
@@ -490,10 +502,10 @@ ejecución:
 | `AppLockManagerTest` (20) | ciclo de vida, código creado bloqueado, reinicio, retardo persistido, rebloqueo 60 s, cambio/eliminación, fallo de almacenamiento |
 | `CallTimerTextTest` (3) | formato `2:59 / 3:00`, segundos con dos dígitos, dígitos latinos sea cual sea la locale |
 | `LanguageTagsTest` (5) | `fr-FR`/`es-419`/`FR`, idioma no traducido → idioma del teléfono |
-| `OnboardingStageTest` (17) | orden de los pasos: código → anti-desinstalación → colgar → rol → pantalla completa → app |
+| `OnboardingStageTest` (11) | orden de los pasos: código → colgar → rol → pantalla completa → app |
 | `ExampleUnitTest` (1) | comprobación de que el lanzador de pruebas funciona |
 
-Es decir, **117 pruebas** en total.
+Es decir, **122 pruebas** en total.
 
 ```bash
 ./gradlew :app:testDebugUnitTest
@@ -562,8 +574,8 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 - **Rol revocable**: si el sistema retira `ROLE_CALL_REDIRECTION` (otra app de filtrado, una
   actualización), la protección se detiene; la app lo detecta y muestra un banner.
 - **Bloqueo evitable**: el código protege los ajustes de la app, no el sistema. `adb`, un
-  borrado de datos, el modo seguro o la desactivación del administrador desde los Ajustes
-  siguen siendo posibles. Ver [Bloqueo de protección](#bloqueo-de-protección).
+  borrado de datos, el modo seguro o una desinstalación desde los Ajustes siguen siendo
+  posibles. Ver [Bloqueo de protección](#bloqueo-de-protección).
 - **Respuesta interactiva**: la autorización con un toque (`allowInteractiveResponse` de
   Telecom) aún no está implementada — el bloqueo es binario.
 - **Fork de fabricante**: las capas muy agresivas (gestión de batería, autostart) pueden

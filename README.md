@@ -156,7 +156,6 @@ window asks for the code again. No grace period.
 | Switch off an active window | ✅ |
 | Delete a window (including an ongoing Zen) | ✅ |
 | Change the code | ✅ |
-| Remove the uninstall protection | ✅ |
 | Block a call, add a window, enable Zen | ❌ |
 | View the history | ❌ |
 
@@ -313,11 +312,14 @@ No network dependency, no analytics, no account.
 
 The latest signed version is available in **[Releases](../../releases/latest)**:
 
-**[⬇ InstantPause-1.7.0](../../releases/download/v1.7.0)** — 6.7 MB · Android 10+
+**[⬇ InstantPause-1.6.0](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** - 6.7 MB · Android 10+
+
+> 1.7.0 is rolling out on Google Play. Its APK will be attached to the `v1.7.0` release
+> after the review; until then, the GitHub download above is the last signed APK (1.6.0).
 
 ```bash
 # Verify the integrity of the downloaded file
-sha256sum InstantPause-1.7.0
+sha256sum InstantPause-1.6.0.apk
 # e4c7dde1d3e6a89be20dde68449560fbad13f2e1cb93c42ccd30b42256920af3
 ```
 
@@ -564,7 +566,7 @@ implementation), which allows it to run with in-memory fakes.
 - **Revocable role**: if the system removes `ROLE_CALL_REDIRECTION` (another filtering
   app, an update), protection stops; the app detects it and shows a banner.
 - **Bypassable lock**: the code protects the app's settings, not the system. `adb`,
-  clearing data, safe mode or deactivating the admin from Settings remain possible. See
+  clearing data, safe mode or uninstalling the app from Settings remain possible. See
   [Protection lock](#protection-lock).
 - **Interactive response**: one-tap authorisation (Telecom's `allowInteractiveResponse`)
   is not yet implemented — blocking is binary.

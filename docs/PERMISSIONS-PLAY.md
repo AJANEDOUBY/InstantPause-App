@@ -30,20 +30,20 @@ l'analyseur a détecté, et le bandeau reviendrait.
 | Nom d'utilisateur | `not applicable` |
 | Mot de passe | `review2026` |
 
-### Instructions — version courte (481 caractères, limite 500)
+### Instructions — version courte (444 caractères, limite 500)
 
-Le champ est limité à **500 caractères**. Celle-ci en fait 481, comptés par script.
+Le champ est limité à **500 caractères**. Celle-ci en fait 444, comptés par script.
 
 ```
-No account, no login, no server. At first launch, CREATE a protection code (not an existing credential): enter review2026 twice (6+ chars, one letter, one digit). It is only asked later to weaken protection. Then accept 4 normal consents: device admin (uninstall guard only), phone permission (3-min hang-up), call redirection role, full-screen intent. To test: call during an active window; the pause screen appears. Needs a SIM. Emergencies never blocked. No INTERNET permission.
+No account, no login, no server. At first launch, CREATE a protection code (not an existing credential): enter review2026 twice (6+ chars, one letter, one digit). It is only asked later to weaken protection. Then accept 3 normal consents: phone permission (3-min hang-up), call redirection role, full-screen intent. To test: call during an active window; the pause screen appears. Needs a SIM. Emergencies never blocked. No INTERNET permission.
 ```
 
-### Secours (342 caractères)
+### Secours (328 caractères)
 
 Si la Console refuse encore, ou s'il reste une champ plus court :
 
 ```
-No account, no server. On first launch, CREATE a code (not a login): type review2026 twice (6+ chars, letter+digit). It is only asked to weaken protection. Then accept device admin, phone permission, call redirection and full-screen intent. To test, call during an active window: the pause screen appears. Needs a SIM. No INTERNET permission.
+No account, no server. On first launch, CREATE a code (not a login): type review2026 twice (6+ chars, letter+digit). It is only asked to weaken protection. Then accept phone permission, call redirection and full-screen intent. To test, call during an active window: the pause screen appears. Needs a SIM. No INTERNET permission.
 ```
 
 ### Version longue — pour un e-mail au support, pas pour le formulaire
@@ -57,17 +57,16 @@ credential: type the code below, twice, and it becomes the code for this install
   Suggested code: review2026
   Rules: at least 6 characters, at least one letter and one digit.
 
-This code is only requested later, and only to weaken the protection: delete a time window,
-remove an allowed contact, or deactivate uninstall protection. Browsing the app, creating a
-window or enabling Zen mode never asks for it. If you forget it, clear the app data.
+This code is only requested later, and only to weaken the protection: delete a time window
+or remove an allowed contact. Browsing the app, creating a window or enabling Zen mode never
+asks for it. If you forget it, clear the app data.
 
-After creating the code, the onboarding asks for four system grants, which are normal Android
+After creating the code, the onboarding asks for three system grants, which are normal Android
 consents, not credentials:
-  1. Device admin — used only to slow down uninstalling the app. No policy is enforced.
-  2. Phone permission (ANSWER_PHONE_CALLS) — used only to hang up at 3:00 on the three
+  1. Phone permission (ANSWER_PHONE_CALLS) — used only to hang up at 3:00 on the three
      trusted contacts.
-  3. Call redirection role — the API that intercepts an outgoing call before it connects.
-  4. Full-screen intent — shows the pause screen over the dialer.
+  2. Call redirection role — the API that intercepts an outgoing call before it connects.
+  3. Full-screen intent — shows the pause screen over the dialer.
 
 To verify the core feature, place an outgoing call to any non-emergency number during an
 active time window: the pause screen appears instead of the call connecting. This requires a
@@ -229,82 +228,21 @@ refuser la permission. Voir `docs/FEUILLE-DE-ROUTE.md`, section 2.
 
 ---
 
-## 4. `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`
+## 4. `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` - retirée en 1.7.0
 
-Permission à usage restreint : Google l'accepte seulement si l'optimisation batterie
-**dégrade réellement la fonction principale**. C'est le cas ici, mais la justification doit
-être précise, car l'argument paresseux (« toutes les apps demandent ça ») est refusé.
+Cette permission n'est **plus déclarée ni demandée** depuis la 1.7.0. Google Play la traite
+comme une permission à usage restreint et exige de prouver que l'optimisation batterie dégrade
+réellement la fonction principale ; le risque d'examen ne justifiait plus le gain.
 
-### Ce qui casse réellement sans l'exemption
+L'application n'envoie donc plus `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`. Quand le
+système optimise encore l'app, l'écran principal affiche un bandeau qui ouvre simplement les
+**réglages batterie du système** (`ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS`) : c'est
+l'utilisateur qui choisit « Sans restriction » pour Instant Pause, sans dialogue ni permission
+spéciale. Il n'y a donc **aucun formulaire à remplir** pour cette permission dans la Console.
 
-À ne pas confondre avec Doze. Les alarmes du projet utilisent déjà
-`setExactAndAllowWhileIdle`, qui traverse Doze. Le problème est ailleurs :
-
-| Sans exemption | Conséquence observable |
-|---|---|
-| Processus gelé ou tué écran éteint | le prochain appel passe **sans interception** : l'écran de pause n'apparaît pas, aucune erreur affichée |
-| Minuteur de 3 minutes gelé en communication | la promesse « coupé à 3:00 » devient silencieusement fausse |
-| Watchdog non relancé | la protection reste inactive jusqu'à la prochaine ouverture manuelle de l'app |
-| ROM constructeur (Infinix, Tecno, itel) | le service permanent est tué en quelques minutes, même avec `START_STICKY` |
-
-C'est le pire mode de défaillance possible : **une protection qui se tait**. L'utilisateur
-croit être protégé et ne l'est plus.
-
-### Texte de justification (champ ou e-mail au support)
-
-```
-Instant Pause blocks outgoing calls during time windows the user defines. Android gives a
-third-party app no callback at the exact moment a call is placed, so the app must already be
-running: it keeps a foreground service and re-arms it with a 15-minute allow-while-idle alarm
-when the process is killed.
-
-Battery optimisation defeats that design in two ways. First, when the process is frozen or
-killed, the next outgoing call is placed with no interception at all: the pause screen never
-appears and the user loses the protection they explicitly configured, with no error shown.
-Second, when a call to a trusted contact is in progress with the screen off, the 3-minute cap
-is computed by the app's own timer; a frozen process stops the timer, so the 3-minute
-guarantee silently becomes longer.
-
-The exemption is requested from a banner on the main screen, only after protection is set up,
-through ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, with a fallback to the system battery
-optimisation list when a manufacturer blocks that action. Declining keeps the app fully
-usable; it only makes the protection less reliable. The app has no INTERNET permission, runs
-no background network work, and holds no wake lock.
-```
-
-### Version française (contrôle, ne pas coller)
-
-```
-Instant Pause bloque les appels sortants pendant des plages horaires définies par
-l'utilisateur. Android n'offre aucun rappel au moment exact où un appel est composé :
-l'application doit donc déjà tourner. Elle maintient un service de premier plan et le relance
-par une alarme « allow while idle » de 15 minutes si le processus est tué.
-
-L'optimisation batterie casse ce mécanisme de deux façons. D'abord, quand le processus est
-gelé ou tué, l'appel suivant passe sans aucune interception : l'écran de pause n'apparaît pas
-et l'utilisateur perd la protection qu'il a explicitement configurée, sans message d'erreur.
-Ensuite, pendant un appel vers un contact autorisé écran éteint, la limite de 3 minutes est
-calculée par le minuteur de l'application ; un processus gelé arrête ce minuteur, et la
-promesse des 3 minutes devient silencieusement plus longue.
-
-L'exemption est demandée depuis un bandeau de l'écran principal, une fois la protection
-configurée, via ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, avec repli vers la liste système
-d'optimisation batterie quand un constructeur bloque cette action. Refuser laisse
-l'application pleinement utilisable ; seule la fiabilité de la protection diminue.
-L'application n'a pas la permission INTERNET, ne fait aucun travail réseau en arrière-plan et
-ne détient aucun wake lock.
-```
-
-### À vérifier avant de coller ce texte
-
-1. Le bandeau `BatteryBanner` apparaît bien quand `isBatteryOptimized()` est vrai — donc
-   l'exemption n'est **pas** demandée à l'installation (c'est ce qui la rend défendable).
-2. Sur la tablette, toucher le bandeau ouvre le dialogue système « Ignorer l'optimisation
-   batterie ? », et non la simple liste.
-3. Le repli fonctionne : sur un appareil où `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` est
-   refusée, l'app ouvre `ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS` sans planter.
-4. La phrase « aucun wake lock » est vraie : `WAKE_LOCK` n'est pas déclarée dans le manifeste.
-   Si un jour elle est ajoutée, ce texte doit être corrigé.
+Le comportement observable reste le même : processus gelé = appel non intercepté, sans message.
+Si un jour la permission revient, la justification détaillée est conservée dans l'historique
+Git (section 4 avant la 1.7.0).
 
 ---
 
@@ -354,7 +292,7 @@ pendant qu'il n'interagit pas avec l'app.
 
 ### Préparation
 
-1. Tablette `R5GL350ZJ9P`, version 1.4.0 installée, plage active (par exemple 05:55–07:55) et
+1. Tablette `R5GL350ZJ9P`, version 1.7.0 installée, plage active (par exemple 05:55-07:55) et
    les trois contacts autorisés configurés.
 2. Mode avion **désactivé** (l'app n'utilise pas le réseau, mais un écran d'erreur réseau
    parasite la démonstration).

@@ -32,8 +32,7 @@ QUÉ LA HACE DIFERENTE
 
 • El código de protección se crea en frío, antes que nada, y nunca se guarda en
   claro.
-• Cortar una franja, eliminar un contacto autorizado o quitar la protección
-  anti-desinstalación exige ese código.
+• Cortar una franja o eliminar un contacto autorizado exige ese código.
 • Sin cuenta. Sin publicidad. Sin analítica. Sin servidor.
 • La aplicación no pide permiso para leer tu agenda: eliges un contacto con el
   selector de Android y solo se guarda esa ficha.
@@ -58,13 +57,12 @@ viven en el almacenamiento privado de la aplicación, en tu teléfono. La polít
 completa está aquí:
 https://ajanedouby.github.io/instant-pause-privacy/
 
-CONFIGURACIÓN EN 6 PASOS
+CONFIGURACIÓN EN 5 PASOS
 
 1. Elige tu código.
-2. Activa la protección anti-desinstalación.
-3. Autoriza el colgado a los 3 minutos.
-4. Acepta el rol de redirección de llamadas.
-5. Autoriza el dibujo sobre las llamadas.
-6. Crea una franja horaria. Eso es todo.
+2. Autoriza el colgado a los 3 minutos.
+3. Acepta el rol de redirección de llamadas.
+4. Autoriza el dibujo sobre las llamadas.
+5. Crea una franja horaria. Eso es todo.
 
 Una corrección de código, una duda, un fallo: escribe a janedouby@gmail.com.
