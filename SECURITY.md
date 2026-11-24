@@ -66,7 +66,7 @@ vulnérabilités qui nous intéressent sont donc les contournements **sans le co
 
 | Sujet | Exemple de faille valable |
 | --- | --- |
-| Contournement du code | Couper une plage, supprimer un contact autorisé ou retirer l'administrateur d'appareil sans saisir le code |
+| Contournement du code | Couper une plage, supprimer un contact autorisé ou modifier les réglages de protection sans saisir le code |
 | Faille du hachage | Empreinte réversible, sel prévisible, comparaison non constante, code stocké en clair quelque part |
 | Temporisation | Contournement du verrouillage après plusieurs essais (redémarrage, changement d'heure, réinstallation partielle) |
 | Plage horaire | Appel bloqué hors plage, ou appel non bloqué pendant une plage active (hors fail-open, voir plus bas) |

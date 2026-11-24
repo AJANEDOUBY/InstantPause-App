@@ -212,7 +212,6 @@ La aplicación no modifica esas reglas y no promete que una aplicación concreta
 |---|---|
 | Rol **Redirección de llamadas** (Telecom) | Interceptar la llamada saliente para mostrar la pantalla de pausa |
 | `ANSWER_PHONE_CALLS` | Colgar automáticamente a los 3 minutos una llamada a un contacto autorizado |
-| Administrador de dispositivos | Frenar una desinstalación impulsiva. **Ninguna política** se impone al dispositivo y no es posible ningún borrado remoto |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Mostrar la pantalla de pausa sobre la pantalla de llamada o de bloqueo |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notificación permanente de la protección y respuestas hápticas |
 | `RECEIVE_BOOT_COMPLETED` | Reactivar la protección tras un reinicio |
@@ -243,7 +242,7 @@ ningún dato al editor, estos derechos se ejercen **directamente en la aplicaci�
   *Ajustes → Aplicaciones → Instant Pause → Almacenamiento*. Todo desaparece con el almacenamiento
   privado.
 - La protección anti-desinstalación impide una desinstalación impulsiva: desactiva primero el
-  administrador de dispositivos en *Ajustes → Seguridad → Administración del dispositivo*, con tu
+  ajustes de la aplicación en *Ajustes → Aplicaciones → Instant Pause*, con tu
   código. Es una barrera contra ti mismo, no una retención de datos.
 
 Base legal: ejecución del servicio que solicitas (artículo 6.1.b del RGPD). Ningún tratamiento

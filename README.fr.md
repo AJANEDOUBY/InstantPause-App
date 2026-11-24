@@ -311,11 +311,11 @@ Aucune dépendance réseau, aucun analytics, aucun compte.
 
 La dernière version signée est disponible dans les **[Releases](../../releases/latest)** :
 
-**[⬇ InstantPause-1.6.0.apk](../../releases/download/v1.6.0/InstantPause-1.6.0.apk)** — 6,7 Mo · Android 10+
+**[⬇ InstantPause-1.7.0](../../releases/download/v1.7.0)** — 6,7 Mo · Android 10+
 
 ```bash
 # Vérifier l'intégrité du fichier téléchargé
-sha256sum InstantPause-1.6.0.apk
+sha256sum InstantPause-1.7.0
 # e4c7dde1d3e6a89be20dde68449560fbad13f2e1cb93c42ccd30b42256920af3
 ```
 
@@ -421,7 +421,7 @@ tag git et publication GitHub avec l'APK en asset.
 .\release.ps1 -DryRun
 
 # Avec des notes de release personnalisées
-.\release.ps1 -Notes .\notes-1.6.0.md
+.\release.ps1 -Notes .\notes-1.7.0.md
 ```
 
 Si les identifiants de signature sont renseignés (voir ci-dessous), Gradle produit directement un
