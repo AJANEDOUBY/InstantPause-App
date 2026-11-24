@@ -83,7 +83,6 @@ The app does not override those rules and does not promise that a given app will
 | `POST_NOTIFICATIONS` / `VIBRATE` | Persistent protection notification and haptic feedback |
 | `RECEIVE_BOOT_COMPLETED` | Re-enable protection after a reboot |
 | `SCHEDULE_EXACT_ALARM` | Trigger windows at the scheduled time |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Prevent Android from putting the protection service to sleep |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Keep protection and the call timer active |
 | `ACCESS_NOTIFICATION_POLICY` (Do Not Disturb access) | Switch to *Do Not Disturb - priority only* during your windows, **only if you turn that option on**. The sound mode set before the window is restored afterwards |
 
@@ -216,7 +215,6 @@ La aplicación no modifica esas reglas y no promete que una aplicación concreta
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notificación permanente de la protección y respuestas hápticas |
 | `RECEIVE_BOOT_COMPLETED` | Reactivar la protección tras un reinicio |
 | `SCHEDULE_EXACT_ALARM` | Activar las franjas a la hora prevista |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Impedir que Android duerma el servicio de protección |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Mantener activas la protección y el temporizador de llamada |
 | `ACCESS_NOTIFICATION_POLICY` (acceso a No molestar) | Activar *No molestar - solo prioridad* durante tus franjas, **solo si activas esa opción**. El modo de sonido anterior se restablece después |
 
@@ -352,7 +350,6 @@ L'application ne contourne pas ces règles et ne promet pas qu'une application d
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notification permanente de la protection et retours haptiques |
 | `RECEIVE_BOOT_COMPLETED` | Réactiver la protection après un redémarrage |
 | `SCHEDULE_EXACT_ALARM` | Déclencher les plages à l'heure prévue |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Empêcher Android d'endormir le service de protection |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Maintenir la protection et le minuteur d'appel actifs |
 | `ACCESS_NOTIFICATION_POLICY` (accès « Ne pas déranger ») | Activer *Ne pas déranger - prioritaires uniquement* pendant vos plages, **uniquement si vous activez cette option**. Le mode sonore d'avant la plage est rétabli ensuite |
 

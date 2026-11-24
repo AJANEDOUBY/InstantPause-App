@@ -521,7 +521,6 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé — proposé une fois à l'installation sur Android 14+ (non bloquant) |
 | `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
 | `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proposer l'exemption d'énergie depuis le bandeau |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
 | `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
 | `ACCESS_NOTIFICATION_POLICY` | Optionnel : couper les sonneries WhatsApp/Signal/Telegram pendant une plage (accordée dans l'onglet Sécurité, désactivé par défaut) |

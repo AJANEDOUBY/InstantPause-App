@@ -524,7 +524,6 @@ implementation), which allows it to run with in-memory fakes.
 | `USE_FULL_SCREEN_INTENT` | Display on the lock screen — offered once at install on Android 14+ (non-blocking) |
 | `RECEIVE_BOOT_COMPLETED` | Re-arming after reboot |
 | `SCHEDULE_EXACT_ALARM` | Safety alarm every 15 min (inexact fallback if denied) |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Offer the energy exemption from the banner |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, opening the UI |
 | `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — mandatory permission at install |
 | `ACCESS_NOTIFICATION_POLICY` | Optional: mute WhatsApp/Signal/Telegram ringtones during a window (granted in the Security tab, off by default) |

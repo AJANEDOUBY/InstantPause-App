@@ -520,7 +520,6 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 | `USE_FULL_SCREEN_INTENT` | Visualización en pantalla bloqueada — se propone una vez al instalar en Android 14+ (no bloqueante) |
 | `RECEIVE_BOOT_COMPLETED` | Rearme tras el reinicio |
 | `SCHEDULE_EXACT_ALARM` | Alarma de seguridad cada 15 min (recurso inexacto si se deniega) |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Proponer la exención de energía desde el banner |
 | `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, apertura de UI |
 | `ANSWER_PHONE_CALLS` | Colgar a las 3:00 la llamada a un contacto autorizado — permiso obligatorio al instalar |
 | `ACCESS_NOTIFICATION_POLICY` | Opcional: silenciar los tonos de WhatsApp/Signal/Telegram durante una franja (se concede en la pestaña Seguridad, desactivado por defecto) |
