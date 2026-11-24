@@ -379,8 +379,6 @@ Avant la première publication, la Play Console réclame :
 2. le formulaire **Sécurité des données** — ici, tout est local : « aucune donnée collectée » ;
 3. la **justification des permissions sensibles**, à rédiger au moment de l'envoi :
    - `ANSWER_PHONE_CALLS` : couper à 3 minutes un appel vers un contact autorisé ;
-   - administrateur d'appareil : freiner une désinstallation impulsive (aucune politique
-     n'est demandée à l'appareil) ;
    - service de premier plan `specialUse` : maintien de la protection et minuteur d'appel ;
    - `USE_FULL_SCREEN_INTENT` : afficher l'écran de pause par-dessus le verrouillage ;
 4. la déclaration d'usage des **services de premier plan** (formulaire séparé).

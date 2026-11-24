@@ -376,8 +376,6 @@ Antes de la primera publicación, Play Console exige:
 2. el formulario **Seguridad de los datos** — aquí todo es local: «ningún dato recogido»;
 3. la **justificación de los permisos sensibles**, que se redacta al enviar:
    - `ANSWER_PHONE_CALLS`: colgar a los 3 minutos una llamada a un contacto autorizado;
-   - administrador de dispositivos: frenar una desinstalación impulsiva (no se solicita
-     ninguna política al dispositivo);
    - servicio en primer plano `specialUse`: mantener la protección y el temporizador de
      llamada;
    - `USE_FULL_SCREEN_INTENT`: mostrar la pantalla de pausa sobre el bloqueo;
