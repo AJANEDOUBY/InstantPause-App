@@ -141,6 +141,12 @@
     <string name="zen_cancel_reason">Arrêter le mode Zen maintenant ? Les appels ne seront plus bloqués jusqu\'à la prochaine plage.</string>
 
     <!-- Plages -->
+    <string name="zen_hours_4">4 h</string>
+    <string name="zen_hours_6">6 h</string>
+    <string name="zen_hours_8">8 h</string>
+    <string name="zen_hours_10">10 h</string>
+    <string name="zen_hours_12">12 h</string>
+
     <string name="empty_title">Aucune plage configurée</string>
     <string name="empty_body">Ajoutez une plage pour activer la protection automatique (ex : 22 h – 7 h).</string>
     <string name="schedule_disable_reason">Désactiver la plage %1$s – %2$s ? Sans elle, plus rien ne bloquera vos appels sur ce créneau.</string>

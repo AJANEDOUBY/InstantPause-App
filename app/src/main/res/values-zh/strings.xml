@@ -121,6 +121,12 @@
     <string name="zen_shorten_reason">缩短 Zen 时段？通话将在 %1$s 而不是 %2$s 重新被拦截。请输入代码确认。</string>
     <string name="zen_cancel_reason">立即停止 Zen 模式？在下一个时段之前，通话将不再被拦截。</string>
 
+    <string name="zen_hours_4">4 小时</string>
+    <string name="zen_hours_6">6 小时</string>
+    <string name="zen_hours_8">8 小时</string>
+    <string name="zen_hours_10">10 小时</string>
+    <string name="zen_hours_12">12 小时</string>
+
     <string name="empty_title">尚未配置时段</string>
     <string name="empty_body">添加一个时段以启用自动保护（例如 22:00 – 07:00）。</string>
     <string name="schedule_disable_reason">停用 %1$s – %2$s 时段？停用后，该时段内将不再拦截通话。</string>

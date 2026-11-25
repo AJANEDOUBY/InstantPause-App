@@ -146,6 +146,12 @@
     <string name="zen_cancel_reason">¿Detener el modo Zen ahora? Las llamadas dejarán de bloquearse hasta la próxima franja.</string>
 
     <!-- Franjas -->
+    <string name="zen_hours_4">4 h</string>
+    <string name="zen_hours_6">6 h</string>
+    <string name="zen_hours_8">8 h</string>
+    <string name="zen_hours_10">10 h</string>
+    <string name="zen_hours_12">12 h</string>
+
     <string name="empty_title">Ninguna franja configurada</string>
     <string name="empty_body">Añade una franja para activar la protección automática (p. ej., de 22:00 a 7:00).</string>
     <string name="schedule_disable_reason">¿Desactivar la franja %1$s – %2$s? Sin ella, nada bloqueará tus llamadas en ese tramo.</string>

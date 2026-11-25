@@ -292,11 +292,11 @@ private fun ZenModeCard(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ScheduleViewModel.ZEN_PRESETS.forEach { (label, durationMs) ->
+                ScheduleViewModel.ZEN_PRESETS.forEach { (labelRes, durationMs) ->
                     FilterChip(
                         selected = false,
                         onClick = { onActivate(durationMs) },
-                        label = { Text(label) }
+                        label = { Text(stringResource(labelRes)) }
                     )
                 }
             }

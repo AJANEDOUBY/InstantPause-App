@@ -121,6 +121,12 @@
     <string name="zen_shorten_reason">Zen अवधि छोटी करें? कॉल %2$s के बजाय %1$s पर फिर ब्लॉक होंगी। पुष्टि के लिए कोड दर्ज करें।</string>
     <string name="zen_cancel_reason">Zen मोड अभी रोकें? अगली अवधि तक कॉल ब्लॉक नहीं होंगी।</string>
 
+    <string name="zen_hours_4">4 घंटे</string>
+    <string name="zen_hours_6">6 घंटे</string>
+    <string name="zen_hours_8">8 घंटे</string>
+    <string name="zen_hours_10">10 घंटे</string>
+    <string name="zen_hours_12">12 घंटे</string>
+
     <string name="empty_title">कोई अवधि सेट नहीं है</string>
     <string name="empty_body">स्वचालित सुरक्षा के लिए एक अवधि जोड़ें (जैसे 22:00 – 07:00)।</string>
     <string name="schedule_disable_reason">%1$s – %2$s अवधि बंद करें? इसके बिना उस समय कॉल ब्लॉक नहीं होंगी।</string>
