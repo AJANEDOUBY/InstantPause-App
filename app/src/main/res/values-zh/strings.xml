@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="zh">
+    <string name="app_name">Instant Pause</string>
+    <string name="app_tagline">等到明天再打电话</string>
+
+    <string name="tab_schedules">时段</string>
+    <string name="tab_contacts">联系人</string>
+    <string name="tab_history">历史</string>
+    <string name="tab_security">安全</string>
+
+    <string name="banner_overlay_title">显示在通话上方</string>
+    <string name="banner_overlay_message">通话期间显示暂停界面所必需。</string>
+    <string name="banner_battery_title">重启后的保护</string>
+    <string name="banner_battery_message">允许自启动并取消电池使用限制。</string>
+    <string name="banner_allow">允许</string>
+
+    <string name="role_title">保护未启用</string>
+    <string name="role_message">要让 Instant Pause 暂停你的通话，Android 需要你授予一项特殊权限。</string>
+    <string name="role_reassurance">只需几秒，且可随时撤销。</string>
+    <string name="role_activate">启用保护</string>
+
+    <string name="violation_too_short">至少 %1$d 个字符</string>
+    <string name="violation_missing_letter">至少一个字母</string>
+    <string name="violation_missing_digit">至少一个数字</string>
+    <string name="list_separator">、</string>
+    <string name="error_requirements">需要 %1$s。</string>
+    <string name="error_mismatch">两次输入不一致。</string>
+    <string name="error_no_code">尚未设置代码。</string>
+    <string name="error_code_exists">已设置代码。</string>
+    <string name="error_too_many_attempts">尝试次数过多。请在 %1$s 后重试。</string>
+    <string name="error_wrong_code">代码错误（区分大小写）。超时前剩余尝试次数：%1$d。</string>
+    <string name="error_storage">无法保存代码。请检查存储空间后重试。</string>
+    <string name="error_retry_in">请在 %1$s 后重试。</string>
+
+    <string name="field_code">字母数字代码</string>
+    <string name="field_current_code">当前代码</string>
+    <string name="field_new_code">新代码</string>
+    <string name="field_confirm_code">确认代码</string>
+    <string name="action_show">显示</string>
+    <string name="action_hide">隐藏</string>
+    <string name="action_cancel">取消</string>
+    <string name="action_save">保存</string>
+    <string name="action_change">更改</string>
+    <string name="action_unlock">解锁</string>
+
+    <string name="dialog_code_required">需要代码</string>
+    <string name="dialog_set_code">设置代码</string>
+    <string name="dialog_change_code">更改代码</string>
+    <string name="dialog_set_code_help">选择一个字母数字代码（字母 + 数字）。停用或删除时段、或返回这些设置时需要使用。</string>
+    <string name="dialog_change_code_help">输入当前代码，然后输入新代码。</string>
+
+    <string name="setup_title">欢迎使用 Instant Pause</string>
+    <string name="setup_subtitle">保护前的最后一步：选择你的代码。</string>
+    <string name="setup_explanation">停用或删除时段时需要使用。现在就趁冷静时选好：它会在那个晚上帮你坚持住。</string>
+    <string name="setup_rules">至少 6 个字符，且至少包含一个字母和一个数字。代码从不明文保存，也无法找回：如果忘记，只能清除应用数据。</string>
+
+    <string name="security_title">安全</string>
+    <string name="security_subtitle">防止保护在冲动之下被关闭。</string>
+    <string name="version_label">Instant Pause %1$s</string>
+    <string name="action_remove_protection">移除保护</string>
+
+    <string name="pause_message_title">暂停界面留言</string>
+    <string name="pause_message_subtitle">现在就趁冷静时写下。它会在冲动的时刻出现。</string>
+    <string name="pause_message_label">你的句子</string>
+    <string name="pause_message_default">这通电话可以等到明天。</string>
+    <string name="pause_message_hint">留空以恢复默认句子。</string>
+
+    <string name="lock_configured">保护代码已启用</string>
+    <string name="lock_none">未设置代码</string>
+    <string name="lock_none_help">使用应用前需要设置代码。</string>
+    <string name="lock_locked">已锁定 — 需要输入代码。</string>
+    <string name="lock_unlocked">本次会话已解锁。</string>
+    <string name="lock_set_help">现在就趁冷静时设置：今晚想一刀切地关掉一切时，正是这个代码会拦住你。</string>
+    <string name="lock_change_help">代码在初始设置时创建，无法从应用内移除。只能更改（需旧代码）。</string>
+    <string name="action_lock_now">立即锁定</string>
+
+    <string name="how_title">代码保护什么（以及不保护什么）</string>
+    <string name="how_bullet_1">代码在首次打开应用时创建：之后无法跳过或移除。</string>
+    <string name="how_bullet_2">需要代码：停用时段、删除时段（包括进行中的 Zen 时段），或更改代码。</string>
+    <string name="how_bullet_3">无需代码：拦截通话、添加时段、启动 Zen、查看历史。</string>
+    <string name="how_bullet_4">解锁仅限本次会话：退到后台 60 秒后就需要重新输入代码。</string>
+    <string name="how_bullet_5">三次尝试后，等待时间依次为 30 秒、1 分钟、2 分钟……最长 15 分钟。</string>
+    <string name="how_footer">代码从不明文保存：设备上只保留 PBKDF2 哈希（120 000 次迭代）。</string>
+
+    <string name="pause_title">停一下。</string>
+    <string name="pause_inhale">轻轻吸气……</string>
+    <string name="pause_exhale">慢慢呼气……</string>
+    <string name="action_close">关闭</string>
+
+    <string name="hangup_title">3 分钟后挂断通话</string>
+    <string name="hangup_body">允许的联系人始终能联系到你 — 但不会聊上一小时。Android 只允许获得此权限的应用挂断通话：没有它，你可能会无限期地聊下去。</string>
+    <string name="hangup_info_timer">倒计时从通话接通时开始：是通话 3 分钟，不是响铃也算 3 分钟。</string>
+    <string name="hangup_info_end">到 0:00 时线路会被切断。下一通电话重新从零开始，次数不限。</string>
+    <string name="hangup_denied">权限已被永久拒绝：Android 不会再次显示请求。请打开应用设置授予权限。</string>
+    <string name="hangup_footer">在授予权限之前，应用会一直停留在此界面。</string>
+    <string name="action_allow">允许</string>
+    <string name="action_open_settings">打开设置</string>
+    <string name="action_app_settings">应用设置</string>
+
+    <string name="fullscreen_title">锁屏上方的暂停界面</string>
+    <string name="fullscreen_body">Android 14+ 不再自动授予全屏显示权限：暂停界面可能只会以通知形式出现。无论哪种方式，通话都会被拦截 — 改变的只是暂停界面向你呈现的方式。</string>
+    <string name="fullscreen_info_blocking">拦截通话不依赖此权限。</string>
+    <string name="fullscreen_info_notification">没有它，请点击通知打开暂停界面。</string>
+    <string name="action_allow_fullscreen">允许全屏显示</string>
+    <string name="action_continue_without">不使用并继续</string>
+    <string name="fullscreen_footer">此步骤不会再出现。你可以随时在应用的 Android 设置中更改。</string>
+
+    <string name="status_zen_until">Zen 模式已开启，至 %1$s</string>
+    <string name="status_zen">Zen 模式已开启</string>
+    <string name="status_active">保护已启用</string>
+    <string name="status_inactive">保护未启用</string>
+    <string name="action_add_schedule">添加时段</string>
+    <string name="action_delete">删除</string>
+    <string name="action_add">添加</string>
+
+    <string name="zen_card_desc">Zen 模式</string>
+    <string name="zen_title">现在需要暂停一下？</string>
+    <string name="zen_running_help">Zen 时段进行中，至 %1$s。缩短时长需要输入代码。</string>
+    <string name="zen_help">选择你的 Zen 时长：点击想要的小时数。保护会立即开始。</string>
+    <string name="action_stop_zen">停止 Zen 模式</string>
+    <string name="zen_shorten_reason">缩短 Zen 时段？通话将在 %1$s 而不是 %2$s 重新被拦截。请输入代码确认。</string>
+    <string name="zen_cancel_reason">立即停止 Zen 模式？在下一个时段之前，通话将不再被拦截。</string>
+
+    <string name="empty_title">尚未配置时段</string>
+    <string name="empty_body">添加一个时段以启用自动保护（例如 22:00 – 07:00）。</string>
+    <string name="schedule_disable_reason">停用 %1$s – %2$s 时段？停用后，该时段内将不再拦截通话。</string>
+    <string name="schedule_delete_reason">永久删除 %1$s – %2$s 时段？</string>
+    <string name="dialog_new_schedule">新时段</string>
+    <string name="label_start">开始</string>
+    <string name="label_end">结束</string>
+    <string name="label_days">星期</string>
+    <string name="schedule_same_day">时段在同一天内。</string>
+    <string name="schedule_crosses_midnight">跨午夜：时段从所选日期开始。</string>
+
+    <string name="days_none">无</string>
+    <string name="days_every">每天</string>
+    <string name="days_weekdays">周一 – 周五</string>
+    <string name="days_weekend">周末</string>
+    <string-array name="days_short">
+        <item>周一</item>
+        <item>周二</item>
+        <item>周三</item>
+        <item>周四</item>
+        <item>周五</item>
+        <item>周六</item>
+        <item>周日</item>
+    </string-array>
+
+    <string name="whitelist_picker_failure">此设备上没有联系人应用。</string>
+    <string name="whitelist_read_error">无法读取此联系人。</string>
+    <string name="whitelist_added">%1$s 已加入信任圈。</string>
+    <string name="whitelist_duplicate">此号码已被允许。</string>
+    <string name="whitelist_limit_short">已达到 %1$d 位联系人的上限。</string>
+    <string name="whitelist_invalid">无法读取的号码：不能允许。</string>
+    <string name="whitelist_add_reason">添加允许的联系人？即使在时段内，对方的来电也会接通。</string>
+    <string name="whitelist_remove_reason">将 %1$s 从信任圈移除？时段内对方的来电将再次被拦截。</string>
+    <string name="action_add_contact">添加联系人</string>
+    <string name="action_remove">移除</string>
+    <string name="whitelist_limit_note">已达到 %1$d 位联系人的上限。移除一位联系人后才能添加。</string>
+    <string name="trust_circle_title">信任圈</string>
+    <string name="trust_circle_body">这些联系人绝不会被拦截，即使时段正在生效。最多 %1$d 位联系人，且允许的通话最长 3 分钟：之后会自动切断。</string>
+    <string name="whitelist_counter">允许的联系人</string>
+    <string name="whitelist_empty_title">没有允许的联系人</string>
+    <string name="whitelist_empty_body">没有允许的联系人时，时段内所有通话都会被拦截（但紧急呼叫绝不会被拦截：112 和当地紧急号码除外）。</string>
+
+    <string name="log_blocked">已拦截</string>
+    <string name="log_allowed">已允许（信任圈）</string>
+    <string name="log_date_pattern">M月d日 HH:mm</string>
+    <string name="logs_empty_title">还没有通话记录</string>
+    <string name="logs_empty_body">被拦截的通话和信任圈允许的通话会显示在这里。</string>
+
+    <string name="channel_protection_name">Instant Pause 保护</string>
+    <string name="channel_protection_desc">通话拦截提醒</string>
+    <string name="channel_service_name">Instant Pause 服务</string>
+    <string name="channel_service_desc">打开暂停界面时的低调通知</string>
+    <string name="channel_quiet_name">暂停界面已打开</string>
+    <string name="channel_quiet_desc">显示暂停界面时的低调提醒</string>
+    <string name="channel_call_timer_name">允许通话计时器</string>
+    <string name="channel_call_timer_desc">信任圈通话的倒计时</string>
+    <string name="channel_watchdog_name">Instant Pause 守护</string>
+    <string name="channel_watchdog_desc">在后台保持保护启用</string>
+    <string name="notif_blocked_title">通话已拦截</string>
+    <string name="notif_blocked_text">点击这里，深呼吸一下。</string>
+    <string name="notif_blocked_big_text">点击打开暂停界面，花一点时间呼吸。</string>
+    <string name="notif_pause_preparing">正在准备暂停……</string>
+    <string name="notif_allowed_call_title">允许的通话</string>
+    <string name="notif_watchdog_title">Instant Pause 守护</string>
+    <string name="notif_watchdog_text">你的保护正在运行。</string>
+    <string name="call_timer_prefix">剩余时间</string>
+    <string name="call_timer_line">%1$s: %2$s</string>
+    <string name="call_time_up_cut">时间到 — 通话已结束</string>
+    <string name="call_time_up_hang_up">时间到 — 请挂断</string>
+
+    <string name="dnd_title">暂停期间静音</string>
+    <string name="dnd_subtitle">在时段内将 WhatsApp、Signal 和 Telegram 的铃声静音。紧急呼叫和闹钟仍然可用。</string>
+    <string name="dnd_allow">允许“勿扰模式”访问</string>
+    <string name="dnd_access_needed">尚未授予访问权限：Android 需要明确授权（设置 › 特殊应用权限）。</string>
+    <string name="dnd_access_lost">访问权限已移除：在你手动关闭“勿扰模式”之前，声音会保持静音。</string>
+    <string name="dnd_access_granted">已授予访问权限。</string>
+    <string name="dnd_active_now">保护启用期间“勿扰模式”已开启。</string>
+    <string name="dnd_suspended">你已为此时段关闭它。下个时段会再次静音。</string>
+    <string name="dnd_priority_link">设置我的优先联系人</string>
+
+    <string name="language_title">应用语言</string>
+    <string name="language_subtitle">应用于整个应用，包括通知。</string>
+    <string name="language_change">选择语言</string>
+    <string name="language_option_system">手机语言（%1$s）</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_fr">Français</string>
+    <string name="language_name_es">Español</string>
+    <string name="language_name_zh">中文</string>
+    <string name="language_name_hi">हिन्दी</string>
+    <string name="language_requires_android13">从 Android 13 起可用。在此之前，应用会跟随手机语言。</string>
+</resources>

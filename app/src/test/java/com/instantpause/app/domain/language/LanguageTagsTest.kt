@@ -35,12 +35,19 @@ class LanguageTagsTest {
     @Test
     fun `une langue non traduite retombe sur la langue du telephone`() {
         assertEquals(LanguageTags.SYSTEM, LanguageTags.normalize("de-DE"))
-        assertEquals(LanguageTags.SYSTEM, LanguageTags.normalize("ja"))
+        assertEquals(LanguageTags.SYSTEM, LanguageTags.normalize("ko"))
         assertEquals(LanguageTags.SYSTEM, LanguageTags.normalize("ar"))
     }
 
     @Test
-    fun `les trois langues livrees sont annoncees`() {
-        assertEquals(listOf("en", "fr", "es"), LanguageTags.supported)
+    fun `les langues asiatiques sont reconnues avec leur region`() {
+        assertEquals("zh", LanguageTags.normalize("zh-CN"))
+        assertEquals("zh", LanguageTags.normalize("zh-Hans-CN"))
+        assertEquals("hi", LanguageTags.normalize("hi-IN"))
+    }
+
+    @Test
+    fun `les cinq langues livrees sont annoncees`() {
+        assertEquals(listOf("en", "fr", "es", "zh", "hi"), LanguageTags.supported)
     }
 }

@@ -545,6 +545,8 @@ private fun LanguageCard(
 private fun nativeName(tag: String): String = when (tag) {
     "fr" -> stringResource(R.string.language_name_fr)
     "es" -> stringResource(R.string.language_name_es)
+    "zh" -> stringResource(R.string.language_name_zh)
+    "hi" -> stringResource(R.string.language_name_hi)
     else -> stringResource(R.string.language_name_en)
 }
 

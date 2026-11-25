@@ -234,5 +234,7 @@
     <string name="language_name_en">English</string>
     <string name="language_name_fr">Français</string>
     <string name="language_name_es">Español</string>
+    <string name="language_name_zh">中文</string>
+    <string name="language_name_hi">हिन्दी</string>
     <string name="language_requires_android13">Disponible à partir d\'Android 13. Avant, l\'application suit la langue du téléphone.</string>
 </resources>

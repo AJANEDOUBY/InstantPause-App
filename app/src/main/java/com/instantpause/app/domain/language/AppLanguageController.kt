@@ -19,7 +19,7 @@ object LanguageTags {
     /** Valeur vide = suivre la langue du téléphone. */
     const val SYSTEM = ""
 
-    val supported = listOf("en", "fr", "es")
+    val supported = listOf("en", "fr", "es", "zh", "hi")
 
     /**
      * Réduit une étiquette quelconque (`fr-FR`, `ES`, `de`, `null`) à une langue
