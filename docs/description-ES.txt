@@ -12,8 +12,10 @@ FULL DESCRIPTION (4,000 characters max)
 QUÉ HACE LA APLICACIÓN
 
 Durante las franjas horarias que definas, cada llamada saliente se intercepta y se
-sustituye por una pantalla de pausa: respirar, calmarse y luego decidir. No es un
-muro. No es un castigo. Unos segundos entre el impulso y el acto.
+sustituye por una pantalla de pausa: respirar, calmarse y luego decidir. No es un muro
+ni un castigo.
+Cerrar la pantalla no realiza la llamada. Las llamadas siguen bloqueadas hasta que termine
+el horario protegido; vuelve a intentarlo después. No se puede reanudar la llamada interceptada.
 
 Son las 23:00. Sabes perfectamente que no deberías llamar. Llamas igualmente.
 Instant Pause existe para ese minuto.

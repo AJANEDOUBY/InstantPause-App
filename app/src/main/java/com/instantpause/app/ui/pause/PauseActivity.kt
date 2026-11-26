@@ -229,6 +229,13 @@ fun SensoryPauseScreen(message: String, onClose: () -> Unit) {
                 textAlign = TextAlign.Center,
                 color = Color(0xFFCBD5E1)
             )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.pause_no_resume),
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF94A3B8)
+            )
             Spacer(Modifier.height(60.dp))
 
             Box(

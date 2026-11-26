@@ -13,7 +13,8 @@ WHAT THE APP DOES
 
 During the time windows you set, every outgoing call is intercepted and replaced
 by a pause screen: breathe, calm down, then decide. Not a wall. Not a punishment.
-A few seconds between the impulse and the act.
+Closing the screen does not place the call. Calls stay blocked until the protected window
+ends; try again afterward. The intercepted call cannot be resumed from the pause screen.
 
 It's 11 p.m. You know perfectly well you shouldn't call. You call anyway.
 Instant Pause exists for that minute.

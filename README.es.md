@@ -15,6 +15,10 @@ llamadas impulsivas**. Durante las franjas horarias que definas, cada llamada sa
 intercepta y se sustituye por una **pantalla de pausa sensorial**: respirar, calmarse y
 luego decidir.
 
+Cerrar la pantalla de pausa no realiza la llamada. Las llamadas siguen bloqueadas hasta que
+termine el horario protegido; vuelve a intentarlo después. No se puede reanudar la llamada
+interceptada desde esa pantalla.
+
 Sin bloqueo de emergencia, sin vigilancia, sin servidor: todo se queda en tu teléfono.
 
 La interfaz está disponible en **inglés (por defecto), francés y español**. El idioma se

@@ -37,8 +37,10 @@ Pause avant vos appels impulsifs. Appels SIM uniquement, pas WhatsApp.
 CE QUE FAIT L'APPLICATION
 
 Pendant les plages horaires que vous définissez, chaque appel sortant est intercepté et remplacé
-par un écran de pause : respirer, se calmer, puis décider. Pas un mur. Pas une punition. Un
-espace de quelques secondes entre l'impulsion et l'acte.
+par un écran de pause : respirer, se calmer, puis décider. Pas un mur. Pas une punition.
+Un temps de pause face à l'impulsion.
+Fermer cet écran ne passe pas l'appel : les appels restent bloqués jusqu'à la fin de la plage
+protégée et ne peuvent pas être repris depuis l'écran de pause.
 
 Il est 23 h. Vous savez très bien que vous ne devriez pas appeler. Vous appelez quand même.
 Instant Pause existe pour cette minute-là.

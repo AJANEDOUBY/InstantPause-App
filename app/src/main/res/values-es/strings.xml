@@ -103,6 +103,7 @@
 
     <!-- Pantalla de pausa -->
     <string name="pause_title">Tómate un momento.</string>
+    <string name="pause_no_resume">Cerrar esta pantalla no realizará la llamada. Las llamadas seguirán bloqueadas hasta que termine este horario.</string>
     <string name="pause_inhale">Inspira suavemente…</string>
     <string name="pause_exhale">Espira despacio…</string>
     <string name="action_close">Cerrar</string>

@@ -98,6 +98,7 @@
 
     <!-- Écran de pause -->
     <string name="pause_title">Prenez un instant.</string>
+    <string name="pause_no_resume">Fermer cet écran ne passe pas l’appel. Les appels restent bloqués jusqu’à la fin de cette plage.</string>
     <string name="pause_inhale">Inspirer doucement…</string>
     <string name="pause_exhale">Expirer lentement…</string>
     <string name="action_close">Fermer</string>

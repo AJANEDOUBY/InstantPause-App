@@ -14,6 +14,9 @@ Instant Pause est une application Android open source qui vous aide à **résist
 Pendant les plages horaires que vous définissez, chaque appel sortant est intercepté et remplacé par
 un **écran de pause sensoriel** : respirer, se calmer, puis décider.
 
+Fermer l’écran de pause ne passe pas l’appel. Les appels restent bloqués jusqu’à la fin de la
+plage protégée : réessayez après. L’appel intercepté ne peut pas être repris depuis cet écran.
+
 Pas de blocage d'urgence, pas de surveillance, pas de serveur : tout reste sur votre téléphone.
 
 L'interface est disponible en **anglais (par défaut), français et espagnol**. La langue se

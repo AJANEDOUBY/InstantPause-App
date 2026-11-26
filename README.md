@@ -13,6 +13,9 @@ Instant Pause is an open-source Android app that helps you **resist impulsive ca
 During the time windows you set, every outgoing call is intercepted and replaced by a
 **sensory pause screen**: breathe, calm down, then decide.
 
+Closing the pause screen does not place the call. Calls stay blocked until the protected
+window ends; try again afterward. The intercepted call cannot be resumed from that screen.
+
 No emergency blocking, no surveillance, no server: everything stays on your phone.
 
 The interface is available in **English (default), French and Spanish**. Pick the language

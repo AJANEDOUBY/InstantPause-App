@@ -101,6 +101,7 @@
 
     <!-- Écran de pause -->
     <string name="pause_title">Take a moment.</string>
+    <string name="pause_no_resume">Closing this screen will not place the call. Calls stay blocked until this time window ends.</string>
     <string name="pause_inhale">Breathe in gently…</string>
     <string name="pause_exhale">Breathe out slowly…</string>
     <string name="action_close">Close</string>
