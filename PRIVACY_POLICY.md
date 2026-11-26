@@ -1,9 +1,8 @@
-
 # Privacy Policy — Instant Pause
 
 **English** · [Español](#política-de-privacidad--instant-pause) · [Français](#politique-de-confidentialité--instant-pause)
 
-**Last updated: 22 November 2026**
+**Last updated: 26 November 2026**
 
 Instant Pause (`com.instantpause.app`) is an Android app that helps you resist impulsive calls.
 This policy explains, plainly, what data the app uses and what it does not do with it.
@@ -31,7 +30,7 @@ The app stores locally the information it needs to work:
 |---|---|---|
 | Protection code | Verify that it is really you before weakening the protection | Salted PBKDF2 hash (the code is **never** stored in plain text) |
 | Time windows | Know when to intercept calls | Private Room database (`cooldown.db`) |
-| Allowed contacts | Let certain calls through, hung up at 3 minutes | Name, international number, displayed number, region |
+| Allowed contacts | Let certain calls through, hung up at 3 minutes (optional) | Name, international number, displayed number, region |
 | Block log | Show you the intercepted calls | Number, timestamp, reason — **purged after 90 days** |
 | Settings | Protection state, Zen mode, preferences | Private DataStore (`cooldown_prefs`) |
 
@@ -72,6 +71,7 @@ The app does not override those rules and does not promise that a given app will
 - **No sharing with third parties.** No data is sold, rented or transmitted.
 - **No advertising, no profiling.**
 - **No access** to your SMS, location, microphone, camera or address book.
+- **No Device Administrator and no battery optimization exemption.**
 
 ## 4. Permissions requested and why
 
@@ -80,10 +80,10 @@ The app does not override those rules and does not promise that a given app will
 | **Call redirection** role (Telecom) | Intercept the outgoing call to show the pause screen |
 | `ANSWER_PHONE_CALLS` | Automatically hang up at 3 minutes a call to an allowed contact |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Show the pause screen over the call screen or the lock screen |
-| `POST_NOTIFICATIONS` / `VIBRATE` | Persistent protection notification and haptic feedback |
+| `POST_NOTIFICATIONS` / `VIBRATE` | Local protection notification and haptic feedback |
 | `RECEIVE_BOOT_COMPLETED` | Re-enable protection after a reboot |
-| `SCHEDULE_EXACT_ALARM` | Trigger windows at the scheduled time |
-| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Keep protection and the call timer active |
+| `SCHEDULE_EXACT_ALARM` | Maintain protection scheduling and time-window transitions |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Keep protection and the active call timer running when needed |
 | `ACCESS_NOTIFICATION_POLICY` (Do Not Disturb access) | Switch to *Do Not Disturb - priority only* during your windows, **only if you turn that option on**. The sound mode set before the window is restored afterwards |
 
 Each permission can be revoked in the Android settings. Removing the Call redirection role or the
@@ -106,6 +106,7 @@ the publisher, these rights are exercised **directly in the app**:
   (with the code).
 - **Erasure**: uninstall the app, or clear its data from
   *Settings → Apps → Instant Pause → Storage*. Everything disappears with the private storage.
+- **No uninstall lock**: since version 1.7.0, the app declares no Device Administrator. Uninstalling it is a standard Android action: if a window is active, turn it off first with your code so you do not leave Do Not Disturb active. It is a guardrail against yourself, not data retention.
 
 Legal basis: performance of the service you request (Article 6(1)(b) GDPR). No processing takes
 place without your action.
@@ -132,7 +133,7 @@ state so explicitly before activation.
 
 [English](#privacy-policy--instant-pause) · **Español** · [Français](#politique-de-confidentialité--instant-pause)
 
-**Última actualización: 22 de noviembre de 2026**
+**Última actualización: 26 de noviembre de 2026**
 
 Instant Pause (`com.instantpause.app`) es una aplicación Android que te ayuda a resistir las
 llamadas impulsivas. Esta política explica, sin rodeos, qué datos utiliza la aplicación y qué no
@@ -161,7 +162,7 @@ La aplicación guarda localmente la información necesaria para funcionar:
 |---|---|---|
 | Código de protección | Comprobar que eres realmente tú antes de debilitar la protección | Huella PBKDF2 con sal (el código **nunca** se guarda en claro) |
 | Franjas horarias | Saber cuándo interceptar las llamadas | Base Room privada (`cooldown.db`) |
-| Contactos autorizados | Dejar pasar ciertas llamadas, colgadas a los 3 minutos | Nombre, número en formato internacional, número mostrado, región |
+| Contactos autorizados | Dejar pasar ciertas llamadas, colgadas a los 3 minutos (opcional) | Nombre, número en formato internacional, número mostrado, región |
 | Registro de bloqueos | Mostrarte las llamadas interceptadas | Número, fecha y hora, motivo — **purgado a los 90 días** |
 | Ajustes | Estado de la protección, modo Zen, preferencias | DataStore privado (`cooldown_prefs`) |
 
@@ -204,6 +205,7 @@ La aplicación no modifica esas reglas y no promete que una aplicación concreta
 - **Ningún intercambio con terceros.** Ningún dato se vende, se alquila ni se transmite.
 - **Sin publicidad, sin perfilado.**
 - **Ningún acceso** a tus SMS, tu ubicación, tu micrófono, tu cámara ni tu agenda.
+- **Sin administrador de dispositivos ni exención de optimización de batería.**
 
 ## 4. Permisos solicitados y motivos
 
@@ -212,10 +214,10 @@ La aplicación no modifica esas reglas y no promete que una aplicación concreta
 | Rol **Redirección de llamadas** (Telecom) | Interceptar la llamada saliente para mostrar la pantalla de pausa |
 | `ANSWER_PHONE_CALLS` | Colgar automáticamente a los 3 minutos una llamada a un contacto autorizado |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Mostrar la pantalla de pausa sobre la pantalla de llamada o de bloqueo |
-| `POST_NOTIFICATIONS` / `VIBRATE` | Notificación permanente de la protección y respuestas hápticas |
+| `POST_NOTIFICATIONS` / `VIBRATE` | Notificación local de la protección y respuestas hápticas |
 | `RECEIVE_BOOT_COMPLETED` | Reactivar la protección tras un reinicio |
-| `SCHEDULE_EXACT_ALARM` | Activar las franjas a la hora prevista |
-| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Mantener activas la protección y el temporizador de llamada |
+| `SCHEDULE_EXACT_ALARM` | Mantener la programación de protección y las transiciones de franjas horarias |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Mantener activas la protección y el temporizador de llamada cuando sea necesario |
 | `ACCESS_NOTIFICATION_POLICY` (acceso a No molestar) | Activar *No molestar - solo prioridad* durante tus franjas, **solo si activas esa opción**. El modo de sonido anterior se restablece después |
 
 Cada permiso puede retirarse desde los ajustes de Android. Retirar el rol de Redirección de
@@ -239,7 +241,7 @@ ningún dato al editor, estos derechos se ejercen **directamente en la aplicaci�
 - **Supresión**: desinstala la aplicación o borra sus datos desde
   *Ajustes → Aplicaciones → Instant Pause → Almacenamiento*. Todo desaparece con el almacenamiento
   privado.
-- **Sin bloqueo de desinstalación**: desde la 1.7.0 la aplicación no declara ningún
+- **Sin bloqueo de desinstalación**: desde la versión 1.7.0 la aplicación no declara ningún
   administrador de dispositivos. Desinstalarla vuelve a ser una acción normal de Android: si
   una franja está activa, desactívala antes con tu código para no dejar el filtro No molestar
   activado. Es una barrera contra ti mismo, no una retención de datos.
@@ -264,11 +266,12 @@ documento. Si una versión futura introdujera un tratamiento de datos (por ejemp
 sincronización opcional), lo indicaría explícitamente antes de activarse.
 
 ---
+
 # Politique de confidentialité — Instant Pause
 
 [English](#privacy-policy--instant-pause) · [Español](#política-de-privacidad--instant-pause) · **Français**
 
-**Dernière mise à jour : 22 novembre 2026**
+**Dernière mise à jour : 26 novembre 2026**
 
 Instant Pause (`com.instantpause.app`) est une application Android qui vous aide à résister aux
 appels impulsifs. Cette politique explique, sans détour, quelles données l'application utilise et
@@ -297,7 +300,7 @@ L'application enregistre localement les informations nécessaires à son fonctio
 |---|---|---|
 | Code de protection | Vérifier que c'est bien vous avant d'affaiblir la protection | Empreinte PBKDF2 salée (le code n'est **jamais** stocké en clair) |
 | Plages horaires | Savoir quand intercepter les appels | Base Room privée (`cooldown.db`) |
-| Contacts autorisés | Laisser passer certains appels, coupés à 3 minutes | Nom, numéro au format international, numéro affiché, région |
+| Contacts autorisés | Laisser passer certains appels, coupés à 3 minutes (optionnel) | Nom, numéro au format international, numéro affiché, région |
 | Journal des blocages | Vous montrer les appels interceptés | Numéro, horodatage, motif — **purgé au-delà de 90 jours** |
 | Réglages | État de la protection, mode Zen, préférences | DataStore privé (`cooldown_prefs`) |
 
@@ -340,6 +343,7 @@ L'application ne contourne pas ces règles et ne promet pas qu'une application d
 - **Aucun partage avec un tiers.** Aucune donnée n'est vendue, louée ni transmise.
 - **Aucune publicité, aucun profilage.**
 - **Aucun accès** à vos SMS, votre position, votre micro, votre caméra ou votre répertoire.
+- **Aucun administrateur d'appareil ni exemption d'optimisation de batterie.**
 
 ## 4. Permissions demandées et raisons
 
@@ -348,10 +352,10 @@ L'application ne contourne pas ces règles et ne promet pas qu'une application d
 | Rôle **Redirection d'appels** (Telecom) | Intercepter l'appel sortant pour afficher l'écran de pause |
 | `ANSWER_PHONE_CALLS` | Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Afficher l'écran de pause par-dessus l'écran d'appel ou de verrouillage |
-| `POST_NOTIFICATIONS` / `VIBRATE` | Notification permanente de la protection et retours haptiques |
+| `POST_NOTIFICATIONS` / `VIBRATE` | Notification locale de la protection et retours haptiques |
 | `RECEIVE_BOOT_COMPLETED` | Réactiver la protection après un redémarrage |
-| `SCHEDULE_EXACT_ALARM` | Déclencher les plages à l'heure prévue |
-| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Maintenir la protection et le minuteur d'appel actifs |
+| `SCHEDULE_EXACT_ALARM` | Maintenir la planification de la protection et les transitions de plages horaires |
+| `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Maintenir la protection et le minuteur d'appel actifs lorsque nécessaire |
 | `ACCESS_NOTIFICATION_POLICY` (accès « Ne pas déranger ») | Activer *Ne pas déranger - prioritaires uniquement* pendant vos plages, **uniquement si vous activez cette option**. Le mode sonore d'avant la plage est rétabli ensuite |
 
 Chaque permission peut être retirée depuis les réglages Android. Retirer le rôle Redirection
@@ -375,6 +379,7 @@ l'application** :
   l'application (avec le code).
 - **Effacement** : désinstallez l'application, ou effacez ses données depuis
   *Paramètres → Applications → Instant Pause → Stockage*. Tout disparaît avec le stockage privé.
+- **Aucun blocage de désinstallation** : depuis la version 1.7.0, l'application ne déclare aucun administrateur d'appareil. La désinstaller est une action Android standard : si une plage est active, désactivez-la d'abord avec votre code afin de ne pas laisser le filtre Ne pas déranger activé. C'est un garde-fou contre vous-même, pas une rétention de données.
 
 Base légale : exécution du service que vous demandez (article 6.1.b du RGPD). Aucun traitement n'a
 lieu sans votre action.
