@@ -32,8 +32,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.instantpause.app.R
 import com.instantpause.app.domain.security.AppLockManager
-import com.instantpause.app.system.CoolDownWatchdogService
-import com.instantpause.app.system.WatchdogAlarmReceiver
 import com.instantpause.app.ui.logs.LogsScreen
 import com.instantpause.app.ui.schedule.ScheduleScreen
 import com.instantpause.app.ui.security.FullScreenIntentScreen
@@ -71,6 +69,7 @@ class MainActivity : ComponentActivity() {
     ) { granted ->
         canHangUp = granted
         hangupAsked = true
+        if (granted) viewModel.markHangupPromptDone()
     }
 
     /**
@@ -85,8 +84,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CoolDownWatchdogService.startIfNeeded(this)
-        WatchdogAlarmReceiver.startAlarm(this)
         batteryOptimized = isBatteryOptimized()
         refreshFullScreenIntent()
 
@@ -104,12 +101,15 @@ class MainActivity : ComponentActivity() {
                 val lockState by securityViewModel.state.collectAsStateWithLifecycle()
                 val fullScreenAcknowledged by
                     viewModel.fullScreenIntentDone.collectAsStateWithLifecycle()
+                val hangupAcknowledged by
+                    viewModel.hangupPromptDone.collectAsStateWithLifecycle()
 
                 when (onboardingStage(
                     loading = lockState.status == AppLockManager.Status.LOADING,
                     hasCode = lockState.status != AppLockManager.Status.DISABLED,
                     roleHeld = roleHeld,
                     canHangUp = canHangUp,
+                    hangupAcknowledged = hangupAcknowledged,
                     canUseFullScreenIntent = fullScreenIntentAllowed,
                     fullScreenAcknowledged = fullScreenAcknowledged
                 )) {
@@ -119,7 +119,9 @@ class MainActivity : ComponentActivity() {
                     // Aucun code : l'app ne va pas plus loin. Le verrou n'est pas une option.
                     OnboardingStage.SETUP_CODE -> SetupScreen(vm = securityViewModel)
 
-                    // Raccrochage à 3 minutes : obligatoire, ce n'est pas une option.
+                    // Raccrochage à 3 minutes : proposé une fois, non bloquant.
+                    // Refusé, la protection fonctionne toujours (minuteur visible
+                    // mais ligne non coupée) et l'onglet Sécurité permet d'y revenir.
                     OnboardingStage.HANGUP_PERMISSION -> HangupPermissionScreen(
                         needsSettings = hangupNeedsSettings,
                         onRequest = {
@@ -127,7 +129,8 @@ class MainActivity : ComponentActivity() {
                                 Manifest.permission.ANSWER_PHONE_CALLS
                             )
                         },
-                        onOpenSettings = { openAppSettings() }
+                        onOpenSettings = { openAppSettings() },
+                        onSkip = { viewModel.markHangupPromptDone() }
                     )
 
                     OnboardingStage.ACTIVATE_ROLE -> RoleActivationScreen(
@@ -170,6 +173,7 @@ class MainActivity : ComponentActivity() {
         batteryOptimized = isBatteryOptimized()
         canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
                 PackageManager.PERMISSION_GRANTED
+        if (canHangUp) viewModel.markHangupPromptDone()
         refreshFullScreenIntent()
         viewModel.syncDnd()
     }

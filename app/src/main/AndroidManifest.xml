@@ -24,15 +24,20 @@
     <!-- Redémarrage du téléphone -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- Ré-armement du veilleur après redémarrage (alarme exacte, avec repli inexact) -->
+    <!--
+        Réveil au début ou à la fin d'une plage, pour recaler le filtre « Ne pas
+        déranger ». Aucune permission spéciale n'est requise : l'alarme est exacte
+        quand le système l'autorise, sinon elle glisse de quelques minutes.
+    -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <!-- Foreground Services (Android 14+) -->
     <!--
-        Type `specialUse` pour les trois services (pause, minuteur, veille) : aucun des
-        types standard ne couvre le blocage d'appel par une app tierce. Le sous-type est
-        justifié dans le manifeste via PROPERTY_SPECIAL_USE_FGS_SUBTYPE ; Play Console
-        demande en plus une justification écrite (formulaire) si l'app y est publiée.
+        Type `specialUse` pour les deux services (pause, minuteur) : aucun des
+        types standard ne couvre le blocage d'appel par une app tierce. Le sous-type
+        est justifié dans le manifeste via PROPERTY_SPECIAL_USE_FGS_SUBTYPE ; Play
+        Console demande en plus une justification écrite (formulaire) si l'app y est
+        publiée.
     -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
@@ -40,8 +45,9 @@
     <!--
         Raccrochage automatique à la fin des 3 minutes d'un appel autorisé.
         ANSWER_PHONE_CALLS est la seule permission qui ouvre TelecomManager.endCall()
-        à une application tierce. Elle est OBLIGATOIRE : demandée pendant l'installation,
-        l'app ne s'ouvre pas sans elle (sinon la limite n'est qu'un rappel visuel).
+        à une application tierce. Elle est OPTIONNELLE : refusée, l'app fonctionne
+        toujours (le minuteur reste visible) mais ne coupe pas la ligne ; l'écran
+        Sécurité permet de l'accorder plus tard.
     -->
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
@@ -108,15 +114,10 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="countdown_for_trusted_contacts_calls" />
         </service>
-        <!-- Service de veille : maintient l'app en vie sur les téléphones agressifs -->
-        <service
-            android:name=".system.CoolDownWatchdogService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="call_protection_watchdog" />
-        </service>
+        <!-- Réveil au prochain changement d'état (début/fin de plage, fin du Zen) -->
+        <receiver
+            android:name=".system.ProtectionAlarmReceiver"
+            android:exported="false" />
         <!-- Récepteur au démarrage du téléphone (exported=true OBLIGATOIRE) -->
         <receiver
             android:name=".system.BootReceiver"

@@ -114,7 +114,7 @@
     <string name="hangup_info_timer">La cuenta atrás empieza al contestar: 3 minutos de conversación, no 3 minutos contando el tono.</string>
     <string name="hangup_info_end">A las 0:00 se corta la línea. Vuelves a empezar de cero en la siguiente llamada, tantas veces como haga falta.</string>
     <string name="hangup_denied">El permiso se ha denegado de forma permanente: Android no volverá a mostrarlo. Abre los ajustes de la app para concederlo.</string>
-    <string name="hangup_footer">La app permanece en esta pantalla hasta que se conceda el permiso.</string>
+    <string name="hangup_footer">Puedes activarlo más tarde en la pestaña Seguridad.</string>
     <string name="action_allow">Permitir</string>
     <string name="action_open_settings">Abrir ajustes</string>
     <string name="action_app_settings">Ajustes de la app</string>
@@ -207,15 +207,11 @@
     <string name="channel_quiet_desc">Recordatorio discreto mientras se muestra la pantalla de pausa</string>
     <string name="channel_call_timer_name">Temporizador de llamada autorizada</string>
     <string name="channel_call_timer_desc">Cuenta atrás de las llamadas al círculo de confianza</string>
-    <string name="channel_watchdog_name">Vigilancia de Instant Pause</string>
-    <string name="channel_watchdog_desc">Mantiene la protección activa en segundo plano</string>
     <string name="notif_blocked_title">Llamada bloqueada</string>
     <string name="notif_blocked_text">Toca aquí para recuperar el aliento.</string>
     <string name="notif_blocked_big_text">Toca para abrir la pantalla de pausa y respirar un momento.</string>
     <string name="notif_pause_preparing">Preparando la pausa…</string>
     <string name="notif_allowed_call_title">Llamada autorizada</string>
-    <string name="notif_watchdog_title">Vigilancia de Instant Pause</string>
-    <string name="notif_watchdog_text">Tu protección está activa.</string>
     <string name="call_timer_prefix">Tiempo restante</string>
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">Tiempo agotado: llamada cortada</string>

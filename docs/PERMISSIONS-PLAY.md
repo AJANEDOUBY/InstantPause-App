@@ -61,12 +61,14 @@ This code is only requested later, and only to weaken the protection: delete a t
 or remove an allowed contact. Browsing the app, creating a window or enabling Zen mode never
 asks for it. If you forget it, clear the app data.
 
-After creating the code, the onboarding asks for three system grants, which are normal Android
+After creating the code, the onboarding asks for two system grants, which are normal Android
 consents, not credentials:
-  1. Phone permission (ANSWER_PHONE_CALLS) — used only to hang up at 3:00 on the three
-     trusted contacts.
-  2. Call redirection role — the API that intercepts an outgoing call before it connects.
-  3. Full-screen intent — shows the pause screen over the dialer.
+  1. Call redirection role — the API that intercepts an outgoing call before it connects.
+  2. Full-screen intent (optional) — shows the pause screen over the dialer.
+
+It also offers the phone permission (ANSWER_PHONE_CALLS) to hang up at 3:00 on the trusted
+contacts. That permission is optional: skipping it leaves blocking and the countdown intact,
+and it can be granted later from the Security tab.
 
 To verify the core feature, place an outgoing call to any non-emergency number during an
 active time window: the pause screen appears instead of the call connecting. This requires a
@@ -101,18 +103,15 @@ les intercepte avant qu'ils partent). Choisir un cas standard serait un faux dé
 
 ```
 Instant Pause blocks impulsive outgoing calls during time windows the user defines (for
-example 10 pm to 7 am). The app runs three foreground services, all declared with the
-specialUse type and three distinct subtypes:
+example 10 pm to 7 am). The app runs two foreground services, both declared with the
+specialUse type and two distinct subtypes:
 
 1. blocking_impulsive_calls — started the instant a blocked outgoing call is intercepted.
    It lasts 3 seconds, shows the pause screen over the dialer, then stops itself.
 
 2. countdown_for_trusted_contacts_calls — runs only during a call the user placed to one of
-   the three trusted contacts they authorized. It displays a 3-minute countdown and hangs up
-   the line at 0:00 using TelecomManager.endCall().
-
-3. call_protection_watchdog — a silent, minimum-importance notification that keeps the
-   protection alive on devices whose manufacturer aggressively kills background apps.
+   the three trusted contacts they authorized. It displays a 3-minute countdown and, if the
+   user granted the optional phone permission, hangs up at 0:00 using TelecomManager.endCall().
 
 None of these services access the network, contacts, location, camera or microphone. The app
 has no INTERNET permission at all. All data (time windows, three contacts, settings) stays in
@@ -143,10 +142,10 @@ configured would never be enforced.
 
 ```
 Instant Pause bloque les appels sortants impulsifs pendant des plages horaires définies par
-l'utilisateur. Trois services de premier plan, tous en specialUse avec trois sous-types :
-interception de l'appel (3 secondes, ouvre l'écran de pause), minuteur de 3 minutes sur les
-appels vers les contacts de confiance (raccrochage via TelecomManager.endCall), et veille
-silencieuse qui maintient la protection sur les téléphones qui tuent les apps en arrière-plan.
+l'utilisateur. Deux services de premier plan, tous en specialUse avec deux sous-types :
+interception de l'appel (3 secondes, ouvre l'écran de pause) et minuteur de 3 minutes sur les
+appels vers les contacts de confiance (raccrochage via TelecomManager.endCall si l'utilisateur
+a accordé la permission facultative).
 Aucun accès réseau, contacts, position, caméra ou micro. L'app n'a pas la permission INTERNET.
 ```
 
@@ -207,14 +206,14 @@ d'appels. Mais elle fait partie du groupe « Téléphone » et peut être contes
 de défense, à garder sous la main plutôt qu'à coller au hasard.
 
 ```
-Instant Pause's core feature is a hard 3-minute cap on calls to the three trusted contacts the
-user explicitly authorizes. Those calls are allowed on purpose, but the user asks the app to
-guarantee they never exceed 3 minutes — that cap is the feature, not a side effect.
+Instant Pause offers a hard 3-minute cap on calls to the three trusted contacts the user
+explicitly authorizes. Those calls are allowed on purpose, but the user can ask the app to
+guarantee they never exceed 3 minutes. The cap is optional: the user may decline the
+permission during setup, in which case blocking and the countdown still work.
 
 ANSWER_PHONE_CALLS is the only permission that grants a third-party app access to
 TelecomManager.endCall(), the only API able to terminate an ongoing call. Without it the app
-could only display a countdown that the user is free to ignore, which is precisely the
-behaviour the app exists to prevent. There is no alternative API.
+can only display a countdown that the user is free to ignore. There is no alternative API.
 
 The app does not place calls, does not read or modify the call log, does not read phone state
 or subscriber identifiers, and has no INTERNET permission.
@@ -311,7 +310,7 @@ adb -s R5GL350ZJ9P shell screenrecord --bit-rate 8000000 --time-limit 120 /sdcar
 | Temps | Ce qu'on voit | Ce que ça prouve |
 |---|---|---|
 | 0:00 | Écran d'accueil de l'app, protection active, plage horaire affichée | l'app est configurée |
-| 0:10 | Volet de notifications : « Instant Pause veille — Votre protection est active. » | service 3 (`call_protection_watchdog`) visible et permanent |
+| 0:10 | Écran d'accueil de l'app, plage horaire affichée | l'app est configurée |
 | 0:20 | Ouvrir le composeur, taper `0123456789`, appuyer sur Appeler | geste utilisateur réel |
 | 0:24 | L'écran de pause s'affiche **par-dessus** le composeur, avec la notification de service | service 1 (`blocking_impulsive_calls`) + `USE_FULL_SCREEN_INTENT` |
 | 0:32 | Revenir à l'app, montrer le journal : « appel bloqué » | l'interception a bien eu lieu |

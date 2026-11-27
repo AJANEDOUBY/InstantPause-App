@@ -1,7 +1,11 @@
 package com.instantpause.app.ui.security
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CallEnd
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
@@ -110,6 +115,9 @@ fun SecurityScreen(
         )
 
         Spacer(Modifier.height(12.dp))
+        HangupCard()
+
+        Spacer(Modifier.height(12.dp))
         DndCard(
             enabled = dndEnabled,
             active = dndActive,
@@ -187,6 +195,85 @@ fun SecurityScreen(
 }
 
 private enum class Dialog { SET, CHANGE }
+
+/**
+ * Rappel du raccrochage à 3 minutes, accordable après l'installation.
+ *
+ * L'étape d'onboarding est optionnelle : ce refus n'empêche pas la protection de
+ * fonctionner, il prive seulement la coupure automatique de la ligne. La carte
+ * disparaît dès que la permission est accordée et revient si elle est retirée.
+ */
+@Composable
+private fun HangupCard() {
+    val context = LocalContext.current
+    var granted by remember {
+        mutableStateOf(
+            context.checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
+                PackageManager.PERMISSION_GRANTED
+        )
+    }
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted = it }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        granted = context.checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
+            PackageManager.PERMISSION_GRANTED
+    }
+
+    if (granted) return
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.CallEnd,
+                    contentDescription = null,
+                    tint = Color(AMBER)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.hangup_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.hangup_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
+                onClick = {
+                    launcher.launch(Manifest.permission.ANSWER_PHONE_CALLS)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.action_allow))
+            }
+            TextButton(
+                onClick = {
+                    runCatching {
+                        context.startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                android.net.Uri.parse("package:${context.packageName}")
+                            )
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.action_open_settings))
+            }
+        }
+    }
+}
 
 /**
  * Phrase affichée sur l'écran de pause, au moment où l'appel est intercepté.

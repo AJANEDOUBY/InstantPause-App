@@ -18,7 +18,7 @@ import java.util.Collections
 
 /**
  * Régressions de la 1.6.1 sur `DndController` :
- * - plusieurs `sync()` simultanés (écran, `BootReceiver`, `WatchdogAlarmReceiver`)
+ * - plusieurs `sync()` simultanés (écran, `BootReceiver`, `ProtectionAlarmReceiver`)
  *   ne doivent jamais mémoriser `PRIORITY` comme « filtre précédent » ;
  * - un téléphone déjà en `PRIORITY` n'est pas modifié ni « restauré » ;
  * - un état défectueux enregistré par une version antérieure ne bloque plus le DND.

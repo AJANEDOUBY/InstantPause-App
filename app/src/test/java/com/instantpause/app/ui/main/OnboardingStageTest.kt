@@ -4,9 +4,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /**
- * L'ordre des étapes est la protection elle-même : si le raccrochage peut être sauté,
- * un utilisateur arrive dans l'app avec des appels qui durent une heure. Ces tests
- * verrouillent cet ordre.
+ * L'ordre des étapes est la protection elle-même. Le verrou et le rôle Telecom
+ * restent obligatoires ; le raccrochage à 3 minutes et le plein écran sont
+ * proposés une fois puis acquittés. Ces tests verrouillent cet ordre.
  */
 class OnboardingStageTest {
 
@@ -15,6 +15,7 @@ class OnboardingStageTest {
         hasCode: Boolean = true,
         roleHeld: Boolean = false,
         canHangUp: Boolean = true,
+        hangupAcknowledged: Boolean? = true,
         canUseFullScreenIntent: Boolean = true,
         fullScreenAcknowledged: Boolean? = false
     ) = onboardingStage(
@@ -22,6 +23,7 @@ class OnboardingStageTest {
         hasCode,
         roleHeld,
         canHangUp,
+        hangupAcknowledged,
         canUseFullScreenIntent,
         fullScreenAcknowledged
     )
@@ -32,16 +34,21 @@ class OnboardingStageTest {
     }
 
     @Test
-    fun `le raccrochage vient avant le role Telecom`() {
-        assertEquals(
-            OnboardingStage.HANGUP_PERMISSION,
-            stage(roleHeld = false, canHangUp = false)
-        )
+    fun `tant que les preferences optionnelles sont inconnues, on charge`() {
+        assertEquals(OnboardingStage.LOADING, stage(fullScreenAcknowledged = null))
+        assertEquals(OnboardingStage.LOADING, stage(hangupAcknowledged = null))
     }
 
     @Test
-    fun `ecran de chargement tant que la preference plein ecran est inconnue`() {
-        assertEquals(OnboardingStage.LOADING, stage(fullScreenAcknowledged = null))
+    fun `le raccrochage vient avant le role Telecom`() {
+        assertEquals(
+            OnboardingStage.HANGUP_PERMISSION,
+            stage(
+                roleHeld = false,
+                canHangUp = false,
+                hangupAcknowledged = false
+            )
+        )
     }
 
     @Test
@@ -52,32 +59,41 @@ class OnboardingStageTest {
         )
     }
 
-    // === Raccrochage à 3 minutes : obligatoire, pas une option ===
+    // === Raccrochage à 3 minutes : proposé, pas imposé ===
 
     @Test
-    fun `sans permission de raccrocher, l'app ne s'ouvre pas`() {
+    fun `sans permission et jamais vu, l'etape est proposee`() {
         assertEquals(
             OnboardingStage.HANGUP_PERMISSION,
             stage(
                 roleHeld = true,
-                canHangUp = false
+                canHangUp = false,
+                hangupAcknowledged = false
             )
         )
     }
 
     @Test
-    fun `permission de raccrocher retiree apres coup, l'app redemande`() {
+    fun `permission refusee puis acquittee, l'app s'ouvre quand meme`() {
         assertEquals(
-            OnboardingStage.HANGUP_PERMISSION,
-            stage(roleHeld = true, canHangUp = false)
+            OnboardingStage.ACTIVATE_ROLE,
+            stage(
+                roleHeld = false,
+                canHangUp = false,
+                hangupAcknowledged = true
+            )
         )
     }
 
     @Test
-    fun `permission accordee, on entre dans l'app`() {
+    fun `permission accordee, l'etape est inutile`() {
         assertEquals(
             OnboardingStage.ACTIVATE_ROLE,
-            stage(roleHeld = false, canHangUp = true)
+            stage(
+                roleHeld = false,
+                canHangUp = true,
+                hangupAcknowledged = false
+            )
         )
     }
 

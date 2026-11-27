@@ -109,7 +109,7 @@
     <string name="hangup_info_timer">Le décompte part du décroché : 3 minutes de parole, pas 3 minutes incluant la sonnerie.</string>
     <string name="hangup_info_end">À 0:00, la ligne est coupée. Vous repartez de zéro pour le prochain appel, autant de fois que nécessaire.</string>
     <string name="hangup_denied">L\'autorisation a été refusée définitivement : Android ne réaffichera plus la demande. Ouvrez les réglages de l\'app pour l\'accorder.</string>
-    <string name="hangup_footer">L\'app reste bloquée sur cet écran tant que l\'autorisation n\'est pas accordée.</string>
+    <string name="hangup_footer">Vous pouvez l\'activer plus tard dans l\'onglet Sécurité.</string>
     <string name="action_allow">Autoriser</string>
     <string name="action_open_settings">Ouvrir les réglages</string>
     <string name="action_app_settings">Réglages de l\'app</string>
@@ -202,15 +202,11 @@
     <string name="channel_quiet_desc">Rappel discret pendant que l\'écran de pause est affiché</string>
     <string name="channel_call_timer_name">Minuteur d\'appel autorisé</string>
     <string name="channel_call_timer_desc">Compte à rebours des appels vers le cercle de confiance</string>
-    <string name="channel_watchdog_name">Instant Pause veille</string>
-    <string name="channel_watchdog_desc">Maintient la protection active en arrière-plan</string>
     <string name="notif_blocked_title">Appel bloqué</string>
     <string name="notif_blocked_text">Touchez ici pour reprendre votre souffle.</string>
     <string name="notif_blocked_big_text">Touchez pour ouvrir l\'écran de pause et respirer un instant.</string>
     <string name="notif_pause_preparing">Préparation de la pause…</string>
     <string name="notif_allowed_call_title">Appel autorisé</string>
-    <string name="notif_watchdog_title">Instant Pause veille</string>
-    <string name="notif_watchdog_text">Votre protection est active.</string>
     <string name="call_timer_prefix">Temps restant</string>
     <string name="call_timer_line">%1$s : %2$s</string>
     <string name="call_time_up_cut">Temps écoulé — appel coupé</string>

@@ -105,6 +105,21 @@ class ProtectionPrefs @Inject constructor(
         dataStore.edit { it[FULL_SCREEN_INTENT_DONE] = value }
     }
 
+    // === Raccrochage à 3 minutes (permission optionnelle) ===
+    //
+    // ANSWER_PHONE_CALLS n'est plus exigée à l'installation : l'écran la propose
+    // une fois, et un refus est mémorisé pour ne pas revenir à chaque lancement.
+    // L'onglet Sécurité permet de l'accorder plus tard.
+    val hangupPromptDone: Flow<Boolean> =
+        data.map { it[HANGUP_PROMPT_DONE] ?: false }.distinctUntilChanged()
+
+    suspend fun isHangupPromptDone(): Boolean =
+        data.first()[HANGUP_PROMPT_DONE] ?: false
+
+    suspend fun setHangupPromptDone(value: Boolean) {
+        dataStore.edit { it[HANGUP_PROMPT_DONE] = value }
+    }
+
     // === Ne pas déranger pendant les plages ===
     //
     // `dnd_active` et `dnd_previous_filter` sont écrits par le contrôleur : ils
@@ -112,6 +127,8 @@ class ProtectionPrefs @Inject constructor(
     // redémarrage ou une mort brutale du processus.
     val dndEnabled: Flow<Boolean> =
         data.map { it[DND_ENABLED] ?: false }.distinctUntilChanged()
+
+    suspend fun isDndEnabled(): Boolean = data.first()[DND_ENABLED] ?: false
 
     val dndActive: Flow<Boolean> =
         data.map { it[DND_ACTIVE] ?: false }.distinctUntilChanged()
@@ -192,6 +209,7 @@ class ProtectionPrefs @Inject constructor(
         val ROLE_REVOKED = booleanPreferencesKey("role_revoked")
         val HELP_BANNER_DISMISSED = booleanPreferencesKey("help_banner_dismissed")
         val FULL_SCREEN_INTENT_DONE = booleanPreferencesKey("fullscreen_intent_done")
+        val HANGUP_PROMPT_DONE = booleanPreferencesKey("hangup_prompt_done")
         val PASSPHRASE_SALT = stringPreferencesKey("passphrase_salt")
         val PASSPHRASE_HASH = stringPreferencesKey("passphrase_hash")
         val PASSPHRASE_ITERATIONS = intPreferencesKey("passphrase_iterations")

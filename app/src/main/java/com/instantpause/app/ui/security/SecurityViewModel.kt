@@ -7,6 +7,7 @@ import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.dnd.DndGateway
 import com.instantpause.app.domain.language.AppLanguageController
 import com.instantpause.app.domain.pause.PauseMessagePolicy
+import com.instantpause.app.domain.protection.ProtectionAlarms
 import com.instantpause.app.domain.security.AppLockManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,8 @@ class SecurityViewModel @Inject constructor(
     private val prefs: ProtectionPrefs,
     private val dnd: DndController,
     private val dndGateway: DndGateway,
-    private val language: AppLanguageController
+    private val language: AppLanguageController,
+    private val alarms: ProtectionAlarms
 ) : ViewModel() {
 
     val state: StateFlow<AppLockManager.State> = lock.state
@@ -119,6 +121,7 @@ class SecurityViewModel @Inject constructor(
         viewModelScope.launch {
             dnd.setEnabled(enabled)
             refreshDndAccess()
+            runCatching { alarms.reschedule() }
         }
     }
 

@@ -62,7 +62,7 @@ interface DndGateway {
  *   prend pas la main : elle n'a rien posé, donc rien à restaurer.
  *
  * Toutes les opérations passent par [mutex] : `sync` est appelé depuis les
- * écrans, `BootReceiver` et `WatchdogAlarmReceiver`. Sans sérialisation, deux
+ * écrans, `BootReceiver` et `ProtectionAlarmReceiver`. Sans sérialisation, deux
  * appels simultanés pouvaient mémoriser `PRIORITY` (posé par le premier) comme
  * « filtre précédent » et laisser le téléphone bloqué en Ne pas déranger.
  */

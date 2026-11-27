@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.dnd.DndController
+import com.instantpause.app.domain.protection.ProtectionAlarms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val prefs: ProtectionPrefs,
-    private val dnd: DndController
+    private val dnd: DndController,
+    private val alarms: ProtectionAlarms
 ) : ViewModel() {
 
     private val roleManager: RoleManager? =
@@ -35,6 +37,10 @@ class MainViewModel @Inject constructor(
     private val _fullScreenIntentDone = MutableStateFlow<Boolean?>(null)
     val fullScreenIntentDone: StateFlow<Boolean?> = _fullScreenIntentDone.asStateFlow()
 
+    /** `null` tant que la valeur n'est pas chargée, comme pour le plein écran. */
+    private val _hangupPromptDone = MutableStateFlow<Boolean?>(null)
+    val hangupPromptDone: StateFlow<Boolean?> = _hangupPromptDone.asStateFlow()
+
     init {
         // Charge l'état initial du bandeau d'aide (visible si pas encore fermé)
         viewModelScope.launch {
@@ -42,6 +48,9 @@ class MainViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _fullScreenIntentDone.value = prefs.isFullScreenIntentDone()
+        }
+        viewModelScope.launch {
+            _hangupPromptDone.value = prefs.isHangupPromptDone()
         }
     }
 
@@ -59,6 +68,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Mémorise que l'écran « raccrocher à 3 minutes » a été vu.
+     *
+     * Appelée quand la permission est accordée, ou quand l'utilisateur choisit de
+     * continuer sans : dans les deux cas, l'étape ne revient plus au lancement.
+     * Le refus n'enlève pas la protection, il retire seulement la coupure à 3 minutes.
+     */
+    fun markHangupPromptDone() {
+        if (_hangupPromptDone.value == true) return
+        viewModelScope.launch {
+            prefs.setHangupPromptDone(true)
+            _hangupPromptDone.value = true
+        }
+    }
+
     fun refreshRole() {
         _roleHeld.value = roleManager
             ?.isRoleHeld(RoleManager.ROLE_CALL_REDIRECTION) == true
@@ -72,7 +96,10 @@ class MainViewModel @Inject constructor(
      * pu se terminer pendant que l'app était en arrière-plan.
      */
     fun syncDnd() {
-        viewModelScope.launch { runCatching { dnd.sync() } }
+        viewModelScope.launch {
+            runCatching { dnd.sync() }
+            runCatching { alarms.reschedule() }
+        }
     }
 
     fun isRoleAvailable(): Boolean =

@@ -112,7 +112,7 @@
     <string name="hangup_info_timer">The countdown starts when the call is answered: 3 minutes of talking, not 3 minutes including ringing.</string>
     <string name="hangup_info_end">At 0:00 the line is cut. You start from zero for the next call, as many times as needed.</string>
     <string name="hangup_denied">The permission was permanently denied: Android will not show the request again. Open the app settings to grant it.</string>
-    <string name="hangup_footer">The app stays on this screen until the permission is granted.</string>
+    <string name="hangup_footer">You can enable this later in the Security tab.</string>
     <string name="action_allow">Allow</string>
     <string name="action_open_settings">Open settings</string>
     <string name="action_app_settings">App settings</string>
@@ -205,15 +205,11 @@
     <string name="channel_quiet_desc">Discreet reminder while the pause screen is displayed</string>
     <string name="channel_call_timer_name">Allowed call timer</string>
     <string name="channel_call_timer_desc">Countdown for calls to the trust circle</string>
-    <string name="channel_watchdog_name">Instant Pause watchdog</string>
-    <string name="channel_watchdog_desc">Keeps protection active in the background</string>
     <string name="notif_blocked_title">Call blocked</string>
     <string name="notif_blocked_text">Tap here to catch your breath.</string>
     <string name="notif_blocked_big_text">Tap to open the pause screen and breathe for a moment.</string>
     <string name="notif_pause_preparing">Preparing the pause…</string>
     <string name="notif_allowed_call_title">Allowed call</string>
-    <string name="notif_watchdog_title">Instant Pause watchdog</string>
-    <string name="notif_watchdog_text">Your protection is active.</string>
     <string name="call_timer_prefix">Time left</string>
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">Time is up — call ended</string>

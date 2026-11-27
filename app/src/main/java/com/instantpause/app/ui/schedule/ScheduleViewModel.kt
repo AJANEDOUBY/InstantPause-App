@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.model.Schedule
+import com.instantpause.app.domain.protection.ProtectionAlarms
 import com.instantpause.app.domain.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class ScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository,
     private val prefs: ProtectionPrefs,
-    private val dnd: DndController
+    private val dnd: DndController,
+    private val alarms: ProtectionAlarms
 ) : ViewModel() {
 
     val schedules: StateFlow<List<Schedule>> = repository.observeAll()
@@ -51,6 +53,7 @@ class ScheduleViewModel @Inject constructor(
                 )
             )
             syncDnd()
+            rescheduleAlarms()
         }
     }
 
@@ -67,6 +70,7 @@ class ScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.setEmergencyUntil(end)
             syncDnd()
+            rescheduleAlarms()
         }
     }
 
@@ -75,6 +79,7 @@ class ScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.clearEmergency()
             syncDnd()
+            rescheduleAlarms()
         }
     }
 
@@ -82,6 +87,7 @@ class ScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             repository.setActive(schedule.id, !schedule.isActive)
             syncDnd()
+            rescheduleAlarms()
         }
     }
 
@@ -89,6 +95,7 @@ class ScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             repository.delete(schedule.id)
             syncDnd()
+            rescheduleAlarms()
         }
     }
 
@@ -99,6 +106,16 @@ class ScheduleViewModel @Inject constructor(
      */
     suspend fun syncDnd() {
         runCatching { dnd.sync() }
+    }
+
+    /**
+     * Une plage a changé : le filtre et l'alarme de transition doivent suivre.
+     *
+     * Séparé de [syncDnd] parce que la boucle d'horloge de l'écran Plages appelle
+     * cette dernière toutes les 15 s — inutile de replanifier une alarme aussi souvent.
+     */
+    private suspend fun rescheduleAlarms() {
+        runCatching { alarms.reschedule() }
     }
 
     /** Version non suspendue, pour les écrans qui n'ont pas de coroutine sous la main. */

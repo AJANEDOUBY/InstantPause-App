@@ -75,7 +75,8 @@ class ProtectionAlertNotifier @Inject constructor(
 
     @SuppressLint("MissingPermission")
     fun showBlockedCall(number: String) {
-        Log.d(TAG, "showBlockedCall called for $number")
+        // Le numéro n'est jamais journalisé : les logs système sont lisibles par
+        // l'utilisateur et par les outils de diagnostic, ce serait une fuite de PII.
         if (!manager.areNotificationsEnabled()) {
             Log.w(TAG, "Notifications disabled, skip")
             return

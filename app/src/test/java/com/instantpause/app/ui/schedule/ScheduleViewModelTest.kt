@@ -8,6 +8,7 @@ import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.dnd.DndGateway
 import com.instantpause.app.domain.model.Schedule
+import com.instantpause.app.domain.protection.ProtectionAlarms
 import com.instantpause.app.domain.protection.ProtectionState
 import com.instantpause.app.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +46,7 @@ class ScheduleViewModelTest {
     @Test
     fun `le mode Zen ne cree aucune plage recurrente`() = runTest {
         val repository = RecordingScheduleRepository()
-        val viewModel = ScheduleViewModel(repository, prefs, dndController(repository))
+        val viewModel = ScheduleViewModel(repository, prefs, dndController(repository), NoopAlarms)
         val before = System.currentTimeMillis()
 
         viewModel.activateZenMode()
@@ -67,7 +68,7 @@ class ScheduleViewModelTest {
 
     @Test
     fun `une duree personnalisee est respectee`() = runTest {
-        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()))
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()), NoopAlarms)
         val before = System.currentTimeMillis()
 
         viewModel.activateZenMode(4 * 60 * 60 * 1000L)
@@ -79,7 +80,7 @@ class ScheduleViewModelTest {
 
     @Test
     fun `une duree hors bornes est ramenee dans l'intervalle autorise`() = runTest {
-        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()))
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()), NoopAlarms)
         val before = System.currentTimeMillis()
 
         viewModel.activateZenMode(48 * 60 * 60 * 1000L)
@@ -91,7 +92,7 @@ class ScheduleViewModelTest {
 
     @Test
     fun `annuler le mode Zen remet l'echeance a zero`() = runTest {
-        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()))
+        val viewModel = ScheduleViewModel(RecordingScheduleRepository(), prefs, dndController(RecordingScheduleRepository()), NoopAlarms)
         viewModel.activateZenMode()
         assertTrue(prefs.getEmergencyUntil() > 0L)
 
@@ -132,7 +133,7 @@ class ScheduleViewModelTest {
     @Test
     fun `une plage ajoutee passe bien par le depot`() = runTest {
         val repository = RecordingScheduleRepository()
-        val viewModel = ScheduleViewModel(repository, prefs, dndController(repository))
+        val viewModel = ScheduleViewModel(repository, prefs, dndController(repository), NoopAlarms)
 
         viewModel.addSchedule(LocalTime.of(22, 0), LocalTime.of(7, 0), Schedule.ALL_DAYS)
 
@@ -159,6 +160,12 @@ private object DeniedDndGateway : DndGateway {
     override fun isAccessGranted(): Boolean = false
     override fun currentFilter(): Int = 0
     override fun setFilter(filter: Int): Boolean = false
+}
+
+/** Les alarmes n'ont pas de sens dans un test JVM : on ne vérifie que les mutations. */
+private object NoopAlarms : ProtectionAlarms {
+    override suspend fun reschedule() = Unit
+    override fun cancel() = Unit
 }
 
 // ===== Fakes =====

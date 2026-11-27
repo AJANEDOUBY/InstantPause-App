@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -33,10 +34,11 @@ import com.instantpause.app.R
 /**
  * Étape d'installation : autoriser le raccrochage automatique à 3 minutes.
  *
- * Ce n'est **pas** une option. `TelecomManager.endCall()`, la seule API qui permette à
- * une app tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`. Sans elle, la limite
- * de 3 minutes n'est qu'un rappel visuel : on peut parler une heure à un contact
- * autorisé. L'app refuse donc d'aller plus loin tant que la permission manque.
+ * **Optionnelle.** `TelecomManager.endCall()`, la seule API qui permette à une app
+ * tierce de couper une ligne, exige `ANSWER_PHONE_CALLS`. Sans elle, la protection
+ * et le minuteur fonctionnent toujours, mais la ligne n'est pas coupée à 0:00.
+ * L'écran propose donc l'accord et laisse continuer sans ; l'onglet Sécurité
+ * permet de revenir dessus plus tard.
  *
  * Le dialogue système est lancé dès l'affichage (une seule fois). S'il ne peut plus
  * s'afficher (refus définitif), l'écran renvoie vers les réglages Android.
@@ -45,7 +47,8 @@ import com.instantpause.app.R
 fun HangupPermissionScreen(
     needsSettings: Boolean,
     onRequest: () -> Unit,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    onSkip: () -> Unit
 ) {
     LaunchedEffect(Unit) { onRequest() }
 
@@ -110,6 +113,15 @@ fun HangupPermissionScreen(
             Spacer(Modifier.height(12.dp))
 
             OutlinedButton(
+                onClick = onSkip,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.action_continue_without))
+            }
+
+            Spacer(Modifier.height(4.dp))
+
+            TextButton(
                 onClick = onOpenSettings,
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -78,17 +78,18 @@ The app does not override those rules and does not promise that a given app will
 | Permission | Why |
 |---|---|
 | **Call redirection** role (Telecom) | Intercept the outgoing call to show the pause screen |
-| `ANSWER_PHONE_CALLS` | Automatically hang up at 3 minutes a call to an allowed contact |
+| `ANSWER_PHONE_CALLS` *(optional)* | Automatically hang up at 3 minutes a call to an allowed contact. If refused, blocking and the timer still work; only the automatic hang-up is off |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Show the pause screen over the call screen or the lock screen |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Persistent protection notification and haptic feedback |
 | `RECEIVE_BOOT_COMPLETED` | Re-enable protection after a reboot |
-| `SCHEDULE_EXACT_ALARM` | Trigger windows at the scheduled time |
+| `SCHEDULE_EXACT_ALARM` | Wake the app at the start and end of your windows to restore the sound, only if you enabled *Silence during the pause* |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Keep protection and the call timer active |
 | `ACCESS_NOTIFICATION_POLICY` (Do Not Disturb access) | Switch to *Do Not Disturb - priority only* during your windows, **only if you turn that option on**. The sound mode set before the window is restored afterwards |
 
-Each permission can be revoked in the Android settings. Removing the Call redirection role or the
-hang-up permission disables the corresponding protection: this is deliberate, the app cannot
-prevent it.
+Each permission can be revoked in the Android settings. Removing the Call redirection role disables
+the protection itself: this is deliberate, the app cannot prevent it. The optional hang-up
+permission can be refused or removed without affecting blocking; only the automatic end of the
+call is lost.
 
 ## 5. Retention
 
@@ -210,17 +211,18 @@ La aplicación no modifica esas reglas y no promete que una aplicación concreta
 | Permiso | Motivo |
 |---|---|
 | Rol **Redirección de llamadas** (Telecom) | Interceptar la llamada saliente para mostrar la pantalla de pausa |
-| `ANSWER_PHONE_CALLS` | Colgar automáticamente a los 3 minutos una llamada a un contacto autorizado |
+| `ANSWER_PHONE_CALLS` *(opcional)* | Colgar automáticamente a los 3 minutos una llamada a un contacto autorizado. Si se rechaza, el bloqueo y el temporizador siguen funcionando; solo se pierde el colgado automático |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Mostrar la pantalla de pausa sobre la pantalla de llamada o de bloqueo |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notificación permanente de la protección y respuestas hápticas |
 | `RECEIVE_BOOT_COMPLETED` | Reactivar la protección tras un reinicio |
-| `SCHEDULE_EXACT_ALARM` | Activar las franjas a la hora prevista |
+| `SCHEDULE_EXACT_ALARM` | Despertar la app al inicio y al final de tus franjas para restablecer el sonido, solo si activaste *Silencio durante la pausa* |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Mantener activas la protección y el temporizador de llamada |
 | `ACCESS_NOTIFICATION_POLICY` (acceso a No molestar) | Activar *No molestar - solo prioridad* durante tus franjas, **solo si activas esa opción**. El modo de sonido anterior se restablece después |
 
 Cada permiso puede retirarse desde los ajustes de Android. Retirar el rol de Redirección de
-llamadas o el permiso de colgado desactiva la protección correspondiente: es voluntario, la
-aplicación no puede impedirlo.
+llamadas desactiva la protección: es voluntario, la aplicación no puede impedirlo. El permiso de
+colgado es opcional y puede rechazarse o retirarse sin afectar al bloqueo; solo se pierde el fin
+automático de la llamada.
 
 ## 5. Plazo de conservación
 
@@ -346,17 +348,18 @@ L'application ne contourne pas ces règles et ne promet pas qu'une application d
 | Permission | Pourquoi |
 |---|---|
 | Rôle **Redirection d'appels** (Telecom) | Intercepter l'appel sortant pour afficher l'écran de pause |
-| `ANSWER_PHONE_CALLS` | Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé |
+| `ANSWER_PHONE_CALLS` *(facultative)* | Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé. Refusée, le blocage et le minuteur fonctionnent toujours ; seule la coupure automatique est désactivée |
 | `SYSTEM_ALERT_WINDOW` / `USE_FULL_SCREEN_INTENT` | Afficher l'écran de pause par-dessus l'écran d'appel ou de verrouillage |
 | `POST_NOTIFICATIONS` / `VIBRATE` | Notification permanente de la protection et retours haptiques |
 | `RECEIVE_BOOT_COMPLETED` | Réactiver la protection après un redémarrage |
-| `SCHEDULE_EXACT_ALARM` | Déclencher les plages à l'heure prévue |
+| `SCHEDULE_EXACT_ALARM` | Réveiller l'application au début et à la fin de vos plages pour rétablir le son, uniquement si vous activez *Silence pendant la pause* |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE` | Maintenir la protection et le minuteur d'appel actifs |
 | `ACCESS_NOTIFICATION_POLICY` (accès « Ne pas déranger ») | Activer *Ne pas déranger - prioritaires uniquement* pendant vos plages, **uniquement si vous activez cette option**. Le mode sonore d'avant la plage est rétabli ensuite |
 
 Chaque permission peut être retirée depuis les réglages Android. Retirer le rôle Redirection
-d'appels ou la permission de raccrochage désactive la protection correspondante : c'est volontaire,
-l'application ne peut pas vous en empêcher.
+d'appels désactive la protection elle-même : c'est volontaire, l'application ne peut pas vous en
+empêcher. La permission de raccrochage est facultative : la refuser ou la retirer ne change rien au
+blocage, seule la coupure automatique de l'appel est perdue.
 
 ## 5. Durée de conservation
 

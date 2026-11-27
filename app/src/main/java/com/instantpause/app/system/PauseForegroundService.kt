@@ -30,8 +30,9 @@ class PauseForegroundService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // Voir CoolDownWatchdogService : constante recopiée à la compilation, sans danger
-    // sur les Android antérieurs à 14 (ServiceCompat ignore le type).
+    // `FOREGROUND_SERVICE_TYPE_SPECIAL_USE` n'existe que depuis l'API 34, mais c'est une
+    // constante `static final int` : recopiée à la compilation, ServiceCompat l'ignore
+    // sous Android 14. Rien à garder derrière un test de version.
     @SuppressLint("InlinedApi")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val number = intent?.getStringExtra(EXTRA_NUMBER).orEmpty()

@@ -133,15 +133,18 @@ deviendrait obligatoire), *Social*, *Dating*, *Parentalité* (aucune fonction po
 
 À coller dans le formulaire de déclaration, au moment de l'import du bundle.
 
-### Raccrochage à 3 minutes — `ANSWER_PHONE_CALLS`
+### Raccrochage à 3 minutes — `ANSWER_PHONE_CALLS` (facultative)
 
 ```
 Instant Pause laisse l'utilisateur joindre trois contacts de confiance pendant ses plages de
-protection, mais limite volontairement ces appels à 3 minutes : c'est la règle que l'utilisateur
-a lui-même fixée pour éviter de rester une heure au téléphone avec la personne qui déclenche son
-impulsivité. ANSWER_PHONE_CALLS sert uniquement à raccrocher ce type d'appel, arrivé à 3:00, via
-TelecomManager.endCall(). L'application ne lit ni le journal d'appels, ni les SMS, ne compose
-aucun numéro et ne connaît pas l'identité de l'appelant au-delà du numéro composé.
+protection, mais peut limiter volontairement ces appels à 3 minutes : c'est la règle que
+l'utilisateur a lui-même fixée pour éviter de rester une heure au téléphone avec la personne qui
+déclenche son impulsivité. ANSWER_PHONE_CALLS est facultative : refusée à l'installation,
+l'application continue de bloquer les appels et d'afficher le minuteur, et l'utilisateur peut
+l'accorder plus tard depuis l'onglet Sécurité. Lorsqu'elle est accordée, elle sert uniquement à
+raccrocher ce type d'appel, arrivé à 3:00, via TelecomManager.endCall(). L'application ne lit ni
+le journal d'appels, ni les SMS, ne compose aucun numéro et ne connaît pas l'identité de
+l'appelant au-delà du numéro composé.
 ```
 
 

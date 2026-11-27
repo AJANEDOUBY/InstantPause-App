@@ -4,8 +4,8 @@ package com.instantpause.app.ui.main
  * Étape d'onboarding où se trouve l'utilisateur.
  *
  * Extraite de `MainActivity` pour être testable : l'ordre des étapes est le garde-fou
- * lui-même. Tant que l'app n'a pas le droit de raccrocher, on ne passe pas au rôle
- * Telecom — donc pas à l'app utilisable.
+ * lui-même. Le verrou et le rôle Telecom restent obligatoires ; le raccrochage à
+ * 3 minutes et le plein écran sont proposés, jamais imposés.
  */
 internal enum class OnboardingStage {
     LOADING,
@@ -20,31 +20,36 @@ internal enum class OnboardingStage {
  * @param hasCode un code de protection existe déjà
  * @param roleHeld l'app détient `ROLE_CALL_REDIRECTION`
  * @param canHangUp l'app peut couper un appel (`ANSWER_PHONE_CALLS` accordée)
+ * @param hangupAcknowledged l'étape « raccrocher à 3 minutes » a déjà été vue
+ *   (`null` tant que la préférence n'est pas chargée)
  * @param canUseFullScreenIntent l'écran de pause peut s'afficher par-dessus le
  *   verrouillage (toujours vrai avant Android 14)
  * @param fullScreenAcknowledged l'étape « plein écran » a déjà été vue (`null` tant que
  *   la préférence n'est pas chargée)
  *
- * Le raccrochage est vérifié **en permanence** : sans `ANSWER_PHONE_CALLS`, les
- * 3 minutes ne sont pas garanties, donc l'app ne s'ouvre pas. Retirer la permission
- * depuis les réglages Android ramène ici au lancement suivant — c'est voulu.
+ * Le raccrochage est **optionnel** : sans `ANSWER_PHONE_CALLS`, la protection et le
+ * minuteur fonctionnent, seule la coupure automatique à 3 minutes manque. L'étape est
+ * donc proposée une fois, puis acquittée par un accord ou par « continuer sans ».
+ * L'onglet Sécurité permet de l'accorder plus tard.
  *
- * Le plein écran, enfin, est proposé **une seule fois** : refusé puis acquitté, il ne
- * revient plus (la pause reste accessible par la notification). Sans ce drapeau,
- * l'écran de réglages s'ouvrirait à chaque lancement — plus intrusif que le problème.
+ * Le plein écran fonctionne de la même façon : proposé une seule fois, refusé puis
+ * acquitté, il ne revient plus (la pause reste accessible par la notification).
+ * Sans ce drapeau, l'écran de réglages s'ouvrirait à chaque lancement — plus
+ * intrusif que le problème.
  */
 internal fun onboardingStage(
     loading: Boolean,
     hasCode: Boolean,
     roleHeld: Boolean,
     canHangUp: Boolean,
+    hangupAcknowledged: Boolean?,
     canUseFullScreenIntent: Boolean,
     fullScreenAcknowledged: Boolean?
 ): OnboardingStage = when {
-    loading || fullScreenAcknowledged == null ->
+    loading || fullScreenAcknowledged == null || hangupAcknowledged == null ->
         OnboardingStage.LOADING
     !hasCode -> OnboardingStage.SETUP_CODE
-    !canHangUp -> OnboardingStage.HANGUP_PERMISSION
+    !canHangUp && !hangupAcknowledged -> OnboardingStage.HANGUP_PERMISSION
     !roleHeld -> OnboardingStage.ACTIVATE_ROLE
     !canUseFullScreenIntent && !fullScreenAcknowledged -> OnboardingStage.FULL_SCREEN_INTENT
     else -> OnboardingStage.MAIN
