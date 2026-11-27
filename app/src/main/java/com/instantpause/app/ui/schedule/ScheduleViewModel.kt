@@ -2,6 +2,7 @@ package com.instantpause.app.ui.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.instantpause.app.R
 import com.instantpause.app.data.datastore.ProtectionPrefs
 import com.instantpause.app.domain.dnd.DndController
 import com.instantpause.app.domain.model.Schedule
@@ -128,13 +129,13 @@ class ScheduleViewModel @Inject constructor(
         const val MIN_ZEN_MS = 5 * 60 * 1000L
         const val MAX_ZEN_MS = 24 * 60 * 60 * 1000L
 
-        /** Durées proposées d'un seul appui, de la plus courte à la plus longue. */
-        val ZEN_PRESETS: List<Pair<String, Long>> = listOf(
-            "4 h" to 4 * 60 * 60 * 1000L,
-            "6 h" to 6 * 60 * 60 * 1000L,
-            "8 h" to 8 * 60 * 60 * 1000L,
-            "10 h" to 10 * 60 * 60 * 1000L,
-            "12 h" to 12 * 60 * 60 * 1000L
+        /** Durées proposées d'un seul appui : libellé localisé puis durée en millisecondes. */
+        val ZEN_PRESETS: List<Pair<Int, Long>> = listOf(
+            R.string.zen_hours_4 to 4 * 60 * 60 * 1000L,
+            R.string.zen_hours_6 to 6 * 60 * 60 * 1000L,
+            R.string.zen_hours_8 to 8 * 60 * 60 * 1000L,
+            R.string.zen_hours_10 to 10 * 60 * 60 * 1000L,
+            R.string.zen_hours_12 to 12 * 60 * 60 * 1000L
         )
 
         private const val SAME_END_TOLERANCE_MS = 60_000L

@@ -145,6 +145,12 @@
     <string name="zen_cancel_reason">Stop Zen mode now? Calls will no longer be blocked until the next window.</string>
 
     <!-- Plages -->
+    <string name="zen_hours_4">4 h</string>
+    <string name="zen_hours_6">6 h</string>
+    <string name="zen_hours_8">8 h</string>
+    <string name="zen_hours_10">10 h</string>
+    <string name="zen_hours_12">12 h</string>
+
     <string name="empty_title">No window configured</string>
     <string name="empty_body">Add a window to enable automatic protection (e.g. 10 pm – 7 am).</string>
     <string name="schedule_disable_reason">Disable the %1$s – %2$s window? Without it, nothing will block your calls during that slot.</string>
@@ -234,5 +240,7 @@
     <string name="language_name_en">English</string>
     <string name="language_name_fr">Français</string>
     <string name="language_name_es">Español</string>
+    <string name="language_name_zh">中文</string>
+    <string name="language_name_hi">हिन्दी</string>
     <string name="language_requires_android13">Available from Android 13. Before that, the app follows your phone language.</string>
 </resources>
