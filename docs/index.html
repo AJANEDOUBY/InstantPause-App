@@ -103,7 +103,7 @@
   }
 </style>
 </head>
-<body>
+<body id="top">
 <main>
 
 <header>
@@ -205,21 +205,20 @@ ci-dessus. Il n'est transmis à personne.</p>
   </thead>
   <tbody>
     <tr><td>Rôle <strong>Redirection d'appels</strong> (Telecom)</td><td>Intercepter l'appel sortant pour afficher l'écran de pause</td></tr>
-    <tr><td><code>ANSWER_PHONE_CALLS</code></td><td>Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé</td></tr>
-    <tr><td>Administrateur d'appareil</td><td>Freiner une désinstallation impulsive. <strong>Aucune politique</strong> n'est imposée à l'appareil, aucun effacement à distance n'est possible</td></tr>
+    <tr><td><code>ANSWER_PHONE_CALLS</code></td><td>Raccrocher automatiquement à 3 minutes un appel vers un contact autorisé — <strong>facultative</strong>, refusable à l'installation et accordable plus tard dans l'onglet Sécurité</td></tr>
     <tr><td><code>SYSTEM_ALERT_WINDOW</code> / <code>USE_FULL_SCREEN_INTENT</code></td><td>Afficher l'écran de pause par-dessus l'écran d'appel ou de verrouillage</td></tr>
     <tr><td><code>POST_NOTIFICATIONS</code> / <code>VIBRATE</code></td><td>Notification permanente de la protection et retours haptiques</td></tr>
     <tr><td><code>RECEIVE_BOOT_COMPLETED</code></td><td>Réactiver la protection après un redémarrage</td></tr>
-    <tr><td><code>SCHEDULE_EXACT_ALARM</code></td><td>Déclencher les plages à l'heure prévue</td></tr>
-    <tr><td><code>REQUEST_IGNORE_BATTERY_OPTIMIZATIONS</code></td><td>Empêcher Android d'endormir le service de protection</td></tr>
-    <tr><td><code>FOREGROUND_SERVICE</code>, <code>FOREGROUND_SERVICE_SPECIAL_USE</code></td><td>Maintenir la protection et le minuteur d'appel actifs</td></tr>
+    <tr><td><code>SCHEDULE_EXACT_ALARM</code></td><td>Réveiller l'application au début et à la fin des plages pour rétablir le son, uniquement si l'option « Silence pendant la pause » est active</td></tr>
+    <tr><td><code>FOREGROUND_SERVICE</code>, <code>FOREGROUND_SERVICE_SPECIAL_USE</code></td><td>Afficher l'écran de pause et le minuteur d'appel</td></tr>
   </tbody>
 </table>
 </div>
 
 <p>Chaque permission peut être retirée depuis les réglages Android. Retirer le rôle Redirection
-d'appels ou la permission de raccrochage désactive la protection correspondante : c'est
-volontaire, l'application ne peut pas vous en empêcher.</p>
+d'appels désactive le blocage lui-même : c'est volontaire, l'application ne peut pas vous en
+empêcher. La permission de raccrochage est facultative : la refuser ou la retirer ne change rien
+au blocage, seule la coupure automatique de l'appel est perdue.</p>
 
 <h2 id="conservation">5. Durée de conservation</h2>
 <ul>
@@ -238,9 +237,10 @@ d'opposition. Comme aucune donnée n'est transmise à l'éditeur, ces droits s'e
   <li><strong>Effacement</strong> : désinstallez l'application, ou effacez ses données depuis
   <em>Paramètres → Applications → Instant Pause → Stockage</em>. Tout disparaît avec le stockage
   privé.</li>
-  <li>L'anti-désinstallation empêche une désinstallation impulsive : désactivez d'abord
-  l'administrateur d'appareil dans <em>Paramètres → Sécurité → Administration de l'appareil</em>,
-  avec votre code. C'est un garde-fou contre vous-même, pas une rétention de données.</li>
+  <li>Le code de protection freine une modification impulsive de la protection : il est demandé
+  pour retirer une plage, un contact ou désactiver l'option de silence. Il n'empêche pas la
+  désinstallation, et <strong>aucun administrateur d'appareil n'est utilisé</strong>. C'est un
+  garde-fou contre vous-même, pas une rétention de données.</li>
 </ul>
 <p>Base légale : exécution du service que vous demandez (article 6.1.b du RGPD). Aucun traitement
 n'a lieu sans votre action.</p>

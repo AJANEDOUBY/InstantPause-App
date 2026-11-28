@@ -135,8 +135,9 @@ las acciones que **debilizan** la protección — nunca para bloquear una llamad
 franja. Consulta [Bloqueo de protección](#bloqueo-de-protección).
 
 ### 🛡️ Robustez
-- **Watchdog** en servicio en primer plano: la app sobrevive a los gestores de batería
-  agresivos (fabricantes chinos en particular).
+- **Ningún servicio permanente**: el bloqueo no depende de que la app siga viva — Telecom la
+  reinicia en frío en cada llamada. Solo se programa una alarma, al inicio y al final de una
+  franja, para restablecer el sonido cuando *Silencio durante la pausa* está activo.
 - **Reinicio**: la protección se rearma tras un reinicio o una actualización.
 - **Fail-open**: cualquier error, cualquier tiempo de espera agotado o la muerte del
   servicio deja pasar la llamada. El peor escenario es «la llamada pasa», nunca «la
@@ -271,8 +272,8 @@ app/src/main/java/com/instantpause/app/
 ├── system/
 │   ├── CoolDownCallRedirectionService.kt  # Intercepción Telecom
 │   ├── PauseForegroundService.kt          # Apertura de la UI desde segundo plano
-│   ├── CoolDownWatchdogService.kt         # Mantener el proceso vivo
-│   ├── WatchdogAlarmReceiver.kt           # Rearme periódico
+│   ├── ProtectionAlarmScheduler.kt        # Una alarma en los límites de las franjas (sonido)
+│   ├── ProtectionAlarmReceiver.kt         # Despertar al inicio/fin de una franja
 │   ├── ProtectionAlertNotifier.kt         # Canales + notificaciones
 │   └── BootReceiver.kt                    # Tras reinicio / actualización
 └── ui/
@@ -535,10 +536,10 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 | `SYSTEM_ALERT_WINDOW` | Mostrar la pantalla de pausa sobre el marcador |
 | `USE_FULL_SCREEN_INTENT` | Visualización en pantalla bloqueada — se propone una vez al instalar en Android 14+ (no bloqueante) |
 | `RECEIVE_BOOT_COMPLETED` | Rearme tras el reinicio |
-| `SCHEDULE_EXACT_ALARM` | Alarma de seguridad cada 15 min (recurso inexacto si se deniega) |
-| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, apertura de UI |
-| `ANSWER_PHONE_CALLS` | Colgar a las 3:00 la llamada a un contacto autorizado — permiso obligatorio al instalar |
-| `ACCESS_NOTIFICATION_POLICY` | Opcional: silenciar los tonos de WhatsApp/Signal/Telegram durante una franja (se concede en la pestaña Seguridad, desactivado por defecto) |
+| `SCHEDULE_EXACT_ALARM` | Despertar al inicio/fin de una franja para restablecer el sonido (solo si *Silencio durante la pausa* está activo; recurso inexacto si se deniega) |
+| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Pantalla de pausa y temporizador de llamada |
+| `ANSWER_PHONE_CALLS` | Colgar a las 3:00 la llamada a un contacto autorizado — opcional, se puede conceder más tarde en la pestaña Seguridad |
+| `ACCESS_NOTIFICATION_POLICY` | Opcional: activa « No molestar » durante una franja (se concede en la pestaña Seguridad, desactivado por defecto) |
 
 ---
 
@@ -583,12 +584,11 @@ Android), lo que permite ejecutarlo con fakes en memoria.
 - **Respuesta interactiva**: la autorización con un toque (`allowInteractiveResponse` de
   Telecom) aún no está implementada — el bloqueo es binario.
 - **Fork de fabricante**: las capas muy agresivas (gestión de batería, autostart) pueden
-  matar el watchdog y **retrasar `BOOT_COMPLETED`** hasta no entregarlo nunca. En estos
+  **retrasar `BOOT_COMPLETED`** hasta no entregarlo nunca. En estos
   dispositivos (itel/Transsion, Xiaomi, Infinix…), permite Instant Pause en **Inicio
   automático** y **sin restricciones de energía**. La app muestra un banner ámbar mientras
   falte la exención de energía. La intercepción de llamadas, en cambio, **sigue
-  funcionando**: Telecom reinicia el proceso en frío en cada llamada, y el watchdog se
-  rearma en esa ocasión.
+  funcionando**: Telecom reinicia el proceso en frío en cada llamada.
 
 ---
 

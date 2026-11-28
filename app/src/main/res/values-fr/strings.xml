@@ -17,6 +17,8 @@
     <string name="banner_overlay_message">Requis pour montrer l\'écran de pause pendant un appel.</string>
     <string name="banner_battery_title">Protection après redémarrage</string>
     <string name="banner_battery_message">Autorisez le démarrage auto et l\'énergie sans restriction.</string>
+    <string name="banner_notifications_title">Notifications désactivées</string>
+    <string name="banner_notifications_message">Autorisez les notifications pour afficher les alertes de pause lors d’un blocage.</string>
     <string name="banner_allow">Autoriser</string>
 
     <!-- Écran d'activation du rôle -->
@@ -68,7 +70,6 @@
     <string name="security_title">Sécurité</string>
     <string name="security_subtitle">Empêcher la protection d\'être coupée sur un coup de tête.</string>
     <string name="version_label">Instant Pause %1$s</string>
-    <string name="action_remove_protection">Retirer la protection</string>
 
     <!-- Message de l'écran de pause -->
     <string name="pause_message_title">Message de l\'écran de pause</string>
@@ -220,7 +221,7 @@
 
     <!-- Silence pendant les plages (Ne pas déranger) -->
     <string name="dnd_title">Silence pendant la pause</string>
-    <string name="dnd_subtitle">Coupe les sonneries WhatsApp, Signal et Telegram pendant vos plages. Les appels d\'urgence et les alarmes restent possibles.</string>
+    <string name="dnd_subtitle">Active « Ne pas déranger » pendant vos plages. Ce qui sonne encore dépend de vos réglages Android.</string>
     <string name="dnd_allow">Autoriser l\'accès « Ne pas déranger »</string>
     <string name="dnd_access_needed">Accès non accordé : Android exige une autorisation explicite (Réglages › Accès spéciaux des applications).</string>
     <string name="dnd_access_lost">Accès retiré : le son reste coupé jusqu\'à ce que vous désactiviez « Ne pas déranger » à la main.</string>

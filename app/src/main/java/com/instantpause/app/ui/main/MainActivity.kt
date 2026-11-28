@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
     private var canHangUp by mutableStateOf(false)
     private var hangupAsked by mutableStateOf(false)
     private var fullScreenIntentAllowed by mutableStateOf(true)
+    private var notificationsEnabled by mutableStateOf(true)
 
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
@@ -61,7 +62,12 @@ class MainActivity : ComponentActivity() {
 
     private val notificationsPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { }
+    ) { granted ->
+        notificationsEnabled = granted && areNotificationsActive()
+        if (!notificationsEnabled) {
+            openNotificationSettings()
+        }
+    }
 
     /** Raccrocher un appel autorisé à la fin des 3 minutes (TelecomManager.endCall). */
     private val hangupPermissionLauncher = registerForActivityResult(
@@ -86,13 +92,7 @@ class MainActivity : ComponentActivity() {
 
         batteryOptimized = isBatteryOptimized()
         refreshFullScreenIntent()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
-                    PackageManager.PERMISSION_GRANTED)
-        ) {
-            notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
+        notificationsEnabled = areNotificationsActive()
 
         setContent {
             CoolDownTheme {
@@ -151,6 +151,7 @@ class MainActivity : ComponentActivity() {
                     OnboardingStage.MAIN -> MainScreen(
                         hasOverlayPermission = hasOverlayPermission,
                         batteryOptimized = batteryOptimized,
+                        notificationsEnabled = notificationsEnabled,
                         onRequestOverlayPermission = {
                             startActivity(
                                 Intent(
@@ -159,7 +160,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                         },
-                        onRequestBatteryExemption = { requestBatteryExemption() }
+                        onRequestBatteryExemption = { requestBatteryExemption() },
+                        onRequestNotifications = { requestOrOpenNotifications() }
                     )
                 }
             }
@@ -171,11 +173,53 @@ class MainActivity : ComponentActivity() {
         viewModel.refreshRole()
         hasOverlayPermission = Settings.canDrawOverlays(this)
         batteryOptimized = isBatteryOptimized()
+        notificationsEnabled = areNotificationsActive()
         canHangUp = checkSelfPermission(Manifest.permission.ANSWER_PHONE_CALLS) ==
                 PackageManager.PERMISSION_GRANTED
         if (canHangUp) viewModel.markHangupPromptDone()
         refreshFullScreenIntent()
         viewModel.syncDnd()
+    }
+
+    private fun areNotificationsActive(): Boolean {
+        val nm = getSystemService(NotificationManager::class.java) ?: return false
+        val permissionOk = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+        if (!permissionOk || !nm.areNotificationsEnabled()) return false
+
+        val channel = nm.getNotificationChannel("cooldown_protection")
+        return channel == null || channel.importance != NotificationManager.IMPORTANCE_NONE
+    }
+
+    private fun requestOrOpenNotifications() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            openNotificationSettings()
+        }
+    }
+
+    private fun openNotificationSettings() {
+        val nm = getSystemService(NotificationManager::class.java)
+        val channel = nm?.getNotificationChannel("cooldown_protection")
+        val channelMuted = nm?.areNotificationsEnabled() == true &&
+                channel?.importance == NotificationManager.IMPORTANCE_NONE
+
+        val intent = if (channelMuted) {
+            Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                putExtra(Settings.EXTRA_CHANNEL_ID, "cooldown_protection")
+            }
+        } else {
+            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            }
+        }
+        runCatching { startActivity(intent) }.onFailure { openAppSettings() }
     }
 
     /**
@@ -225,12 +269,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestBatteryExemption() {
-        // Conforme Google Play : ouvre les réglages batterie sans utiliser REQUEST_IGNORE_BATTERY_OPTIMIZATIONS.
-        runCatching {
-            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-        }.onFailure {
-            openAppSettings()
-        }
+        // Ouvre directement la fiche Informations sur l'application (Batterie -> Non restreinte)
+        // au lieu de la liste globale Android filtrée sur Samsung One UI.
+        openAppSettings()
     }
 }
 
@@ -245,8 +286,10 @@ private fun LoadingScreen() {
 private fun MainScreen(
     hasOverlayPermission: Boolean,
     batteryOptimized: Boolean,
+    notificationsEnabled: Boolean,
     onRequestOverlayPermission: () -> Unit,
-    onRequestBatteryExemption: () -> Unit
+    onRequestBatteryExemption: () -> Unit,
+    onRequestNotifications: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -278,6 +321,9 @@ private fun MainScreen(
             }
             if (batteryOptimized) {
                 BatteryBanner(onRequestExemption = onRequestBatteryExemption)
+            }
+            if (!notificationsEnabled) {
+                NotificationBanner(onRequestNotifications = onRequestNotifications)
             }
 
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {

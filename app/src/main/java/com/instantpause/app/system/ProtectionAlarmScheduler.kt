@@ -14,7 +14,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
 
 /**
  * Programme **une** alarme au prochain changement d'état de la protection.

@@ -77,15 +77,17 @@ class ProtectionAlertNotifier @Inject constructor(
     fun showBlockedCall(number: String) {
         // Le numéro n'est jamais journalisé : les logs système sont lisibles par
         // l'utilisateur et par les outils de diagnostic, ce serait une fuite de PII.
+        val quiet = pauseVisible
+
         if (!manager.areNotificationsEnabled()) {
-            Log.w(TAG, "Notifications disabled, skip")
+            Log.w(TAG, "Notifications disabled, skip visual alert")
+            if (!quiet) vibrate()
             return
         }
 
         // Une seule alerte, au moment du blocage. Aucune répétition : l'appel est
         // déjà refusé, re-sonner toutes les 30 s n'apporte rien et finit par
         // pousser l'utilisateur à couper les notifications de l'app.
-        val quiet = pauseVisible
         runCatching {
             manager.notify(ID_BLOCKED_CALL, buildBlockedNotification(number, quiet = quiet))
         }.onFailure { Log.e(TAG, "Notify failed", it) }
@@ -154,7 +156,7 @@ class ProtectionAlertNotifier @Inject constructor(
     }
 
     companion object {
-        private const val TAG = "CoolDownNotifier"
+        private const val TAG = "ProtectionAlertNotifier"
         private const val CHANNEL_ID = "cooldown_protection"
         private const val QUIET_CHANNEL_ID = "cooldown_protection_quiet"
         private const val SERVICE_CHANNEL_ID = "cooldown_service"

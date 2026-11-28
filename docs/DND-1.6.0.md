@@ -251,7 +251,7 @@ Livré sur `release/1.6.0` (versionCode 16), dans la même version que la traduc
 | Passerelle `NotificationManager` | `system/AndroidDndGateway.kt` |
 | Clés `dnd_*` (DataStore) | `data/datastore/ProtectionPrefs.kt` |
 | Carte de l'onglet Sécurité | `ui/security/SecurityScreen.kt`, `SecurityViewModel.kt` |
-| Restauration hors activité | `system/DndRestore.kt`, `BootReceiver`, `WatchdogAlarmReceiver` |
+| Restauration hors activité | `system/DndRestore.kt`, `BootReceiver`, `ProtectionAlarmReceiver` (remplace `WatchdogAlarmReceiver` depuis la 1.8.0) |
 | Injection | `di/DndModule.kt`, `di/DndEntryPoint.kt` |
 | Tests | `DndControllerTest` (12 cas), `ShouldBlockCallUseCaseTest`, `ScheduleViewModelTest` |
 

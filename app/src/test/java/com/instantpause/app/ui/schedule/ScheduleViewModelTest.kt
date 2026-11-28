@@ -14,7 +14,6 @@ import com.instantpause.app.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,11 +35,6 @@ class ScheduleViewModelTest {
     fun setUp() {
         dataStore = FakeDataStore(emptyPreferences())
         prefs = ProtectionPrefs(dataStore)
-    }
-
-    @After
-    fun tearDown() {
-        // Rien à libérer : le DataStore de test est en mémoire.
     }
 
     @Test

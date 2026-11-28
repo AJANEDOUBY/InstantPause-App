@@ -128,8 +128,9 @@ actions that **weaken** the protection — never to block a call or add a window
 See [Protection lock](#protection-lock).
 
 ### 🛡️ Robustness
-- **Watchdog** in a foreground service: the app survives aggressive battery managers
-  (Chinese manufacturers in particular).
+- **No permanent service**: blocking does not depend on the app staying alive — Telecom restarts
+  the app cold on every call. Only one alarm is scheduled, at the start and end of a window,
+  to restore the sound when *Silence during the pause* is on.
 - **Restart**: protection is re-armed after a reboot or an update.
 - **Fail-open**: any error, any timeout or a service death lets the call through. The
   worst case is "the call goes through", never "the call is lost".
@@ -267,8 +268,8 @@ app/src/main/java/com/instantpause/app/
 ├── system/
 │   ├── CoolDownCallRedirectionService.kt  # Telecom interception
 │   ├── PauseForegroundService.kt          # Opens the UI from the background
-│   ├── CoolDownWatchdogService.kt         # Keeps the process alive
-│   ├── WatchdogAlarmReceiver.kt           # Periodic re-arming
+│   ├── ProtectionAlarmScheduler.kt        # One alarm at window boundaries (sound)
+│   ├── ProtectionAlarmReceiver.kt         # Wakes at start/end of a window
 │   ├── ProtectionAlertNotifier.kt         # Channels + notifications
 │   └── BootReceiver.kt                    # After reboot / update
 └── ui/
@@ -528,10 +529,10 @@ implementation), which allows it to run with in-memory fakes.
 | `SYSTEM_ALERT_WINDOW` | Show the pause screen above the dialer |
 | `USE_FULL_SCREEN_INTENT` | Display on the lock screen — offered once at install on Android 14+ (non-blocking) |
 | `RECEIVE_BOOT_COMPLETED` | Re-arming after reboot |
-| `SCHEDULE_EXACT_ALARM` | Safety alarm every 15 min (inexact fallback if denied) |
-| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, opening the UI |
-| `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — mandatory permission at install |
-| `ACCESS_NOTIFICATION_POLICY` | Optional: mute WhatsApp/Signal/Telegram ringtones during a window (granted in the Security tab, off by default) |
+| `SCHEDULE_EXACT_ALARM` | Wake at the start/end of a window to restore the sound (only if *Silence during the pause* is on; inexact fallback if denied) |
+| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Pause screen and call timer |
+| `ANSWER_PHONE_CALLS` | Hang up at 3:00 a call to an allowed contact — optional, can be granted later from the Security tab |
+| `ACCESS_NOTIFICATION_POLICY` | Optional: turns on Do Not Disturb during a window (granted in the Security tab, off by default) |
 
 ---
 
@@ -573,12 +574,12 @@ implementation), which allows it to run with in-memory fakes.
   [Protection lock](#protection-lock).
 - **Interactive response**: one-tap authorisation (Telecom's `allowInteractiveResponse`)
   is not yet implemented — blocking is binary.
-- **Manufacturer fork**: very aggressive overlays (battery management, autostart) can kill
-  the watchdog and **delay `BOOT_COMPLETED`** to the point of never delivering it. On
-  these devices (itel/Transsion, Xiaomi, Infinix…), allow Instant Pause in
-  **Autostart** and **no battery restrictions**. The app shows an amber banner as long as
-  the energy exemption is missing. Call interception, however, **keeps working**: Telecom
-  restarts the process cold on every call, and the watchdog re-arms on that occasion.
+- **Manufacturer fork**: very aggressive overlays (battery management, autostart) can
+  **delay `BOOT_COMPLETED`** to the point of never delivering it. On these devices
+  (itel/Transsion, Xiaomi, Infinix…), allow Instant Pause in **Autostart** and
+  **no battery restrictions**. The app shows an amber banner as long as the energy exemption
+  is missing. Call interception, however, **keeps working**: Telecom restarts the process cold
+  on every call.
 
 ---
 

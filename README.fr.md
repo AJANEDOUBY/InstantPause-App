@@ -132,8 +132,9 @@ ajouter une plage.
 Voir la section [Verrou de protection](#verrou-de-protection).
 
 ### 🛡️ Robustesse
-- **Watchdog** en foreground service : l'app survit aux gestionnaires de batterie agressifs
-  (constructeurs chinois notamment).
+- **Aucun service permanent** : le blocage ne dépend pas de la survie de l'app — Telecom la
+  relance à froid à chaque appel. Une seule alarme est posée, au début et à la fin d'une plage,
+  pour rétablir le son quand *Silence pendant la pause* est actif.
 - **Redémarrage** : la protection est ré-armée après un reboot ou une mise à jour.
 - **Fail-open** : toute erreur, tout timeout ou une mort du service laisse passer l'appel.
   Le pire scénario est « l'appel passe », jamais « l'appel est perdu ».
@@ -266,8 +267,8 @@ app/src/main/java/com/instantpause/app/
 ├── system/
 │   ├── CoolDownCallRedirectionService.kt  # Interception Telecom
 │   ├── PauseForegroundService.kt          # Ouverture de l'UI depuis l'arrière-plan
-│   ├── CoolDownWatchdogService.kt         # Maintien en vie
-│   ├── WatchdogAlarmReceiver.kt           # Ré-armement périodique
+│   ├── ProtectionAlarmScheduler.kt        # Une alarme aux bornes des plages (son)
+│   ├── ProtectionAlarmReceiver.kt         # Réveil au début/à la fin d'une plage
 │   ├── ProtectionAlertNotifier.kt         # Canaux + notifications
 │   └── BootReceiver.kt                    # Après reboot / mise à jour
 └── ui/
@@ -527,10 +528,10 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 | `SYSTEM_ALERT_WINDOW` | Affichage de l'écran de pause au-dessus du dialer |
 | `USE_FULL_SCREEN_INTENT` | Affichage sur écran verrouillé — proposé une fois à l'installation sur Android 14+ (non bloquant) |
 | `RECEIVE_BOOT_COMPLETED` | Ré-armement après redémarrage |
-| `SCHEDULE_EXACT_ALARM` | Alarme de sécurité toutes les 15 min (repli inexact si refusée) |
-| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Watchdog, ouverture d'UI |
-| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — permission obligatoire à l'installation |
-| `ACCESS_NOTIFICATION_POLICY` | Optionnel : couper les sonneries WhatsApp/Signal/Telegram pendant une plage (accordée dans l'onglet Sécurité, désactivé par défaut) |
+| `SCHEDULE_EXACT_ALARM` | Réveil au début/à la fin d'une plage pour rétablir le son (uniquement si *Silence pendant la pause* est actif ; repli inexact si refusée) |
+| `FOREGROUND_SERVICE` / `FOREGROUND_SERVICE_SPECIAL_USE` | Écran de pause et minuteur d'appel |
+| `ANSWER_PHONE_CALLS` | Raccrocher à 3:00 l'appel vers un contact autorisé — facultative, accordable plus tard depuis l'onglet Sécurité |
+| `ACCESS_NOTIFICATION_POLICY` | Optionnel : active « Ne pas déranger » pendant une plage (accordée dans l'onglet Sécurité, désactivé par défaut) |
 
 ---
 
@@ -573,12 +574,12 @@ ce qui permet de l'exécuter avec des fakes en mémoire.
 - **Réponse interactive** : l'autorisation en un tap (`allowInteractiveResponse` de Telecom)
   n'est pas encore implémentée — le blocage est binaire.
 - **Fork constructeur** : les surcouches très agressives (gestion batterie, autostart) peuvent
-  tuer le watchdog et **retarder le `BOOT_COMPLETED`** au point de ne jamais le délivrer.
+  **retarder le `BOOT_COMPLETED`** au point de ne jamais le délivrer.
   Sur ces appareils (itel/Transsion, Xiaomi, Infinix…), autorisez Instant Pause dans
   **Démarrage automatique** et **sans restriction d'énergie**. L'app affiche un bandeau
   ambre tant que l'exemption d'énergie manque.
   L'interception d'appel, elle, **continue de fonctionner** : Telecom relance le processus
-  à froid à chaque appel, et le watchdog se ré-arme à cette occasion.
+  à froid à chaque appel.
 
 ---
 

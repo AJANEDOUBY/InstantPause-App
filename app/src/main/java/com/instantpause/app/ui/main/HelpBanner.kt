@@ -3,6 +3,7 @@ package com.instantpause.app.ui.main
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -109,6 +110,23 @@ fun BatteryBanner(
         containerColor = Color(0xFFB45309),
         icon = Icons.Default.BatteryAlert,
         onClick = onRequestExemption,
+        modifier = modifier
+    )
+}
+
+/** Bandeau affiché quand les notifications ou le canal principal sont désactivés. */
+@Composable
+fun NotificationBanner(
+    modifier: Modifier = Modifier,
+    onRequestNotifications: () -> Unit
+) {
+    CompactBanner(
+        title = stringResource(R.string.banner_notifications_title),
+        message = stringResource(R.string.banner_notifications_message),
+        actionLabel = stringResource(R.string.banner_allow),
+        containerColor = Color(0xFFDC2626),
+        icon = Icons.Default.NotificationsOff,
+        onClick = onRequestNotifications,
         modifier = modifier
     )
 }

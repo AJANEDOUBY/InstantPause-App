@@ -28,7 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -132,7 +132,7 @@ fun UnlockDialog(
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val res = LocalContext.current.resources
+    val res = LocalResources.current
 
     var code by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -223,7 +223,7 @@ fun PassphraseDialog(
 ) {
     val lockState by vm.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-    val res = LocalContext.current.resources
+    val res = LocalResources.current
 
     var current by remember { mutableStateOf("") }
     var newCode by remember { mutableStateOf("") }

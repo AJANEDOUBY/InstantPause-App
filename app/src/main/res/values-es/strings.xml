@@ -22,6 +22,8 @@
     <string name="banner_overlay_message">Necesario para mostrar la pantalla de pausa durante una llamada.</string>
     <string name="banner_battery_title">Protección tras reiniciar</string>
     <string name="banner_battery_message">Permite el inicio automático y el uso de batería sin restricciones.</string>
+    <string name="banner_notifications_title">Notificaciones desactivadas</string>
+    <string name="banner_notifications_message">Permita las notificaciones para mostrar alertas de pausa al bloquear una llamada.</string>
     <string name="banner_allow">Permitir</string>
 
     <!-- Pantalla de activación del rol -->
@@ -73,7 +75,6 @@
     <string name="security_title">Seguridad</string>
     <string name="security_subtitle">Evita que la protección se desactive por impulso.</string>
     <string name="version_label">Instant Pause %1$s</string>
-    <string name="action_remove_protection">Quitar la protección</string>
 
     <!-- Mensaje de la pantalla de pausa -->
     <string name="pause_message_title">Mensaje de la pantalla de pausa</string>
@@ -225,7 +226,7 @@
 
     <!-- Silencio durante las franjas (No molestar) -->
     <string name="dnd_title">Silencio durante la pausa</string>
-    <string name="dnd_subtitle">Silencia los tonos de WhatsApp, Signal y Telegram durante tus franjas. Las llamadas de emergencia y las alarmas siguen siendo posibles.</string>
+    <string name="dnd_subtitle">Activa « No molestar » durante tus franjas. Lo que sigue sonando depende de tus ajustes de Android.</string>
     <string name="dnd_allow">Permitir el acceso a «No molestar»</string>
     <string name="dnd_access_needed">Acceso no concedido: Android exige una autorización explícita (Ajustes › Acceso especial de apps).</string>
     <string name="dnd_access_lost">Acceso retirado: el sonido sigue silenciado hasta que desactives «No molestar» manualmente.</string>

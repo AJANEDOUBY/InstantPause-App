@@ -12,6 +12,8 @@
     <string name="banner_overlay_message">通话期间显示暂停界面所必需。</string>
     <string name="banner_battery_title">重启后的保护</string>
     <string name="banner_battery_message">允许自启动并取消电池使用限制。</string>
+    <string name="banner_notifications_title">通知已禁用</string>
+    <string name="banner_notifications_message">允许通知以在拦截通话时显示暂停提醒。</string>
     <string name="banner_allow">允许</string>
 
     <string name="role_title">保护未启用</string>
@@ -57,7 +59,6 @@
     <string name="security_title">安全</string>
     <string name="security_subtitle">防止保护在冲动之下被关闭。</string>
     <string name="version_label">Instant Pause %1$s</string>
-    <string name="action_remove_protection">移除保护</string>
 
     <string name="pause_message_title">暂停界面留言</string>
     <string name="pause_message_subtitle">现在就趁冷静时写下。它会在冲动的时刻出现。</string>
@@ -104,6 +105,7 @@
     <string name="action_allow_fullscreen">允许全屏显示</string>
     <string name="action_continue_without">不使用并继续</string>
     <string name="fullscreen_footer">此步骤不会再出现。你可以随时在应用的 Android 设置中更改。</string>
+    <string name="pause_no_resume">关闭此界面不会拨出电话。在此时间段结束前，通话将一直被拦截。</string>
 
     <string name="status_zen_until">Zen 模式已开启，至 %1$s</string>
     <string name="status_zen">Zen 模式已开启</string>
@@ -183,22 +185,18 @@
     <string name="channel_quiet_desc">显示暂停界面时的低调提醒</string>
     <string name="channel_call_timer_name">允许通话计时器</string>
     <string name="channel_call_timer_desc">信任圈通话的倒计时</string>
-    <string name="channel_watchdog_name">Instant Pause 守护</string>
-    <string name="channel_watchdog_desc">在后台保持保护启用</string>
     <string name="notif_blocked_title">通话已拦截</string>
     <string name="notif_blocked_text">点击这里，深呼吸一下。</string>
     <string name="notif_blocked_big_text">点击打开暂停界面，花一点时间呼吸。</string>
     <string name="notif_pause_preparing">正在准备暂停……</string>
     <string name="notif_allowed_call_title">允许的通话</string>
-    <string name="notif_watchdog_title">Instant Pause 守护</string>
-    <string name="notif_watchdog_text">你的保护正在运行。</string>
     <string name="call_timer_prefix">剩余时间</string>
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">时间到 — 通话已结束</string>
     <string name="call_time_up_hang_up">时间到 — 请挂断</string>
 
     <string name="dnd_title">暂停期间静音</string>
-    <string name="dnd_subtitle">在时段内将 WhatsApp、Signal 和 Telegram 的铃声静音。紧急呼叫和闹钟仍然可用。</string>
+    <string name="dnd_subtitle">在时间段内开启“勿扰模式”。哪些声音仍会响，取决于你的 Android 设置。</string>
     <string name="dnd_allow">允许“勿扰模式”访问</string>
     <string name="dnd_access_needed">尚未授予访问权限：Android 需要明确授权（设置 › 特殊应用权限）。</string>
     <string name="dnd_access_lost">访问权限已移除：在你手动关闭“勿扰模式”之前，声音会保持静音。</string>

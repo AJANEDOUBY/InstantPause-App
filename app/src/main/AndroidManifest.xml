@@ -118,10 +118,11 @@
         <receiver
             android:name=".system.ProtectionAlarmReceiver"
             android:exported="false" />
-        <!-- Récepteur au démarrage du téléphone (exported=true OBLIGATOIRE) -->
+        <!-- Récepteur au démarrage du téléphone. Non exporté : Android livre malgré tout
+             BOOT_COMPLETED et MY_PACKAGE_REPLACED au récepteur de l'application. -->
         <receiver
             android:name=".system.BootReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />

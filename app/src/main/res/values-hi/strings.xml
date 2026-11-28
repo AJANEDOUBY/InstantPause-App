@@ -12,6 +12,8 @@
     <string name="banner_overlay_message">कॉल के दौरान पॉज़ स्क्रीन दिखाने के लिए आवश्यक।</string>
     <string name="banner_battery_title">रीबूट के बाद सुरक्षा</string>
     <string name="banner_battery_message">ऑटो-स्टार्ट और बिना प्रतिबंध बैटरी उपयोग की अनुमति दें।</string>
+    <string name="banner_notifications_title">सूचनाएँ अक्षम हैं</string>
+    <string name="banner_notifications_message">कॉल ब्लॉक होने पर विराम अलर्ट दिखाने के लिए सूचनाओं की अनुमति दें।</string>
     <string name="banner_allow">अनुमति दें</string>
 
     <string name="role_title">सुरक्षा सक्षम नहीं है</string>
@@ -57,7 +59,6 @@
     <string name="security_title">सुरक्षा</string>
     <string name="security_subtitle">आवेग में सुरक्षा बंद होने से रोकें।</string>
     <string name="version_label">Instant Pause %1$s</string>
-    <string name="action_remove_protection">सुरक्षा हटाएँ</string>
 
     <string name="pause_message_title">पॉज़ स्क्रीन का संदेश</string>
     <string name="pause_message_subtitle">अभी शांत मन से लिखें। यह आवेग के क्षण में दिखेगा।</string>
@@ -104,6 +105,7 @@
     <string name="action_allow_fullscreen">पूर्ण-स्क्रीन दिखाने की अनुमति दें</string>
     <string name="action_continue_without">इसके बिना जारी रखें</string>
     <string name="fullscreen_footer">यह चरण फिर नहीं आएगा। आप ऐप की Android सेटिंग्स में इसे कभी भी बदल सकते हैं।</string>
+    <string name="pause_no_resume">इस स्क्रीन को बंद करने से कॉल नहीं लगेगी। यह समय-अवधि खत्म होने तक कॉल ब्लॉक रहेंगी।</string>
 
     <string name="status_zen_until">Zen मोड %1$s तक चालू</string>
     <string name="status_zen">Zen मोड चालू</string>
@@ -183,22 +185,18 @@
     <string name="channel_quiet_desc">पॉज़ स्क्रीन दिखते समय गुप्त अनुस्मारक</string>
     <string name="channel_call_timer_name">अनुमत कॉल टाइमर</string>
     <string name="channel_call_timer_desc">विश्वास मंडल की कॉल के लिए उलटी गिनती</string>
-    <string name="channel_watchdog_name">Instant Pause रक्षक</string>
-    <string name="channel_watchdog_desc">बैकग्राउंड में सुरक्षा सक्रिय रखता है</string>
     <string name="notif_blocked_title">कॉल ब्लॉक हुई</string>
     <string name="notif_blocked_text">साँस सँभालने के लिए यहाँ टैप करें।</string>
     <string name="notif_blocked_big_text">पॉज़ स्क्रीन खोलने और एक पल साँस लेने के लिए टैप करें।</string>
     <string name="notif_pause_preparing">पॉज़ तैयार हो रहा है…</string>
     <string name="notif_allowed_call_title">अनुमत कॉल</string>
-    <string name="notif_watchdog_title">Instant Pause रक्षक</string>
-    <string name="notif_watchdog_text">आपकी सुरक्षा सक्रिय है।</string>
     <string name="call_timer_prefix">बचा समय</string>
     <string name="call_timer_line">%1$s: %2$s</string>
     <string name="call_time_up_cut">समय पूरा — कॉल समाप्त</string>
     <string name="call_time_up_hang_up">समय पूरा — कॉल काटें</string>
 
     <string name="dnd_title">अवधि के दौरान शांति</string>
-    <string name="dnd_subtitle">आपकी अवधि के दौरान WhatsApp, Signal और Telegram की रिंगटोन शांत करता है। आपातकालीन कॉल और अलार्म अब भी संभव हैं।</string>
+    <string name="dnd_subtitle">आपकी अवधि के दौरान “परेशान न करें” चालू करता है। कौन-सी ध्वनियाँ बजेंगी, यह आपकी Android सेटिंग्स पर निर्भर करता है।</string>
     <string name="dnd_allow">परेशान न करें की अनुमति दें</string>
     <string name="dnd_access_needed">अनुमति नहीं मिली: Android को स्पष्ट अनुमति चाहिए (सेटिंग्स › विशेष ऐप एक्सेस)।</string>
     <string name="dnd_access_lost">अनुमति हट गई: जब तक आप “परेशान न करें” खुद बंद न करें, आवाज़ शांत रहेगी।</string>

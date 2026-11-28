@@ -20,6 +20,8 @@
     <string name="banner_overlay_message">Required to display the pause screen during a call.</string>
     <string name="banner_battery_title">Protection after reboot</string>
     <string name="banner_battery_message">Allow auto-start and unrestricted battery use.</string>
+    <string name="banner_notifications_title">Notifications disabled</string>
+    <string name="banner_notifications_message">Allow notifications to display pause alerts when a call is blocked.</string>
     <string name="banner_allow">Allow</string>
 
     <!-- Écran d'activation du rôle -->
@@ -29,7 +31,7 @@
     <string name="role_activate">Enable protection</string>
 
     <!-- Code de protection : règles et messages -->
-    <string name="violation_too_short">at least %1$d characters</string>
+    <string name="violation_too_short" tools:ignore="PluralsCandidate">at least %1$d characters</string>
     <string name="violation_missing_letter">at least one letter</string>
     <string name="violation_missing_digit">at least one digit</string>
     <string name="list_separator">", "</string>
@@ -71,7 +73,6 @@
     <string name="security_title">Security</string>
     <string name="security_subtitle">Stop protection from being switched off on impulse.</string>
     <string name="version_label">Instant Pause %1$s</string>
-    <string name="action_remove_protection">Remove protection</string>
 
     <!-- Message de l'écran de pause -->
     <string name="pause_message_title">Pause screen message</string>
@@ -182,15 +183,15 @@
     <string name="whitelist_read_error">Could not read this contact.</string>
     <string name="whitelist_added">%1$s added to the trust circle.</string>
     <string name="whitelist_duplicate">This number is already allowed.</string>
-    <string name="whitelist_limit_short">Limit of %1$d contacts reached.</string>
+    <string name="whitelist_limit_short" tools:ignore="PluralsCandidate">Limit of %1$d contacts reached.</string>
     <string name="whitelist_invalid">Unreadable number: it cannot be allowed.</string>
     <string name="whitelist_add_reason">Add an allowed contact? Their calls will go through even during a window.</string>
     <string name="whitelist_remove_reason">Remove %1$s from the trust circle? Their calls will be blocked again during windows.</string>
     <string name="action_add_contact">Add a contact</string>
     <string name="action_remove">Remove</string>
-    <string name="whitelist_limit_note">Limit of %1$d contacts reached. Remove a contact to add another.</string>
+    <string name="whitelist_limit_note" tools:ignore="PluralsCandidate">Limit of %1$d contacts reached. Remove a contact to add another.</string>
     <string name="trust_circle_title">Trust circle</string>
-    <string name="trust_circle_body">These contacts are never blocked, even during an active window. %1$d contacts maximum, and an allowed call lasts 3 minutes: it is cut automatically afterwards.</string>
+    <string name="trust_circle_body" tools:ignore="PluralsCandidate">These contacts are never blocked, even during an active window. %1$d contacts maximum, and an allowed call lasts 3 minutes: it is cut automatically afterwards.</string>
     <string name="whitelist_counter">Allowed contacts</string>
     <string name="whitelist_empty_title">No allowed contact</string>
     <string name="whitelist_empty_body">Without an allowed contact, all calls are blocked during windows (except emergencies: 112 and local emergency numbers).</string>
@@ -223,7 +224,7 @@
 
     <!-- Silence pendant les plages (Ne pas deranger) -->
     <string name="dnd_title">Silence during the pause</string>
-    <string name="dnd_subtitle">Mutes WhatsApp, Signal and Telegram ringtones during your windows. Emergency calls and alarms remain possible.</string>
+    <string name="dnd_subtitle">Turns on Do Not Disturb during your windows. What still rings depends on your Android settings.</string>
     <string name="dnd_allow">Allow Do Not Disturb access</string>
     <string name="dnd_access_needed">Access not granted: Android requires an explicit authorization (Settings › Special app access).</string>
     <string name="dnd_access_lost">Access removed: sound stays muted until you turn Do Not Disturb off manually.</string>
